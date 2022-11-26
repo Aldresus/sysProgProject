@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Livrable1", "Livrable1.csproj", "{115C74CF-9E3A-4427-B058-59E8AE9D6CA6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{115C74CF-9E3A-4427-B058-59E8AE9D6CA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{115C74CF-9E3A-4427-B058-59E8AE9D6CA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{115C74CF-9E3A-4427-B058-59E8AE9D6CA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{115C74CF-9E3A-4427-B058-59E8AE9D6CA6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {25DBE841-A4F6-4B55-90D6-9F0233C79681}
+	EndGlobalSection
+EndGlobal
