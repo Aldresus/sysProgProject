@@ -48,6 +48,7 @@ public class VM_Class
         _type = type;
     }
 
+    // Constructor
     public VM_Class(string name, string sourceDirectory, string destinationDirectory, string type)
     {
         _name = name;
@@ -56,8 +57,12 @@ public class VM_Class
         _type = type;
     }
 
-    public static void Update()
+    // Method to update data
+    public void Update(string name, string sourceDirectory, string destinationDirectory, string type)
     {
-        // Code to update view
+        this.Set_Name(name);
+        this.Set_SourceDirectory(sourceDirectory);
+        this.Set_DestinationDirectory(destinationDirectory);
+        this.Set_Type(type);
     }
 }
