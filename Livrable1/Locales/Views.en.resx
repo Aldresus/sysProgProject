@@ -129,6 +129,15 @@
   <data name="fullSave" xml:space="preserve">
     <value>full save</value>
   </data>
+  <data name="index" xml:space="preserve">
+    <value>index</value>
+  </data>
+  <data name="input" xml:space="preserve">
+    <value>input</value>
+  </data>
+  <data name="invalid" xml:space="preserve">
+    <value>invalid</value>
+  </data>
   <data name="jobName" xml:space="preserve">
     <value>job name</value>
   </data>
