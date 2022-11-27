@@ -1,5 +1,4 @@
-﻿using System;
-namespace NSUtils
+﻿namespace NSUtils
 {
     public class U_Reader
     {

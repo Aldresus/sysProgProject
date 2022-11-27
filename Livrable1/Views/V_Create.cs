@@ -1,5 +1,5 @@
-﻿using NSViewModel;
-using NSUtils;
+﻿using NSUtils;
+using NSViewModel;
 namespace NSViews
 {
     public class V_Create
@@ -16,7 +16,11 @@ namespace NSViews
             if (true)
             {
                 Console.Clear();
+
                 string name = Reader.ReadString("name", false);
+                //print types
+                Console.WriteLine("1 - type 1"); //placeholder
+                Console.WriteLine("2 - type 2"); //placeholder
                 int type = Reader.ReadInt("type");
                 string source = Reader.ReadString("source", false);
                 string dest = Reader.ReadString("dest", false);
