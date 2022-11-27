@@ -17,12 +17,13 @@ namespace NSViews
             {
                 bool validInput = false;
 
-                //TODO print all jobs currently available
-                Console.WriteLine("1 - job name"); //placeholder
+
 
                 while (!validInput)
                 {
                     Console.Clear();
+                    //TODO print all jobs currently available
+                    Console.WriteLine("1 - job name"); //placeholder
                     List<int> indexes = Reader.ReadMany("index csv '1,2,3'");
                     foreach (int i in indexes)
                     {
@@ -30,7 +31,9 @@ namespace NSViews
                     }
 
                     Console.Write("deleted\n");
+                    validInput = true;
                     Reader.PressAnyKeyToContinue();
+                    
                 }
             }
         }
