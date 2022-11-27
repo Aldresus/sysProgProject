@@ -48,7 +48,10 @@ namespace NSViewModel
         {
             _type = type;
         }
-
+        // Constructor for empty values
+        public VM_ViewModel()
+        {
+        }
         // Constructor
         public VM_ViewModel(string name, string sourceDirectory, string destinationDirectory, string type)
         {
@@ -56,6 +59,7 @@ namespace NSViewModel
             _sourceDirectory = sourceDirectory;
             _destinationDirectory = destinationDirectory;
             _type = type;
+
         }
 
         // Method to update data
