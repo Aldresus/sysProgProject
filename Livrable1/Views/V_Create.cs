@@ -3,12 +3,12 @@ using System.Resources;
 
 public class V_Create
 {
-	private viewModel oViewModel;
+	private viewModel _oViewModel;
     
 	public V_Create(viewModel VM)
 	{
         //TODO language
-        this.oViewModel = VM;
+        this._oViewModel = VM;
         //TODO check if there is less than 5 save jobs
         Console.Clear();
         Console.WriteLine("job ?");
