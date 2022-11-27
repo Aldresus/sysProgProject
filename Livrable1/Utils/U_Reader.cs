@@ -4,7 +4,7 @@ namespace NSUtils
     public class U_Reader
     {
 
-        public static int ReadInt(string promptText)
+        public int ReadInt(string promptText)
         {
             //TODO translate error messages
 
@@ -35,7 +35,7 @@ namespace NSUtils
             }
             return -1; // should never happen
         }
-        public static string ReadString(string promptText, bool canBeEmpty)
+        public string ReadString(string promptText, bool canBeEmpty)
         {
             //TODO translate error messages
 
