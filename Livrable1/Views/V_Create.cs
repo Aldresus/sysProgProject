@@ -25,6 +25,7 @@ namespace NSViews
                 string source = Reader.ReadString("source", false);
                 string dest = Reader.ReadString("dest", false);
                 Console.WriteLine(@$"name: {name} source:{source} dest:{dest} type:{type}");
+                Reader.PressAnyKeyToContinue();
             }
         }
     }

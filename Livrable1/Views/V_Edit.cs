@@ -38,6 +38,7 @@ namespace NSViews
                         string dest = Reader.ReadString("dest", false);
                         Console.WriteLine(@$"name: {name} source:{source} dest:{dest} type:{type}"); //placeholder
                         validInput = true;
+                        Reader.PressAnyKeyToContinue();
                     }
                     else
                     {

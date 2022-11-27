@@ -62,5 +62,10 @@
             }
             return "errored"; // should never happen
         }
+        public void PressAnyKeyToContinue()
+        {
+            Console.WriteLine("\n\nPress any key to continue");
+            Console.ReadKey();
+        }
     }
 }
