@@ -22,18 +22,15 @@ namespace NSViews
 
                 while (!validInput)
                 {
-                    int job = Reader.ReadInt("view to del");
-                    //check if job exists
-                    if (job >= 1 && job <= 5)//TODO change 5 by the total of jobs
+                    Console.Clear();
+                    List<int> indexes = Reader.ReadMany("index csv '1,2,3'");
+                    foreach (int i in indexes)
                     {
-                        Console.WriteLine($"\ndeleted {job}");
-                        validInput = true;
-                        Reader.PressAnyKeyToContinue();
+                        Console.Write($"{i} ");
                     }
-                    else
-                    {
-                        Console.WriteLine("index out of bound");
-                    }
+
+                    Console.Write("deleted\n");
+                    Reader.PressAnyKeyToContinue();
                 }
             }
         }

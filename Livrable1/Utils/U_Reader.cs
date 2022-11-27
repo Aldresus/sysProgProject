@@ -1,4 +1,5 @@
-﻿namespace NSUtils
+﻿using System.Collections.Generic;
+namespace NSUtils
 {
     public class U_Reader
     {
@@ -60,8 +61,62 @@
                     Console.WriteLine("cannot be empty");
                 }
             }
-            return "errored"; // should never happen
+            return null; // should never happen
         }
+        public List<int> ReadMany(string promptText)
+        {
+            //TODO translate error messages
+
+            bool validInput = false;
+
+            while (!validInput)
+            {
+                Console.WriteLine(promptText);
+                string userInput = Console.ReadLine();
+
+                if (userInput.Length > 0)
+                {
+
+                    string[] temp = userInput.Replace(" ", "").Split(",");
+                    List<int> output = new List<int>();
+                    try
+                    {
+                        foreach (string i in temp)
+                        {
+                            int j = int.Parse(i);
+                            if (j >= 1 && j <= 5)
+                            {
+                                output.Add(j);
+                            }
+                            else
+                            {
+                                Console.WriteLine("index out of range");
+                                output.Clear();
+                                break;
+                            }
+                        }
+                        if (output.Any())
+                        {
+                            validInput = true;
+                            return output;
+                        }
+                    }
+                    catch (System.FormatException e)
+                    {
+                        Console.WriteLine("invalid");
+                    }
+
+
+                }
+                else
+                {
+                    Console.WriteLine("cannot be empty");
+                }
+            }
+            return null; // should never happen
+        }
+
+
         public void PressAnyKeyToContinue()
         {
             Console.WriteLine("\n\nPress any key to continue");
