@@ -4,10 +4,10 @@ namespace NSViewModel
 {
     public class VM_ViewModel
     {
-        private string _name;
-        private string _sourceDirectory;
-        private string _destinationDirectory;
-        private string _type;
+        private string? _name;
+        private string? _sourceDirectory;
+        private string? _destinationDirectory;
+        private string? _type;
 
         public string Get_Name()
         {
