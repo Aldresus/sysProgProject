@@ -1,33 +1,27 @@
-﻿using System;
-using System.Resources;
-
-public class V_Create
+﻿using NSViewModel;
+using NSUtils;
+namespace NSViews
 {
-	private viewModel _oViewModel;
-    
-	public V_Create(viewModel VM)
-	{
-        //TODO language
-        this._oViewModel = VM;
-        //TODO check if there is less than 5 save jobs
-        Console.Clear();
-        Console.WriteLine("job ?");
-        string job = Console.ReadLine();
-        Console.Clear();
-        Console.WriteLine("source ?");
-        string source = Console.ReadLine();
-        Console.Clear();
-        Console.WriteLine("dest ?");
-        string dest = Console.ReadLine();
-        Console.Clear();
-        Console.WriteLine(@"type ?
-            1 ful
-            2 differential");
-        string type = Console.ReadLine();
-        Console.Clear();
-        Console.WriteLine(@$"job: {job}
-source:{source}
-dest:{dest}
-type:{type}");
+    public class V_Create
+    {
+        private VM_ViewModel _oViewModel;
+
+        public V_Create(VM_ViewModel VM)
+        {
+            //TODO language
+            this._oViewModel = VM;
+            U_Reader Reader = new U_Reader();
+
+            //TODO check if there is less than 5 save jobs
+            if (true)
+            {
+                Console.Clear();
+                string name = Reader.ReadString("name", false);
+                int type = Reader.ReadInt("type");
+                string source = Reader.ReadString("source", false);
+                string dest = Reader.ReadString("dest", false);
+                Console.WriteLine(@$"name: {name} source:{source} dest:{dest} type:{type}");
+            }
+        }
     }
 }
