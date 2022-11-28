@@ -57,5 +57,8 @@ public class Model
         _language = value;
     }
 
-    
+    public void WriteJSON(M_SaveJob saveJob){
+        //Write JSON file
+        
+    }
 }
