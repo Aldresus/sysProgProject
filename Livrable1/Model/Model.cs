@@ -1,64 +1,68 @@
 //Class Model
 //Description : This class is used to write log file and to move files about different save.
-
-public class Model
+namespace NSModel
 {
-    private List<M_SaveJob> _listSaveJob;
-    private FileStream _logFile;
-    private FileStream _workFile;
-    private string _language;
-
-    //Getter and Setter
-    
-    //Getter _listSaveJob
-    public List<M_SaveJob> Get_listSaveJob()
+    public class Model
     {
-        return _listSaveJob;
-    }
+        private List<M_SaveJob> _listSaveJob;
+        private FileStream _logFile;
+        private FileStream _workFile;
+        private string _language;
 
-    //Setter _listSaveJob
-    public void Set_ListSaveJob(List<M_SaveJob> values)
-    {
-        this._listSaveJob = values;
-    }
+        //Getter and Setter
 
-    //Getter _logFile
-    public FileStream Get_logFile() {
-        return _logFile;
-    }
+        //Getter _listSaveJob
+        public List<M_SaveJob> Get_listSaveJob()
+        {
+            return _listSaveJob;
+        }
 
-    //Setter _logFile
-    public void Set_logFile(FileStream value)
-    {
-        _logFile = value;
-    }
+        //Setter _listSaveJob
+        public void Set_ListSaveJob(List<M_SaveJob> values)
+        {
+            this._listSaveJob = values;
+        }
 
-    //Getter _workFile
-    public FileStream Get_workFile()
-    {
-        return _workFile;
-    }
+        //Getter _logFile
+        public FileStream Get_logFile()
+        {
+            return _logFile;
+        }
 
-    //Setter _workFile
-    public void Set_workFile(FileStream value)
-    {
-        _workFile = value;
-    }
+        //Setter _logFile
+        public void Set_logFile(FileStream value)
+        {
+            _logFile = value;
+        }
 
-    //Getter _language
-    public string Get_language()
-    {
-        return _language;
-    }
+        //Getter _workFile
+        public FileStream Get_workFile()
+        {
+            return _workFile;
+        }
 
-    //Setter _language
-    public void Set_language(string value)
-    {
-        _language = value;
-    }
+        //Setter _workFile
+        public void Set_workFile(FileStream value)
+        {
+            _workFile = value;
+        }
 
-    public void WriteJSON(M_SaveJob saveJob){
-        //Write JSON file
-        
+        //Getter _language
+        public string Get_language()
+        {
+            return _language;
+        }
+
+        //Setter _language
+        public void Set_language(string value)
+        {
+            _language = value;
+        }
+
+        public void WriteJSON(M_SaveJob saveJob)
+        {
+            //Write JSON file
+
+        }
     }
 }
