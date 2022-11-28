@@ -117,9 +117,9 @@ namespace NSUtils
         }
 
 
-        public void PressAnyKeyToContinue()
+        public void PressAnyKeyToContinue(string text)
         {
-            Console.WriteLine("\n\nPress any key to continue");
+            Console.WriteLine($"\n\n{text}");
             Console.ReadKey();
         }
     }
