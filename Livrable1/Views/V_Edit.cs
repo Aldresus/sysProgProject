@@ -18,6 +18,8 @@ namespace NSViews
             M_Model M = VM.Get_Model();
 
             U_Reader Reader = new U_Reader();
+            U_Show Show = new U_Show();
+            U_Checker Checker = new U_Checker();
 
             //TODO move code bellow to MODEL to become new language or something
             var assembly = Assembly.GetExecutingAssembly();
@@ -27,7 +29,7 @@ namespace NSViews
             dynamic d = JObject.Parse(reader.ReadToEnd());
             string locale = M.Get_language();
 
-            if (true)//TODO check if there is jobs
+            if (Checker.CheckAnyJobs(M.Get_listSaveJob()) > 0)//TODO check if there is jobs
             {
 
                 bool validInput = false;
@@ -35,7 +37,8 @@ namespace NSViews
                 while (!validInput)
                 {
                     //TODO print all jobs currently available
-                    Console.WriteLine("1 - job name"); //placeholder
+                    Console.WriteLine(d[locale].availableJobs.ToString());
+                    Show.ShowJobs(M.Get_listSaveJob());
                     int job = Reader.ReadInt(d[locale].whichJobToEdit.ToString());
 
                     //check if job exists
@@ -57,6 +60,11 @@ namespace NSViews
                         Console.WriteLine(d[locale].indexOutOfRange.ToString());
                     }
                 }
+            }
+            else
+            {
+                Console.WriteLine(d[locale].noJob.ToString());
+                Reader.PressAnyKeyToContinue(d[locale].pressAnyToContinue.ToString());
             }
         }
     }

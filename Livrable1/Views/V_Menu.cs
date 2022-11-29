@@ -21,6 +21,9 @@ namespace NSViews
             M_Model M = VM.Get_Model();
             
             U_Reader Reader = new U_Reader();
+            U_Show Show = new U_Show();
+            U_Checker Checker = new U_Checker();
+            
 
             //TODO move code bellow to MODEL to become new language or something
             var assembly = Assembly.GetExecutingAssembly();
@@ -34,9 +37,13 @@ namespace NSViews
                 string locale = M.Get_language();
                 Console.Clear();
                 Console.WriteLine($"         ______________                                                                                   .----.      \r\n        |[]            |                                                                      .---------. | == |      \r\n        |  __________  |                  .                     .                     .       |.-\"\"\"\"\"-.| |----|      \r\n        |  |  Easy  |  |   .. ............;;.    .. ............;;.    .. ............;;.     ||{d[locale].ordina.ToString()}|| | == |      \r\n        |  |  Save! |  |    ..::::::::::::;;;;.   ..::::::::::::;;;;.   ..::::::::::::;;;;.   ||  {d[locale].coeur.ToString()}|| |----|      \r\n        |  |________|  |   . . ::::::::::::;;:'  . . ::::::::::::;;:'  . . ::::::::::::;;:'   |'-.....-'| |::::|      \r\n        |   ________   |                  :'                    :'                    :'      `\"\")---(\"\"` |___.|      \r\n        |   [ [ ]  ]   |                                                                     /:::::::::::\\\" _  \"      \r\n        \\___[_[_]__]___|                                                                    /:::=======:::\\`\\`\\       \r\n                                                                                            `\"\"\"\"\"\"\"\"\"\"\"\"\"`  '-'      ");
-                
+
                 //TODO list all jobs
-                Console.WriteLine("job 1"); //placeholder
+                if (Checker.CheckAnyJobs(M.Get_listSaveJob()) > 0) { 
+                    Console.WriteLine(d[locale].availableJobs.ToString());
+                    Show.ShowJobs(M.Get_listSaveJob());
+                }
+                
                 //TODO hide options if there isnt any job to edit/execute/delete
                 Console.WriteLine($"\n\n1 - {d[locale].createJob.ToString()}");
                 Console.WriteLine($"2 - {d[locale].executeJob.ToString()}");

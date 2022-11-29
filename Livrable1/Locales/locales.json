@@ -41,9 +41,10 @@
     "cannotBeEmpty": "ne peut pas être vide",
     "option": "option",
     "ordina": "ordina-",
-    "coeur": "coeur"
-
-
+    "coeur": "coeur",
+    "noJob": "aucune tâche",
+    "maxJobReached": "nombre maximum de tâches atteint",
+    "availableJobs": "tâches disponibles"
   },
   "en": {
     "destinationFolder": "destination",
@@ -87,7 +88,10 @@
     "cannotBeEmpty": "cannot be empty",
     "option": "option",
     "ordina": "comput-",
-    "coeur": "heart"
+    "coeur": "heart",
+    "noJob": "no job",
+    "maxJobReached": "maximum number of jobs reached",
+    "availableJobs": "available jobs"
 
   },
   "de": {
@@ -132,7 +136,10 @@
     "cannotBeEmpty": "darf nicht leer sein",
     "option": "möglichkeit",
     "ordina": "comput-",
-    "coeur": "heart"
+    "coeur": "heart",
+    "noJob": "keine aufgabe",
+    "maxJobReached": "maximale anzahl von aufgaben erreicht",
+    "availableJobs": "verfügbare aufgaben"
   }
 }
   

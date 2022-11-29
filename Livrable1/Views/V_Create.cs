@@ -16,7 +16,10 @@ namespace NSViews
             M_Model M = VM.Get_Model();
 
             U_Reader Reader = new U_Reader();
-string locale = M.Get_language();
+            U_Show Show = new U_Show();
+            U_Checker Checker = new U_Checker();
+            
+            string locale = M.Get_language();
             //TODO move code bellow to MODEL to become new language or something
             var assembly = Assembly.GetExecutingAssembly();
             var resourceName = "Livrable1.Locales.locales.json";
@@ -26,7 +29,7 @@ string locale = M.Get_language();
             
 
             //TODO check if there is less than 5 save jobs
-            if (true)
+            if (Checker.CheckAnyJobs(M.Get_listSaveJob()) == 5)
             {
                 Console.Clear();
 
@@ -39,6 +42,13 @@ string locale = M.Get_language();
                 string dest = Reader.ReadString(d[locale].enterJobDestination.ToString(), false);
                 Console.WriteLine(@$"name: {name} source:{source} dest:{dest} type:{type}");
                 Reader.PressAnyKeyToContinue(d[locale].pressAnyToContinue.ToString());
+            }
+            else
+            {
+                {
+                    Console.WriteLine(d[locale].maxJobReached.ToString());
+                    Reader.PressAnyKeyToContinue(d[locale].pressAnyToContinue.ToString());
+                }
             }
         }
     }
