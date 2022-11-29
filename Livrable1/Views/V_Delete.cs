@@ -20,14 +20,7 @@ namespace NSViews
             U_Show Show = new U_Show();
             U_Checker Checker = new U_Checker();
 
-            //TODO move code bellow to MODEL to become new language or something
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "Livrable1.Locales.locales.json";
-            Stream stream = assembly.GetManifestResourceStream(resourceName);
-            StreamReader reader = new StreamReader(stream);
-            dynamic d = JObject.Parse(reader.ReadToEnd());
-            string locale = M.Get_language();
-            //TODO check if there is at least 1 job
+
             if (Checker.CheckAnyJobs(M.Get_listSaveJob()) > 0)
             {
                 bool validInput = false;
@@ -38,25 +31,37 @@ namespace NSViews
                 {
                     
                     Console.Clear();
-                    Console.WriteLine(d[locale].availableJobs.ToString());
+                    Console.WriteLine(M.Get_language().availableJobs.ToString());
                     Show.ShowJobs(M.Get_listSaveJob());
-                    List<int> indexes = Reader.ReadMany(d[locale].enterJobIndexToDelete.ToString());
+                    List<int> indexes = Reader.ReadMany(M.Get_language().enterJobIndexToDelete.ToString());
                     foreach (int i in indexes)
                     {
                         Console.Write($"{i} ");
+                        
+                        int jobIndex = i-1;
+                        M.Get_listSaveJob()[jobIndex].Set_saveJobName("");
+                        M.Get_listSaveJob()[jobIndex].Set_saveJobSourceDirectory("");
+                        M.Get_listSaveJob()[jobIndex].Set_saveJobDestinationDirectory("");
+                        M.Get_listSaveJob()[jobIndex].Set_saveJobType(0);
+                        M.Get_listSaveJob()[jobIndex].Set_state("");
+                        M.Get_listSaveJob()[jobIndex].Set_totalNbFile(0);
+                        M.Get_listSaveJob()[jobIndex].Set_totalSizeFile(0);
+
+                        M.WriteJSON(jobIndex);
                     }
 
-                    Console.Write(d[locale].deleted.ToString());
+                    Console.Write(M.Get_language().deleted.ToString());
                     validInput = true;
-                    Reader.PressAnyKeyToContinue(d[locale].pressAnyToContinue.ToString());
+                    
+                    Reader.PressAnyKeyToContinue(M.Get_language().pressAnyToContinue.ToString());
                     
                 }
             }
             else
             {
                
-                Console.WriteLine(d[locale].noJob.ToString());
-                Reader.PressAnyKeyToContinue(d[locale].pressAnyToContinue.ToString());
+                Console.WriteLine(M.Get_language().noJob.ToString());
+                Reader.PressAnyKeyToContinue(M.Get_language().pressAnyToContinue.ToString());
                 
             }
         }
