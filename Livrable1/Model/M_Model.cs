@@ -2,7 +2,7 @@
 //Description : This class is used to write log file and to move files about different save.
 namespace NSModel
 {
-    public class Model
+    public class M_Model
     {
         private List<M_SaveJob> _listSaveJob;
         private FileStream _logFile;
@@ -64,7 +64,7 @@ namespace NSModel
             //Write JSON file
 
         }
-        public Model()
+        public M_Model()
         {
             //Constructor
         }
