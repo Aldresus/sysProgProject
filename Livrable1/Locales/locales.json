@@ -44,7 +44,9 @@
     "coeur": "coeur",
     "noJob": "aucune tâche",
     "maxJobReached": "nombre maximum de tâches atteint",
-    "availableJobs": "tâches disponibles"
+    "availableJobs": "tâches disponibles",
+    "name": "nom",
+    "sourceFolder": "dossier source"
   },
   "en": {
     "destinationFolder": "destination",
@@ -91,7 +93,9 @@
     "coeur": "heart",
     "noJob": "no job",
     "maxJobReached": "maximum number of jobs reached",
-    "availableJobs": "available jobs"
+    "availableJobs": "available jobs",
+    "name": "name",
+    "sourceFolder": "source folder"
 
   },
   "de": {
@@ -139,7 +143,9 @@
     "coeur": "heart",
     "noJob": "keine aufgabe",
     "maxJobReached": "maximale anzahl von aufgaben erreicht",
-    "availableJobs": "verfügbare aufgaben"
+    "availableJobs": "verfügbare aufgaben",
+    "name": "name",
+    "sourceFolder": "quellordner"
   }
 }
   

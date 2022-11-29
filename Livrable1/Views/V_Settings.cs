@@ -16,7 +16,6 @@ namespace NSViews
         {
             this._oViewModel = VM;
             M_Model M = VM.Get_Model();
-            string locale = M.Get_language();
             U_Reader Reader = new U_Reader();
             bool validInput = false;
 
@@ -26,7 +25,6 @@ namespace NSViews
             Stream stream = assembly.GetManifestResourceStream(resourceName);
             StreamReader reader = new StreamReader(stream);
             dynamic d = JObject.Parse(reader.ReadToEnd());
-            
 
             while (!validInput)
             {
@@ -39,12 +37,13 @@ namespace NSViews
                     i++;
                 }
 
-                int option = Reader.ReadInt(d[locale].selectLanguage.ToString());
+                int option = Reader.ReadInt(M.Get_language().selectLanguage.ToString());
                 if(option>=1 && option <= i-1)
                 {
-                    M.Set_language(languages[option - 1]);
+                    M.Set_language(d[languages[option - 1]]);
                     Console.WriteLine(d[languages[option - 1]].languageChanged.ToString());
                     validInput = true;
+                    M.WriteLanguage(languages[option - 1]);
                     Reader.PressAnyKeyToContinue(d[languages[option - 1]].pressAnyToContinue.ToString());
                 }
                 //TODO change the param in model

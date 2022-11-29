@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Reflection;
 
 namespace NSModel {
     public class M_Model
@@ -13,7 +14,7 @@ namespace NSModel {
         private List<M_SaveJob> _listSaveJob = new List<M_SaveJob>();
         private string _logFile;
         private string _workFile;
-        private string _language;
+        private dynamic _language;
 
         //Constructor
         public M_Model()
@@ -33,7 +34,7 @@ namespace NSModel {
                 string initLogFile = "{\n\t\"logs\": []\n}";
                 File.WriteAllText(this.Get_logFile(), initLogFile);
             }
-            
+
 
             string pathState = pathApp + @"\state.json";
             this.Set_workFile(pathState);
@@ -86,15 +87,29 @@ namespace NSModel {
 
             JObject objJSON = JObject.Parse(File.ReadAllText(this.Get_workFile()));
 
-            
+
             for (int i = 0; i < 5; i++)
             {
                 this._listSaveJob.Add(new M_SaveJob(objJSON["State"][i]["Name"].ToString(), objJSON["State"][i]["SourceFilePath"].ToString(), objJSON["State"][i]["TargetFilePath"].ToString(), objJSON["State"][i]["Type"].Value<int>(), objJSON["State"][i]["State"].ToString(), objJSON["State"][i]["TotalFilesToCopy"].Value<int>(), objJSON["State"][i]["TotalFilesSize"].Value<int>()));
             }
 
-            //TODO : Parse language
-            this._language = objJSON["lang"].ToString();
+            //Parse language
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = "Livrable1.Locales.locales.json";
+            Stream stream = assembly.GetManifestResourceStream(resourceName);
+            StreamReader reader = new StreamReader(stream);
+             this._language = JObject.Parse(reader.ReadToEnd())[objJSON["lang"].ToString()];
+        }
+        
+        public void WriteLanguage(string language) {
+            JObject objJSON = JObject.Parse(File.ReadAllText(this.Get_workFile()));
+            objJSON["lang"] = language;
 
+            //Convert object JObject to string
+            string json = objJSON.ToString();
+
+            //Write json string to JSON file
+            File.WriteAllText(this.Get_workFile(), json);
         }
 
         //Getter and Setter
@@ -155,13 +170,13 @@ namespace NSModel {
         }
 
         //Getter _language
-        public string Get_language()
+        public dynamic Get_language()
         {
             return this._language;
         }
 
         //Setter _language
-        public void Set_language(string value)
+        public void Set_language(dynamic value)
         {
             this._language = value;
         }
