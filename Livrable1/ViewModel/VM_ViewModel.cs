@@ -1,5 +1,7 @@
 ﻿// Class ViewModel
 // Interacts with the View and the Model
+using NSModel;
+
 namespace NSViewModel
 {
     public class VM_ViewModel
@@ -8,6 +10,7 @@ namespace NSViewModel
         private string? _sourceDirectory;
         private string? _destinationDirectory;
         private string? _type;
+        private M_Model _oModel;
 
         public string Get_Name()
         {
@@ -17,6 +20,10 @@ namespace NSViewModel
         public string Get_SourceDirectory()
         {
             return _sourceDirectory;
+        }
+        public M_Model Get_Model()
+        {
+            return _oModel;
         }
 
         public string Get_DestinationDirectory()
@@ -49,8 +56,9 @@ namespace NSViewModel
             _type = type;
         }
         // Constructor for empty values
-        public VM_ViewModel()
+        public VM_ViewModel(M_Model M)
         {
+            this._oModel = M;
         }
         // Constructor
         public VM_ViewModel(string name, string sourceDirectory, string destinationDirectory, string type)

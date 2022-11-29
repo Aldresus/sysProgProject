@@ -68,6 +68,5 @@ namespace NSModel
         {
             //Constructor
         }
-
     }
 }

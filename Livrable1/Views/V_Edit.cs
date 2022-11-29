@@ -1,6 +1,9 @@
-﻿using NSUtils;
+﻿using Newtonsoft.Json.Linq;
+using NSModel;
+using NSUtils;
 using NSViewModel;
 using System;
+using System.Reflection;
 
 namespace NSViews
 {
@@ -11,9 +14,18 @@ namespace NSViews
 
         public V_Edit(VM_ViewModel VM)
         {
-            //TODO language
             this._oViewModel = VM;
+            M_Model M = VM.Get_Model();
+
             U_Reader Reader = new U_Reader();
+
+            //TODO move code bellow to MODEL to become new language or something
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = "Livrable1.Locales.locales.json";
+            Stream stream = assembly.GetManifestResourceStream(resourceName);
+            StreamReader reader = new StreamReader(stream);
+            dynamic d = JObject.Parse(reader.ReadToEnd());
+            string locale = M.Get_language();
 
             if (true)//TODO check if there is jobs
             {
@@ -24,25 +36,25 @@ namespace NSViews
                 {
                     //TODO print all jobs currently available
                     Console.WriteLine("1 - job name"); //placeholder
-                    int job = Reader.ReadInt("Which job do you want to edit?");
+                    int job = Reader.ReadInt(d[locale].whichJobToEdit.ToString());
 
                     //check if job exists
                     if (job >= 1 && job <= 5)//TODO change 5 by the total of jobs
                     {
-                        string name = Reader.ReadString("name", false);
+                        string name = Reader.ReadString(d[locale].enterJobName.ToString(), false);
                         //TODO print types
                         Console.WriteLine("1 - type 1"); //placeholder
                         Console.WriteLine("2 - type 2"); //placeholder
-                        int type = Reader.ReadInt("type");
-                        string source = Reader.ReadString("source", false);
-                        string dest = Reader.ReadString("dest", false);
+                        int type = Reader.ReadInt(d[locale].enterJobType.ToString());
+                        string source = Reader.ReadString(d[locale].enterJobSource.ToString(), false);
+                        string dest = Reader.ReadString(d[locale].enterJobDestination.ToString(), false);
                         Console.WriteLine(@$"name: {name} source:{source} dest:{dest} type:{type}"); //placeholder
                         validInput = true;
-                        Reader.PressAnyKeyToContinue();
+                        Reader.PressAnyKeyToContinue(d[locale].pressAnyToContinue.ToString());
                     }
                     else
                     {
-                        Console.WriteLine("index out of bound");
+                        Console.WriteLine(d[locale].indexOutOfRange.ToString());
                     }
                 }
             }
