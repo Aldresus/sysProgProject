@@ -123,6 +123,11 @@ public class M_SaveJob
         this.Set_totalNbFile(_totalNbFile);
         this.Set_totalSizeFile(_totalSizeFile);
     }
+    
+    public M_SaveJob()
+    {
+        
+    }
 
     //Edit attributes of object M_SaveJob
     public void Update(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, string _saveJobType, M_MovingFile _file, string _state, int _totalNbFile, int _totalSizeFile)
