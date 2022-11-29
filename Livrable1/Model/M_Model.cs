@@ -53,7 +53,7 @@ namespace NSModel {
                 writer.WritePropertyName("State");
                 writer.WriteValue("");
                 writer.WritePropertyName("Type");
-                writer.WriteValue("");
+                writer.WriteValue(0);
                 writer.WritePropertyName("TotalFilesToCopy");
                 writer.WriteValue(0);
                 writer.WritePropertyName("TotalFilesSize");
@@ -89,18 +89,12 @@ namespace NSModel {
             
             for (int i = 0; i < 5; i++)
             {
-                this._listSaveJob.Add(new M_SaveJob(objJSON["State"][i]["Name"].ToString(), objJSON["State"][i]["SourceFilePath"].ToString(), objJSON["State"][i]["TargetFilePath"].ToString(), objJSON["State"][i]["Type"].ToString(), objJSON["State"][i]["State"].ToString(), objJSON["State"][i]["TotalFilesToCopy"].Value<int>(), objJSON["State"][i]["TotalFilesSize"].Value<int>()));
+                this._listSaveJob.Add(new M_SaveJob(objJSON["State"][i]["Name"].ToString(), objJSON["State"][i]["SourceFilePath"].ToString(), objJSON["State"][i]["TargetFilePath"].ToString(), objJSON["State"][i]["Type"].Value<int>(), objJSON["State"][i]["State"].ToString(), objJSON["State"][i]["TotalFilesToCopy"].Value<int>(), objJSON["State"][i]["TotalFilesSize"].Value<int>()));
             }
-            //TEST
-            foreach (M_SaveJob saveJob in this._listSaveJob)
-            {
-                foreach (KeyValuePair<string, dynamic> i in saveJob.Read())
-                {
-                    Console.WriteLine($"{i.Key} : {i.Value}");
-                }
 
-            }
             //TODO : Parse language
+            this._language = objJSON["lang"].ToString();
+
         }
 
         //Getter and Setter

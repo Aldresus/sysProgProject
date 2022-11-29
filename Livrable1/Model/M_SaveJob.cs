@@ -23,7 +23,7 @@ namespace NSModel
         }
         
         //Constructor (Set all attributes when object instantiation)
-    public M_SaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, string _saveJobType, string _state, int _totalNbFile, int _totalSizeFile)
+    public M_SaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int _totalNbFile, int _totalSizeFile)
     {
         this.Set_saveJobName(_saveJobName);
         this.Set_saveJobSourceDirectory(_saveJobSourceDirectory);
@@ -108,18 +108,6 @@ namespace NSModel
             }
         }
 
-        //Getter _file
-        public M_MovingFile Get_file()
-        {
-            return _file;
-        }
-
-        //Setter _file
-        public void Set_file(M_MovingFile value)
-        {
-            _file = value;
-        }
-
         //Getter _state
         public string Get_state()
         {
@@ -157,7 +145,7 @@ namespace NSModel
         }
 
         //Edit attributes of object M_SaveJob
-    public void Update(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, string _saveJobType, M_MovingFile _file, string _state, int _totalNbFile, int _totalSizeFile)
+    public void Update(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int _totalNbFile, int _totalSizeFile)
     {
         //Edit attributes
         this.Set_saveJobName(_saveJobName);
