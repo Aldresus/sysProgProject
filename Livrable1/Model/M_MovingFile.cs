@@ -1,6 +1,7 @@
 // Class MovingFile
 // Description: This class is used to store information about the file that will move.
 
+using System;
 using System.ComponentModel.DataAnnotations;
 
 public class M_MovingFile

@@ -1,6 +1,8 @@
 //Class Model
 //Description : This class is used to write log file and to move files about different save.
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -8,10 +10,98 @@ using Newtonsoft.Json.Linq;
 namespace NSModel {
     public class M_Model
     {
-        private List<M_SaveJob> _listSaveJob;
+        private List<M_SaveJob> _listSaveJob = new List<M_SaveJob>();
         private string _logFile;
         private string _workFile;
         private string _language;
+
+        //Constructor
+        public M_Model()
+        {
+            string pathApp = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).ToString() + @"\Livrable1\Log";
+            if (!Directory.Exists(pathApp))
+            {
+                Directory.CreateDirectory(pathApp);
+            }
+            //TEST
+            Console.WriteLine(Directory.Exists(pathApp));
+            Console.ReadLine();
+            string pathLog = pathApp + @"\Log.json";
+            this.Set_logFile(pathLog);
+            if (!File.Exists(this.Get_logFile()))
+            {
+                string initLogFile = "{\n\t\"logs\": []\n}";
+                File.WriteAllText(this.Get_logFile(), initLogFile);
+            }
+            
+
+            string pathState = pathApp + @"\state.json";
+            this.Set_workFile(pathState);
+            if (!File.Exists(this.Get_workFile()))
+            {
+                StringBuilder sb = new StringBuilder();
+                StringWriter sw = new StringWriter(sb);
+                JsonWriter writer = new JsonTextWriter(sw);
+                writer.Formatting = Formatting.Indented;
+                writer.WriteStartObject();
+                writer.WritePropertyName("Name");
+                writer.WriteValue("");
+                writer.WritePropertyName("SourceFilePath");
+                writer.WriteValue("");
+                writer.WritePropertyName("TargetFilePath");
+                writer.WriteValue("");
+                writer.WritePropertyName("State");
+                writer.WriteValue("");
+                writer.WritePropertyName("Type");
+                writer.WriteValue("");
+                writer.WritePropertyName("TotalFilesToCopy");
+                writer.WriteValue(0);
+                writer.WritePropertyName("TotalFilesSize");
+                writer.WriteValue(0);
+                writer.WritePropertyName("NbFilesLeftToDo");
+                writer.WriteValue(0);
+                writer.WritePropertyName("Progression");
+                writer.WriteValue(0);
+                writer.WriteEndObject();
+
+                //Create start State Json file
+                string startJson = "{\n\"lang\": \"en\",\n\"State\": [\n";
+
+                //Convert object JObject to string
+                string json = sb.ToString();
+
+                string file = json;
+                for (int i = 0; i < 4; i++)
+                {
+                    file += ",\n" + json;
+                }
+
+                //Create end State Json file
+                string endJson = "\n]\n}";
+
+                //Write json string to JSON file
+                File.WriteAllText(this.Get_workFile(), startJson + file + endJson);
+
+            }
+
+            JObject objJSON = JObject.Parse(File.ReadAllText(this.Get_workFile()));
+
+            
+            for (int i = 0; i < 5; i++)
+            {
+                this._listSaveJob.Add(new M_SaveJob(objJSON["State"][i]["Name"].ToString(), objJSON["State"][i]["SourceFilePath"].ToString(), objJSON["State"][i]["TargetFilePath"].ToString(), objJSON["State"][i]["Type"].ToString(), objJSON["State"][i]["State"].ToString(), objJSON["State"][i]["TotalFilesToCopy"].Value<int>(), objJSON["State"][i]["TotalFilesSize"].Value<int>()));
+            }
+            //TEST
+            foreach (M_SaveJob saveJob in this._listSaveJob)
+            {
+                foreach (KeyValuePair<string, dynamic> i in saveJob.Read())
+                {
+                    Console.WriteLine($"{i.Key} : {i.Value}");
+                }
+
+            }
+            //TODO : Parse language
+        }
 
         //Getter and Setter
 
@@ -90,21 +180,23 @@ namespace NSModel {
             M_SaveJob saveJobSelected = GetSelectedSaveJob(index);
 
             //Edit Name
-            objJSON["SaveJob"][0]["Name"] = saveJobSelected.Get_saveJobName();
+            objJSON["State"][index]["Name"] = saveJobSelected.Get_saveJobName();
             //Edit SourceFilePath
-            objJSON["SaveJob"][0]["SourceFilePath"] = saveJobSelected.Get_file().Get_fileSource();
+            objJSON["State"][index]["SourceFilePath"] = saveJobSelected.Get_saveJobSourceDirectory();
             //Edit DestinationFilePath
-            objJSON["SaveJob"][0]["TargetFilePath"] = saveJobSelected.Get_file().Get_fileDestination();
+            objJSON["State"][index]["TargetFilePath"] = saveJobSelected.Get_saveJobDestinationDirectory();
             //Edit State
-            objJSON["SaveJob"][0]["State"] = saveJobSelected.Get_state();
+            objJSON["State"][index]["State"] = saveJobSelected.Get_state();
+            //Edit saveJobType
+            objJSON["State"][index]["Type"] = saveJobSelected.Get_saveJobType();
             //Edit TotalFilesToCopy
-            objJSON["SaveJob"][0]["TotalFilesToCopy"] = saveJobSelected.Get_totalNbFile();
+            objJSON["State"][index]["TotalFilesToCopy"] = saveJobSelected.Get_totalNbFile();
             //Edit TotalFilesSize
-            objJSON["SaveJob"][0]["TotalFilesSize"] = saveJobSelected.Get_totalSizeFile();
+            objJSON["State"][index]["TotalFilesSize"] = saveJobSelected.Get_totalSizeFile();
             //Edit NbFilesLeftToDo
-            objJSON["SaveJob"][0]["NbFilesLeftToDo"] = 30;
+            objJSON["State"][index]["NbFilesLeftToDo"] = 30;
             //Edit Progression
-            objJSON["SaveJob"][0]["Progression"] = 0;
+            objJSON["State"][index]["Progression"] = 0;
 
             //Convert object JObject to string
             string json = objJSON.ToString();
@@ -113,7 +205,8 @@ namespace NSModel {
             File.WriteAllText(this.Get_workFile(), json);
         }
 
-        public void WriteLog(int index) 
+        //TODO : déplacer la méthode dans M_SaveJob et modifier les WriteValue nécessaires.
+       /* public void WriteLog(int index) 
         {
             //Get JSON file's content
             JObject allLog = JObject.Parse(File.ReadAllText(this.Get_logFile()));
@@ -159,6 +252,6 @@ namespace NSModel {
 
             //Write newLogFile string to log JSON file
             File.WriteAllText(this.Get_logFile(), newLogFile);
-        }
+        }*/
     }
 }

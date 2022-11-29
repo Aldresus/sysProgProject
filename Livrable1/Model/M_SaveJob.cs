@@ -8,7 +8,6 @@ public class M_SaveJob
     private string _saveJobSourceDirectory;
     private string _saveJobDestinationDirectory;
     private string _saveJobType;
-    private M_MovingFile _file;
     private string _state;
     private int _totalNbFile;
     private int _totalSizeFile;
@@ -63,18 +62,6 @@ public class M_SaveJob
         _saveJobType = value;
     }
 
-    //Getter _file
-    public M_MovingFile Get_file()
-    {
-        return _file;
-    }
-
-    //Setter _file
-    public void Set_file(M_MovingFile value)
-    {
-        _file = value;
-    }
-
     //Getter _state
     public string Get_state()
     {
@@ -112,13 +99,12 @@ public class M_SaveJob
     }
 
     //Constructor (Set all attributes when object instantiation)
-    public M_SaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, string _saveJobType, M_MovingFile _file, string _state, int _totalNbFile, int _totalSizeFile)
+    public M_SaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, string _saveJobType, string _state, int _totalNbFile, int _totalSizeFile)
     {
         this.Set_saveJobName(_saveJobName);
         this.Set_saveJobSourceDirectory(_saveJobSourceDirectory);
         this.Set_saveJobDestinationDirectory(_saveJobDestinationDirectory);
         this.Set_saveJobType(_saveJobType);
-        this.Set_file(_file);
         this.Set_state(_state);
         this.Set_totalNbFile(_totalNbFile);
         this.Set_totalSizeFile(_totalSizeFile);
@@ -137,7 +123,6 @@ public class M_SaveJob
         this.Set_saveJobSourceDirectory(_saveJobSourceDirectory);
         this.Set_saveJobDestinationDirectory(_saveJobDestinationDirectory);
         this.Set_saveJobType(_saveJobType);
-        this.Set_file(_file);
         this.Set_state(_state);
         this.Set_totalNbFile(_totalNbFile);
         this.Set_totalSizeFile(_totalSizeFile);
@@ -153,7 +138,6 @@ public class M_SaveJob
         values.Add("_saveJobSourceDirectory", this.Get_saveJobSourceDirectory());
         values.Add("_saveJobDestinationDirectory", this.Get_saveJobDestinationDirectory());
         values.Add("_saveJobType", this.Get_saveJobType());
-        values.Add("_file", this.Get_file());
         values.Add("_state", this.Get_state());
         values.Add("_totalNbFile", this.Get_totalNbFile());
         values.Add("_totalSizeFile", this.Get_totalSizeFile());
