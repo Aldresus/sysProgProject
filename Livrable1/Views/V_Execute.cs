@@ -32,9 +32,9 @@ namespace NSViews
                         {
                             //TODO execute job
                             M_SaveJob a = new M_SaveJob();
-                            a.Set_saveJobType("FullSave");
+                            a.Set_saveJobType(1);
                             a.Execute();
-                            a.Set_saveJobType("DiffentialSave");
+                            a.Set_saveJobType(2);
                             a.Execute();
                         }
                         else
