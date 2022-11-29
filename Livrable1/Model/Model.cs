@@ -64,5 +64,10 @@ namespace NSModel
             //Write JSON file
 
         }
+        public Model()
+        {
+            //Constructor
+        }
+
     }
 }

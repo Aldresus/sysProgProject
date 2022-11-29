@@ -1,5 +1,6 @@
 ﻿using NSUtils;
 using NSViewModel;
+using NSModel;
 namespace NSViews
 {
     public class V_Execute
@@ -27,8 +28,20 @@ namespace NSViews
                     foreach (int i in indexes)
                     {
                         Console.Write($"{i} ");
+                        if (i == 1)
+                        {
+                            //TODO execute job
+                            M_SaveJob a = new M_SaveJob();
+                            a.Set_saveJobType("FullSave");
+                            a.Execute();
+                            a.Set_saveJobType("DiffentialSave");
+                            a.Execute();
+                        }
+                        else
+                        {
+                             Console.Write("executed\n");
+                        }
                     }
-                    Console.Write("executed\n");
                     validInput = true;
                     Reader.PressAnyKeyToContinue();
                 }

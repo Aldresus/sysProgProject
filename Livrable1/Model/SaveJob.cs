@@ -16,6 +16,25 @@ namespace NSModel
         private string _state;
         private int _totalNbFile;
         private int _totalSizeFile;
+        private IStrategy? _strategy;
+
+        // default Constructor
+        public M_SaveJob()
+        {
+        }
+        
+        private void _SetStrategy(IStrategy strategy)
+        {
+            this._strategy = strategy;
+        }
+
+        public void Execute()
+        {
+            // TODO : Select depositery from attribute
+            string source = "allo";
+            string destination = "oui";
+            this._strategy.Execute(source, destination);
+        }
 
         //Getter and Setter
 
@@ -65,6 +84,14 @@ namespace NSModel
         public void Set_saveJobType(string value)
         {
             _saveJobType = value;
+            if (value == "FullSave")
+            {
+                this._SetStrategy(new FullSave());
+            }
+            else if (value == "DiffentialSave")
+            {
+                this._SetStrategy(new DiffentialSave());
+            }
         }
 
         //Getter _file
@@ -114,7 +141,7 @@ namespace NSModel
         {
             _totalSizeFile = value;
         }
-
+        
         //Constructor (Set all attributes when object instantiation)
         public M_SaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, string _saveJobType, M_MovingFile _file, string _state, int _totalNbFile, int _totalSizeFile)
         {
@@ -164,6 +191,6 @@ namespace NSModel
         {
             //Destructor
         }
-
+        
     }
 }
