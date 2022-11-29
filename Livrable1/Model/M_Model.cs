@@ -64,5 +64,9 @@ namespace NSModel
             //Write JSON file
 
         }
+        public M_Model()
+        {
+            //Constructor
+        }
     }
 }
