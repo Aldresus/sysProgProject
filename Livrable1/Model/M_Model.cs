@@ -205,7 +205,7 @@ namespace NSModel {
             File.WriteAllText(this.Get_workFile(), json);
         }
 
-        //TODO : déplacer la méthode dans M_SaveJob et modifier les WriteValue nécessaires.
+        //TODO : dï¿½placer la mï¿½thode dans M_SaveJob et modifier les WriteValue nï¿½cessaires.
        /* public void WriteLog(int index) 
         {
             //Get JSON file's content
