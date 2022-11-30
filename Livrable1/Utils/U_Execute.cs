@@ -99,8 +99,19 @@ namespace NSUtils
         //TODO : d�placer la m�thode dans M_SaveJob et modifier les WriteValue n�cessaires.
         public void WriteLog(string JsonLogPath, string fileName, string fileSourcePath, string fileDestPath, string directorySource, TimeSpan copyTime)
         {
+            long size;
             //Get fileinfo
-            FileInfo fileInfo = new FileInfo(fileSourcePath);
+            try
+            {
+                FileInfo fileInfo = new FileInfo(fileSourcePath);
+                size = fileInfo.Length;
+            }
+            catch (Exception)
+            {
+                size = 0;
+            }
+            
+            
             
             //Get JSON file's content
             JObject allLog = JObject.Parse(File.ReadAllText(JsonLogPath));
@@ -119,7 +130,7 @@ namespace NSUtils
             writer.WritePropertyName("destPath");
             writer.WriteValue(directorySource);
             writer.WritePropertyName("FileSize");
-            writer.WriteValue(fileInfo.Length);
+            writer.WriteValue(size);
             writer.WritePropertyName("FileTransferTime");
             writer.WriteValue(copyTime);
             writer.WritePropertyName("time");
