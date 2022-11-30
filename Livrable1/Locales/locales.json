@@ -47,7 +47,11 @@
     "availableJobs": "tâches disponibles",
     "name": "nom",
     "sourceFolder": "dossier source",
-    "jobUpdated": "tâche mise à jour"
+    "jobUpdated": "tâche mise à jour",
+    "enterExitToAbort": "entrer 'exit' pour annuler",
+    "enterZeroToAbort": "entrer '0' pour annuler",
+    "onlyNumbers": "entrez seulement des nombres",
+    "sourcePathDoentExist": "le chemin source n'existe pas"
   },
   "en": {
     "destinationFolder": "destination",
@@ -97,8 +101,11 @@
     "availableJobs": "available jobs",
     "name": "name",
     "sourceFolder": "source folder",
-    "jobUpdated": "job updated"
-
+    "jobUpdated": "job updated",
+    "enterExitToAbort": "enter 'exit' to abort",
+    "enterZeroToAbort": "enter '0' to abort",
+    "onlyNumbers": "enter only numbers",
+    "sourcePathDoentExist": "source path doesn't exist"
   },
   "de": {
     "destinationFolder": "Zielordner",
@@ -148,7 +155,11 @@
     "availableJobs": "verfügbare aufgaben",
     "name": "name",
     "sourceFolder": "quellordner",
-    "jobUpdated": "aufgabe aktualisiert"
+    "jobUpdated": "aufgabe aktualisiert",
+    "enterExitToAbort": "geben sie 'exit' ein, um abzubrechen",
+    "enterZeroToAbort": "geben sie '0' ein, um abzubrechen",
+    "onlyNumbers": "geben sie nur zahlen ein",
+    "sourcePathDoentExist": "quellpfad existiert nicht"
   }
 }
   

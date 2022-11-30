@@ -1,8 +1,15 @@
 ﻿using System.Collections.Generic;
+using NSModel;
 namespace NSUtils
 {
     public class U_Reader
     {
+        private M_Model _oModel;
+
+        public U_Reader(M_Model M)
+        {
+            this._oModel = M;
+        }
 
         public int ReadInt(string promptText)
         {
@@ -25,12 +32,13 @@ namespace NSUtils
                     }
                     catch (System.FormatException e)
                     {
-                        Console.WriteLine("NaN");
+                        Console.WriteLine(_oModel.Get_language().onlyNumbers.ToString());
                     }
+                    
                 }
                 else
                 {
-                    Console.WriteLine("cannot be empty");
+                    Console.WriteLine(_oModel.Get_language().cannotBeEmpty.ToString());
                 }
             }
             return -1; // should never happen
@@ -58,7 +66,7 @@ namespace NSUtils
                 }
                 else
                 {
-                    Console.WriteLine("cannot be empty");
+                    Console.WriteLine(_oModel.Get_language().cannotBeEmpty.ToString());
                 }
             }
             return null; // should never happen
@@ -84,13 +92,13 @@ namespace NSUtils
                         foreach (string i in temp)
                         {
                             int j = int.Parse(i);
-                            if (j >= 1 && j <= 5)
+                            if (j >= 0 && j <= 5)
                             {
                                 output.Add(j);
                             }
                             else
                             {
-                                Console.WriteLine("index out of range");
+                                Console.WriteLine(_oModel.Get_language().indexOutOfRange.ToString());
                                 output.Clear();
                                 break;
                             }
@@ -103,14 +111,14 @@ namespace NSUtils
                     }
                     catch (System.FormatException e)
                     {
-                        Console.WriteLine("invalid");
+                        Console.WriteLine(_oModel.Get_language().onlyNumbers.ToString());
                     }
 
 
                 }
                 else
                 {
-                    Console.WriteLine("cannot be empty");
+                    Console.WriteLine(_oModel.Get_language().cannotBeEmpty.ToString());
                 }
             }
             return null; // should never happen
@@ -138,7 +146,11 @@ namespace NSUtils
                 {
                     validInput = true;
                     return path.Replace(@"/", @"\");
-                } 
+                }
+                else
+                {
+                    Console.WriteLine(_oModel.Get_language().sourcePathDoentExist.ToString());
+                }
             }
             return null; // should never happen
         }

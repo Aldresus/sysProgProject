@@ -20,7 +20,7 @@ namespace NSViews
             this._oViewModel = VM;
             M_Model M = VM.Get_Model();
             
-            U_Reader Reader = new U_Reader();
+            U_Reader Reader = new U_Reader(M);
             U_Show Show = new U_Show();
             U_Checker Checker = new U_Checker();
 

@@ -11,15 +11,15 @@ namespace NSModel
 {
     public interface IStrategy
     {
-        public void Execute(string source, string destination, string FileLogPath);
+        public void Execute(string source, string destination, string FileLogPath, M_Model M);
     }
 
     class DiffentialSave : IStrategy
     {
-        public void Execute(string source, string destination, string FileLogPath)
+        public void Execute(string source, string destination, string FileLogPath, M_Model M)
         {
-            Console.WriteLine("Diff strategy selected");
-            U_Execute utilExecute = new U_Execute();
+           
+            U_Execute utilExecute = new U_Execute(M);
             utilExecute.Execute(source, destination, false, FileLogPath);
         }
     }
@@ -27,10 +27,10 @@ namespace NSModel
 
     class FullSave : IStrategy
     {
-        public void Execute(string source, string destination, string FileLogPath)
+        public void Execute(string source, string destination, string FileLogPath, M_Model M)
         {
-            Console.WriteLine("Full strategy selected");
-            U_Execute utilExecute = new U_Execute();
+            
+            U_Execute utilExecute = new U_Execute(M);
             utilExecute.Execute(source, destination, true, FileLogPath);
         }
     }
