@@ -122,5 +122,25 @@ namespace NSUtils
             Console.WriteLine($"\n\n{text}");
             Console.ReadKey();
         }
+
+        public string ReadPath(string promptText, bool isDest)
+        {
+            bool validInput = false;
+
+            while (!validInput)
+            {
+                string path = this.ReadString(promptText, false);
+                if (path[^1] is not '\\' or not '/')
+                {
+                    path += @"\";
+                }
+                if (File.Exists(path) || Directory.Exists(path) || isDest)
+                {
+                    validInput = true;
+                    return path.Replace(@"/", @"\");
+                } 
+            }
+            return null; // should never happen
+        }
     }
 }

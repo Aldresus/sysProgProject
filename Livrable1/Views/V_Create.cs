@@ -29,8 +29,8 @@ namespace NSViews
                 Console.WriteLine("2 - type 2"); //placeholder
                 
                 int type = Reader.ReadInt(M.Get_language().enterJobType.ToString());
-                string source = Reader.ReadString(M.Get_language().enterJobSource.ToString(), false);
-                string dest = Reader.ReadString(M.Get_language().enterJobDestination.ToString(), false);
+                string source = Reader.ReadPath(M.Get_language().enterJobSource.ToString(), false);
+                string dest = Reader.ReadPath(M.Get_language().enterJobDestination.ToString(), true);
                 Console.WriteLine($"{M.Get_language().jobCreated.ToString()} {M.Get_language().name.ToString()}: {name} {M.Get_language().sourceFolder.ToString()}:{source} {M.Get_language().destinationFolder.ToString()}:{dest} {M.Get_language().type.ToString()}:{type}");
 
                 int jobIndex = Checker.GetEmptyJobIndex(M.Get_listSaveJob());
