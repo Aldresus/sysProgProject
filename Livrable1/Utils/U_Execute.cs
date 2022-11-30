@@ -26,9 +26,10 @@ namespace NSUtils
                 System.IO.Directory.CreateDirectory(targetPath);
                 
                 string state = "active";
-                int NbFilesLeftToDo = 0;
-                int progress = 0;
-                
+                int total = SaveJob.Get_totalNbFile();
+                int NbFilesLeftToDo = total;
+                float progress = 0;
+
                 // Get files in source directory
                 string[] files = System.IO.Directory.GetFiles(sourcePath);
 
@@ -40,13 +41,17 @@ namespace NSUtils
 
                     try
                     {
-                        // Console.WriteLine(file);
                         // Copy the files and overwrite destination files if they already exist.
                         DateTime startCopyTime = DateTime.Now;
+
                         System.IO.File.Copy(file, destFile, isFullSave);
                         DateTime endCopyTime = DateTime.Now;
                         TimeSpan copyTime = endCopyTime - startCopyTime;
                         WriteLog(FileLogPath, fileName, sourcePath + fileName, destFile, sourcePath, copyTime);
+                        NbFilesLeftToDo -= 1;
+                        progress = (int)Math.Round((((float)total - (float)NbFilesLeftToDo) / (float)total) * 100.0f);
+                        SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
+                        Console.WriteLine("progress: " + progress + " %");
                     }
                     catch (Exception e)
                     {
@@ -74,13 +79,15 @@ namespace NSUtils
 
                         try
                         {
-                            // Console.WriteLine(destFile);
                             // Copy the files and overwrite destination files if they already exist.
                             DateTime startCopyTime = DateTime.Now;
                             System.IO.File.Copy(file, destFile, isFullSave);
                             DateTime endCopyTime = DateTime.Now;
                             TimeSpan copyTime = endCopyTime - startCopyTime;
                             WriteLog(FileLogPath, fileName, sourcePath + dir.Name, destFile, sourcePath, copyTime);
+                            NbFilesLeftToDo -= 1;
+                            progress = (int)Math.Round((((float)total - (float)NbFilesLeftToDo) / (float)total) * 100.0f);
+                            SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
                         }
                         catch (Exception e)
                         {
@@ -88,7 +95,8 @@ namespace NSUtils
                         }
                     }
                 }
-                SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, progress);
+                state = "inactive";
+                SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
             }
 
             

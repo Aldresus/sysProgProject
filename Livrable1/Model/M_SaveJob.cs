@@ -255,9 +255,10 @@ namespace NSModel
             //Get JSon file's content
             JObject objJSON = JObject.Parse(File.ReadAllText(JsonStatePath));
 
-            Set_totalNbFile(CalculateFolderNB(Get_saveJobSourceDirectory()));
-            Set_totalSizeFile((int)CalculateFolderSize(Get_saveJobSourceDirectory()));
-
+            Set_state(state);
+            Set_NbFilesLeftToDo(FilesLeft);
+            Set_progress(progress);
+            
             //Edit State
             objJSON["State"][this.Get_index()]["State"] = this.Get_state();
             //Edit NbFilesLeftToDo
