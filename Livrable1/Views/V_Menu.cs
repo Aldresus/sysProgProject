@@ -23,37 +23,31 @@ namespace NSViews
             U_Reader Reader = new U_Reader();
             U_Show Show = new U_Show();
             U_Checker Checker = new U_Checker();
-            
 
-            //TODO move code bellow to MODEL to become new language or something
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "Livrable1.Locales.locales.json";
-            Stream stream = assembly.GetManifestResourceStream(resourceName);
-            StreamReader reader = new StreamReader(stream);
-            dynamic d = JObject.Parse(reader.ReadToEnd());
             
             while (true)
             {
-                string locale = M.Get_language();
                 Console.Clear();
-                Console.WriteLine($"         ______________                                                                                   .----.      \r\n        |[]            |                                                                      .---------. | == |      \r\n        |  __________  |                  .                     .                     .       |.-\"\"\"\"\"-.| |----|      \r\n        |  |  Easy  |  |   .. ............;;.    .. ............;;.    .. ............;;.     ||{d[locale].ordina.ToString()}|| | == |      \r\n        |  |  Save! |  |    ..::::::::::::;;;;.   ..::::::::::::;;;;.   ..::::::::::::;;;;.   ||  {d[locale].coeur.ToString()}|| |----|      \r\n        |  |________|  |   . . ::::::::::::;;:'  . . ::::::::::::;;:'  . . ::::::::::::;;:'   |'-.....-'| |::::|      \r\n        |   ________   |                  :'                    :'                    :'      `\"\")---(\"\"` |___.|      \r\n        |   [ [ ]  ]   |                                                                     /:::::::::::\\\" _  \"      \r\n        \\___[_[_]__]___|                                                                    /:::=======:::\\`\\`\\       \r\n                                                                                            `\"\"\"\"\"\"\"\"\"\"\"\"\"`  '-'      ");
+                string ordina = M.Get_language().ordina.ToString();
+                string coeur = M.Get_language().coeur.ToString();
+                Console.WriteLine($"         ______________                                                                                   .----.      \r\n        |[]            |                                                                      .---------. | == |      \r\n        |  __________  |                  .                     .                     .       |.-\"\"\"\"\"-.| |----|      \r\n        |  |  Easy  |  |   .. ............;;.    .. ............;;.    .. ............;;.     ||{ordina}|| | == |      \r\n        |  |  Save! |  |    ..::::::::::::;;;;.   ..::::::::::::;;;;.   ..::::::::::::;;;;.   ||  {coeur}|| |----|      \r\n        |  |________|  |   . . ::::::::::::;;:'  . . ::::::::::::;;:'  . . ::::::::::::;;:'   |'-.....-'| |::::|      \r\n        |   ________   |                  :'                    :'                    :'      `\"\")---(\"\"` |___.|      \r\n        |   [ [ ]  ]   |                                                                     /:::::::::::\\\" _  \"      \r\n        \\___[_[_]__]___|                                                                    /:::=======:::\\`\\`\\       \r\n                                                                                            `\"\"\"\"\"\"\"\"\"\"\"\"\"`  '-'      ");
 
                 //TODO list all jobs
                 if (Checker.CheckAnyJobs(M.Get_listSaveJob()) > 0) { 
-                    Console.WriteLine(d[locale].availableJobs.ToString());
+                    Console.WriteLine(M.Get_language().availableJobs.ToString());
                     Show.ShowJobs(M.Get_listSaveJob());
                 }
                 
                 //TODO hide options if there isnt any job to edit/execute/delete
-                Console.WriteLine($"\n\n1 - {d[locale].createJob.ToString()}");
-                Console.WriteLine($"2 - {d[locale].executeJob.ToString()}");
-                Console.WriteLine($"3 - {d[locale].editJob.ToString()}");
-                Console.WriteLine($"4 - {d[locale].deleteJob.ToString()}");
-                Console.WriteLine($"5 - {d[locale].settings.ToString()}");
-                Console.WriteLine($"6 - {d[locale].exit.ToString()}");
+                Console.WriteLine($"\n\n1 - {M.Get_language().createJob.ToString()}");
+                Console.WriteLine($"2 - {M.Get_language().executeJob.ToString()}");
+                Console.WriteLine($"3 - {M.Get_language().editJob.ToString()}");
+                Console.WriteLine($"4 - {M.Get_language().deleteJob.ToString()}");
+                Console.WriteLine($"5 - {M.Get_language().settings.ToString()}");
+                Console.WriteLine($"6 - {M.Get_language().exit.ToString()}");
 
 
-                int option = Reader.ReadInt(d[locale].option.ToString());
+                int option = Reader.ReadInt(M.Get_language().option.ToString());
                 
                 switch (option)
                 {

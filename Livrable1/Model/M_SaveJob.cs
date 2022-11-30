@@ -41,10 +41,7 @@ namespace NSModel
 
         public void Execute()
         {
-            // TODO : Select depositery from attribute
-            string source = "allo";
-            string destination = "oui";
-            this._strategy.Execute(source, destination);
+            this._strategy.Execute(this._saveJobSourceDirectory, this._saveJobDestinationDirectory);
         }
 
         //Getter and Setter

@@ -46,7 +46,8 @@
     "maxJobReached": "nombre maximum de tâches atteint",
     "availableJobs": "tâches disponibles",
     "name": "nom",
-    "sourceFolder": "dossier source"
+    "sourceFolder": "dossier source",
+    "jobUpdated": "tâche mise à jour"
   },
   "en": {
     "destinationFolder": "destination",
@@ -95,7 +96,8 @@
     "maxJobReached": "maximum number of jobs reached",
     "availableJobs": "available jobs",
     "name": "name",
-    "sourceFolder": "source folder"
+    "sourceFolder": "source folder",
+    "jobUpdated": "job updated"
 
   },
   "de": {
@@ -145,7 +147,8 @@
     "maxJobReached": "maximale anzahl von aufgaben erreicht",
     "availableJobs": "verfügbare aufgaben",
     "name": "name",
-    "sourceFolder": "quellordner"
+    "sourceFolder": "quellordner",
+    "jobUpdated": "aufgabe aktualisiert"
   }
 }
   
