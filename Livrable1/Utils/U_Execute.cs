@@ -2,26 +2,21 @@
 using Newtonsoft.Json;
 using System.Text;
 using System.IO;
+using System.ComponentModel.Design;
+using NSModel;
 
 namespace NSUtils
 {
     public class U_Execute
     {
-        public void Execute(string source, string destination, bool isFullSave, string FileLogPath)
+        public void Execute(M_SaveJob SaveJob, string FileLogPath, string FileStatePath)
         {
-            
-            Console.WriteLine("Source: " + source);
-            Console.WriteLine("Destination: " + destination);
-
             string fileName;
             string destFile;
 
-            // à redéfinir en argument
-            //string sourcePath = @"C:\Users\Public\TestFolder\";
-            //string targetPath = @"C:\Users\Public\TestFolder2\";
-
-            string sourcePath = source;
-            string targetPath = destination;
+            string sourcePath = SaveJob.Get_saveJobSourceDirectory();
+            string targetPath = SaveJob.Get_saveJobDestinationDirectory();
+            bool isFullSave = (SaveJob.Get_saveJobType() == 1) ? true : false;
 
             // Check if the source directory exists.
             if (System.IO.Directory.Exists(sourcePath))
@@ -29,7 +24,11 @@ namespace NSUtils
                 // Create a new target folder.
                 // If the directory already exists, this method does not create a new directory.
                 System.IO.Directory.CreateDirectory(targetPath);
-
+                
+                string state = "active";
+                int NbFilesLeftToDo = 0;
+                int progress = 0;
+                
                 // Get files in source directory
                 string[] files = System.IO.Directory.GetFiles(sourcePath);
 
@@ -47,7 +46,7 @@ namespace NSUtils
                         System.IO.File.Copy(file, destFile, isFullSave);
                         DateTime endCopyTime = DateTime.Now;
                         TimeSpan copyTime = endCopyTime - startCopyTime;
-                        WriteLog(FileLogPath, fileName, source + fileName, destFile, source, copyTime);
+                        WriteLog(FileLogPath, fileName, sourcePath + fileName, destFile, sourcePath, copyTime);
                     }
                     catch (Exception e)
                     {
@@ -81,7 +80,7 @@ namespace NSUtils
                             System.IO.File.Copy(file, destFile, isFullSave);
                             DateTime endCopyTime = DateTime.Now;
                             TimeSpan copyTime = endCopyTime - startCopyTime;
-                            WriteLog(FileLogPath, fileName, source + dir.Name, destFile, source, copyTime);
+                            WriteLog(FileLogPath, fileName, sourcePath + dir.Name, destFile, sourcePath, copyTime);
                         }
                         catch (Exception e)
                         {
@@ -89,8 +88,10 @@ namespace NSUtils
                         }
                     }
                 }
+                SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, progress);
             }
 
+            
             else
             {
                 Console.WriteLine("Source path does not exist!");

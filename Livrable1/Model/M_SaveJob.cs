@@ -21,6 +21,8 @@ namespace NSModel
         private int _totalSizeFile;
         private IStrategy? _strategy;
         private int _index;
+        private int _NbFilesLeftToDo;
+        private int _progress;
 
         // default Constructor
         public M_SaveJob()
@@ -45,13 +47,13 @@ namespace NSModel
             this._strategy = strategy;
         }
 
-        public void Execute(string logFilePath)
+        public void Execute(M_SaveJob SaveJob, string logFilePath, string stateFilePath)
         {
-            this._strategy.Execute(this._saveJobSourceDirectory, this._saveJobDestinationDirectory, logFilePath);
+            this._strategy.Execute(SaveJob, logFilePath, stateFilePath);
         }
 
         //Getter and Setter
-
+        
         //Getter _savedJobName
         public string Get_saveJobName()
         {
@@ -159,6 +161,31 @@ namespace NSModel
             _index = value;
         }
 
+        // Getter _NbFilesLeftToDo
+        public int Get_NbFilesLeftToDo()
+        {
+            return _NbFilesLeftToDo;
+        }
+
+        // Setter _NbFilesLeftToDo
+        public void Set_NbFilesLeftToDo(int value)
+        {
+            _NbFilesLeftToDo = value;
+        }
+        
+        // Getter _progress
+        public int Get_progress()
+        {
+            return _progress;
+        }
+
+        // Setter _progress
+        public void Set_progress(int value)
+        {
+            _progress = value;
+        }
+
+        
         //Edit attributes of object M_SaveJob
         public void Update(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int _totalNbFile, int _totalSizeFile)
         {
@@ -215,6 +242,28 @@ namespace NSModel
             objJSON["State"][this.Get_index()]["NbFilesLeftToDo"] = 30;
             //Edit Progression
             objJSON["State"][this.Get_index()]["Progression"] = 0;
+
+            //Convert object JObject to string
+            string json = objJSON.ToString();
+
+            //Write json string to JSON file
+            File.WriteAllText(JsonStatePath, json);
+        }        
+        
+        public void WriteJSON(string JsonStatePath, string state, int FilesLeft, int progress)
+        {
+            //Get JSon file's content
+            JObject objJSON = JObject.Parse(File.ReadAllText(JsonStatePath));
+
+            Set_totalNbFile(CalculateFolderNB(Get_saveJobSourceDirectory()));
+            Set_totalSizeFile((int)CalculateFolderSize(Get_saveJobSourceDirectory()));
+
+            //Edit State
+            objJSON["State"][this.Get_index()]["State"] = this.Get_state();
+            //Edit NbFilesLeftToDo
+            objJSON["State"][this.Get_index()]["NbFilesLeftToDo"] = this.Get_NbFilesLeftToDo();
+            //Edit Progression
+            objJSON["State"][this.Get_index()]["Progression"] = this.Get_progress();
 
             //Convert object JObject to string
             string json = objJSON.ToString();
