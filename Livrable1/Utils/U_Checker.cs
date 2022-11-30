@@ -31,9 +31,9 @@ namespace NSUtils
                 if (saveJob.Get_saveJobName() == "")
                 {
                     return i;
-                    i++;
+                    
                 }
-
+                i++;
             }
             Console.ReadLine();
             return -1; // should never happen

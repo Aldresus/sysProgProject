@@ -51,7 +51,7 @@ namespace NSViews
                         M.Get_listSaveJob()[jobIndex].Set_saveJobSourceDirectory(source);
                         M.Get_listSaveJob()[jobIndex].Set_saveJobDestinationDirectory(dest);
                         M.Get_listSaveJob()[jobIndex].Set_saveJobType(type);
-                        M.WriteJSON(jobIndex);
+                        M.GetSelectedSaveJob(jobIndex).WriteJSON(M.Get_workFile());
                         Reader.PressAnyKeyToContinue(M.Get_language().pressAnyToContinue.ToString());
                     }
                     else

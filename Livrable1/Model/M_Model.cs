@@ -90,7 +90,7 @@ namespace NSModel {
 
             for (int i = 0; i < 5; i++)
             {
-                this._listSaveJob.Add(new M_SaveJob(objJSON["State"][i]["Name"].ToString(), objJSON["State"][i]["SourceFilePath"].ToString(), objJSON["State"][i]["TargetFilePath"].ToString(), objJSON["State"][i]["Type"].Value<int>(), objJSON["State"][i]["State"].ToString(), objJSON["State"][i]["TotalFilesToCopy"].Value<int>(), objJSON["State"][i]["TotalFilesSize"].Value<int>()));
+                this._listSaveJob.Add(new M_SaveJob(objJSON["State"][i]["Name"].ToString(), objJSON["State"][i]["SourceFilePath"].ToString(), objJSON["State"][i]["TargetFilePath"].ToString(), objJSON["State"][i]["Type"].Value<int>(), objJSON["State"][i]["State"].ToString(), objJSON["State"][i]["TotalFilesToCopy"].Value<int>(), objJSON["State"][i]["TotalFilesSize"].Value<int>(), i));
             }
 
             //Parse language
@@ -180,87 +180,5 @@ namespace NSModel {
         {
             this._language = value;
         }
-
-        public void WriteJSON(int index) {
-            //Get JSon file's content
-            JObject objJSON = JObject.Parse(File.ReadAllText(this.Get_workFile()));
-
-            //Get Selected SaveJob
-            M_SaveJob saveJobSelected = GetSelectedSaveJob(index);
-
-            //Edit Name
-            objJSON["State"][index]["Name"] = saveJobSelected.Get_saveJobName();
-            //Edit SourceFilePath
-            objJSON["State"][index]["SourceFilePath"] = saveJobSelected.Get_saveJobSourceDirectory();
-            //Edit DestinationFilePath
-            objJSON["State"][index]["TargetFilePath"] = saveJobSelected.Get_saveJobDestinationDirectory();
-            //Edit State
-            objJSON["State"][index]["State"] = saveJobSelected.Get_state();
-            //Edit saveJobType
-            objJSON["State"][index]["Type"] = saveJobSelected.Get_saveJobType();
-            //Edit TotalFilesToCopy
-            objJSON["State"][index]["TotalFilesToCopy"] = saveJobSelected.Get_totalNbFile();
-            //Edit TotalFilesSize
-            objJSON["State"][index]["TotalFilesSize"] = saveJobSelected.Get_totalSizeFile();
-            //Edit NbFilesLeftToDo
-            objJSON["State"][index]["NbFilesLeftToDo"] = 30;
-            //Edit Progression
-            objJSON["State"][index]["Progression"] = 0;
-
-            //Convert object JObject to string
-            string json = objJSON.ToString();
-
-            //Write json string to JSON file
-            File.WriteAllText(this.Get_workFile(), json);
-        }
-
-        //TODO : d�placer la m�thode dans M_SaveJob et modifier les WriteValue n�cessaires.
-       /* public void WriteLog(int index) 
-        {
-            //Get JSON file's content
-            JObject allLog = JObject.Parse(File.ReadAllText(this.Get_logFile()));
-
-            //Get Selected SaveJob
-            M_SaveJob saveJobSelected = GetSelectedSaveJob(index);
-
-            StringBuilder sb = new StringBuilder();
-            StringWriter sw = new StringWriter(sb);
-            JsonWriter writer = new JsonTextWriter(sw);
-            writer.Formatting = Formatting.Indented;
-            writer.WriteStartObject();
-            writer.WritePropertyName("Name");
-            writer.WriteValue(saveJobSelected.Get_saveJobName());
-            writer.WritePropertyName("FileSource");
-            writer.WriteValue(saveJobSelected.Get_file().Get_fileSource());
-            writer.WritePropertyName("FileTarget");
-            writer.WriteValue(saveJobSelected.Get_file().Get_fileDestination());
-            writer.WritePropertyName("destPath");
-            writer.WriteValue(saveJobSelected.Get_saveJobDestinationDirectory());
-            writer.WritePropertyName("FileSize");
-            writer.WriteValue(saveJobSelected.Get_file().Get_fileSize());
-            writer.WritePropertyName("FileTransferTime");
-            writer.WriteValue(0.2);
-            writer.WritePropertyName("time");
-            writer.WriteValue(saveJobSelected.Get_file().Get_time());
-            writer.WriteEndObject();
-
-            //Convert object JsonWriter to string
-            string json = sb.ToString();
-
-            //Convert string to JObject
-            JObject newLog = JObject.Parse(json);
-
-            //Get JObject "logs" of Json Lof file
-            JArray arrayLogs = (JArray)allLog["logs"];
-
-            //Add newLog to allLog
-            arrayLogs.Add(newLog);
-
-            //Convert object JObject to string
-            string newLogFile = allLog.ToString();
-
-            //Write newLogFile string to log JSON file
-            File.WriteAllText(this.Get_logFile(), newLogFile);
-        }*/
     }
 }

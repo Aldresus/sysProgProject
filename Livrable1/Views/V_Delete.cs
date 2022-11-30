@@ -47,7 +47,7 @@ namespace NSViews
                         M.Get_listSaveJob()[jobIndex].Set_totalNbFile(0);
                         M.Get_listSaveJob()[jobIndex].Set_totalSizeFile(0);
 
-                        M.WriteJSON(jobIndex);
+                        M.GetSelectedSaveJob(jobIndex).WriteJSON(M.Get_workFile());
                     }
 
                     Console.Write(M.Get_language().deleted.ToString());
