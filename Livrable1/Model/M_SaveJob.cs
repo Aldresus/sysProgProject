@@ -25,20 +25,20 @@ namespace NSModel
         public M_SaveJob()
         {
         }
-        
+
         //Constructor (Set all attributes when object instantiation)
         public M_SaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int _totalNbFile, int _totalSizeFile, int index)
         {
-        this.Set_saveJobName(_saveJobName);
-        this.Set_saveJobSourceDirectory(_saveJobSourceDirectory);
-        this.Set_saveJobDestinationDirectory(_saveJobDestinationDirectory);
-        this.Set_saveJobType(_saveJobType);
-        this.Set_state(_state);
-        this.Set_totalNbFile(_totalNbFile);
-        this.Set_totalSizeFile(_totalSizeFile);
-        this.Set_index(index);
+            this.Set_saveJobName(_saveJobName);
+            this.Set_saveJobSourceDirectory(_saveJobSourceDirectory);
+            this.Set_saveJobDestinationDirectory(_saveJobDestinationDirectory);
+            this.Set_saveJobType(_saveJobType);
+            this.Set_state(_state);
+            this.Set_totalNbFile(_totalNbFile);
+            this.Set_totalSizeFile(_totalSizeFile);
+            this.Set_index(index);
         }
-        
+
         private void _SetStrategy(IStrategy strategy)
         {
             this._strategy = strategy;
@@ -143,7 +143,8 @@ namespace NSModel
         //Setter _totalSizeFile
         public void Set_totalSizeFile(int value)
         {
-            _totalSizeFile = value;
+            long TotalSize = CalculateFolderSize(_saveJobSourceDirectory);
+            _totalSizeFile = (int)TotalSize;
         }
 
         //Getter _index
@@ -161,7 +162,7 @@ namespace NSModel
         //Edit attributes of object M_SaveJob
         public void Update(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int _totalNbFile, int _totalSizeFile)
         {
-        //Edit attributes
+            //Edit attributes
             this.Set_saveJobName(_saveJobName);
             this.Set_saveJobSourceDirectory(_saveJobSourceDirectory);
             this.Set_saveJobDestinationDirectory(_saveJobDestinationDirectory);
@@ -171,7 +172,7 @@ namespace NSModel
             this.Set_totalSizeFile(_totalSizeFile);
         }
 
-    //Get all attributes of object M_SaveJob
+        //Get all attributes of object M_SaveJob
         public Dictionary<string, dynamic> Read()
         {
             //Create a dictionary to store all attributes of object M_SaveJob
@@ -206,7 +207,7 @@ namespace NSModel
             //Edit TotalFilesToCopy
             objJSON["State"][this.Get_index()]["TotalFilesToCopy"] = this.Get_totalNbFile();
             //Edit TotalFilesSize
-            objJSON["State"][this.Get_index()]["TotalFilesSize"] = this.Get_totalSizeFile();
+            objJSON["State"][this.Get_index()]["TotalFilesSize"] = CalculateFolderSize(this.Get_saveJobSourceDirectory());
             //Edit NbFilesLeftToDo
             objJSON["State"][this.Get_index()]["NbFilesLeftToDo"] = 30;
             //Edit Progression
@@ -219,9 +220,46 @@ namespace NSModel
             File.WriteAllText(JsonStatePath, json);
         }
 
+        public long CalculateFolderSize(string folder)
+        {
+            long folderSize = 0;
+            try
+            {
+                //Checks if the path is valid or not
+                if (!Directory.Exists(folder))
+                    return folderSize;
+                else
+                {
+                    try
+                    {
+                        foreach (string file in Directory.GetFiles(folder))
+                        {
+                            if (File.Exists(file))
+                            {
+                                FileInfo finfo = new FileInfo(file);
+                                folderSize += finfo.Length;
+                            }
+                        }
+
+                        foreach (string dir in Directory.GetDirectories(folder))
+                            folderSize += CalculateFolderSize(dir);
+                    }
+                    catch (NotSupportedException e)
+                    {
+                        Console.WriteLine("Unable to calculate folder size: {0}", e.Message);
+                    }
+                }
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                Console.WriteLine("Unable to calculate folder size: {0}", e.Message);
+            }
+            return folderSize;
+        }
+
         ~M_SaveJob()
-    {
-        //Destructor
-    }
+        {
+            //Destructor
+        }
     }
 }
