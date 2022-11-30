@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Text;
+using System.IO;
 
 namespace NSUtils
 {
@@ -101,6 +102,8 @@ namespace NSUtils
         {
             long size;
             //Get fileinfo
+            Console.Write("\n" + fileSourcePath + "\n");
+            Console.Write("\n" + fileName + "\n");
             try
             {
                 FileInfo fileInfo = new FileInfo(fileSourcePath);
@@ -108,11 +111,10 @@ namespace NSUtils
             }
             catch (Exception)
             {
-                size = 0;
+                FileInfo fileInfo = new FileInfo(fileSourcePath+"\\"+fileName);
+                size = fileInfo.Length;
             }
-            
-            
-            
+
             //Get JSON file's content
             JObject allLog = JObject.Parse(File.ReadAllText(JsonLogPath));
 
