@@ -11,27 +11,26 @@ namespace NSModel
 {
     public interface IStrategy
     {
-        public void Execute(string source, string destination, string FileLogPath, M_Model M);
+        public void Execute(M_SaveJob SaveJob, string FileLogPath, string FileStatePath, M_Model M);
     }
 
     class DiffentialSave : IStrategy
     {
-        public void Execute(string source, string destination, string FileLogPath, M_Model M)
+        public void Execute(M_SaveJob SaveJob, string FileLogPath, string FileStatePath, M_Model M)
         {
-           
             U_Execute utilExecute = new U_Execute(M);
-            utilExecute.Execute(source, destination, false, FileLogPath);
+            utilExecute.Execute(SaveJob, FileLogPath, FileStatePath);
+
         }
     }
 
-
     class FullSave : IStrategy
     {
-        public void Execute(string source, string destination, string FileLogPath, M_Model M)
+        public void Execute(M_SaveJob SaveJob, string FileLogPath, string FileStatePath, M_Model M)
         {
-            
+            Console.WriteLine("Full strategy selected");
             U_Execute utilExecute = new U_Execute(M);
-            utilExecute.Execute(source, destination, true, FileLogPath);
+            utilExecute.Execute(SaveJob, FileLogPath, FileStatePath);
         }
     }
 }

@@ -2,6 +2,8 @@
 using Newtonsoft.Json;
 using System.Text;
 using System.IO;
+using System.ComponentModel.Design;
+
 using NSModel;
 
 namespace NSUtils
@@ -15,18 +17,14 @@ namespace NSUtils
             this._oModel = M;
         }
         
-        public void Execute(string source, string destination, bool isFullSave, string FileLogPath)
+        public void Execute(M_SaveJob SaveJob, string FileLogPath, string FileStatePath)
         {
-
             string fileName;
             string destFile;
 
-            // à redéfinir en argument
-            //string sourcePath = @"C:\Users\Public\TestFolder\";
-            //string targetPath = @"C:\Users\Public\TestFolder2\";
-
-            string sourcePath = source;
-            string targetPath = destination;
+            string sourcePath = SaveJob.Get_saveJobSourceDirectory();
+            string targetPath = SaveJob.Get_saveJobDestinationDirectory();
+            bool isFullSave = (SaveJob.Get_saveJobType() == 1) ? true : false;
 
             // Check if the source directory exists.
             if (System.IO.Directory.Exists(sourcePath))
@@ -34,6 +32,11 @@ namespace NSUtils
                 // Create a new target folder.
                 // If the directory already exists, this method does not create a new directory.
                 System.IO.Directory.CreateDirectory(targetPath);
+                
+                string state = "active";
+                int total = SaveJob.Get_totalNbFile();
+                int NbFilesLeftToDo = total;
+                float progress = 0;
 
                 // Get files in source directory
                 string[] files = System.IO.Directory.GetFiles(sourcePath);
@@ -46,13 +49,17 @@ namespace NSUtils
 
                     try
                     {
-                        // Console.WriteLine(file);
                         // Copy the files and overwrite destination files if they already exist.
                         DateTime startCopyTime = DateTime.Now;
+
                         System.IO.File.Copy(file, destFile, isFullSave);
                         DateTime endCopyTime = DateTime.Now;
                         TimeSpan copyTime = endCopyTime - startCopyTime;
-                        WriteLog(FileLogPath, fileName, source + fileName, destFile, source, copyTime);
+                        WriteLog(FileLogPath, fileName, sourcePath + fileName, destFile, sourcePath, copyTime);
+                        NbFilesLeftToDo -= 1;
+                        progress = (int)Math.Round((((float)total - (float)NbFilesLeftToDo) / (float)total) * 100.0f);
+                        SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
+                        Console.WriteLine("progress: " + progress + " %");
                     }
                     catch (Exception e)
                     {
@@ -80,13 +87,15 @@ namespace NSUtils
 
                         try
                         {
-                            // Console.WriteLine(destFile);
                             // Copy the files and overwrite destination files if they already exist.
                             DateTime startCopyTime = DateTime.Now;
                             System.IO.File.Copy(file, destFile, isFullSave);
                             DateTime endCopyTime = DateTime.Now;
                             TimeSpan copyTime = endCopyTime - startCopyTime;
-                            WriteLog(FileLogPath, fileName, source + dir.Name, destFile, source, copyTime);
+                            WriteLog(FileLogPath, fileName, sourcePath + dir.Name, destFile, sourcePath, copyTime);
+                            NbFilesLeftToDo -= 1;
+                            progress = (int)Math.Round((((float)total - (float)NbFilesLeftToDo) / (float)total) * 100.0f);
+                            SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
                         }
                         catch (Exception e)
                         {
@@ -94,8 +103,11 @@ namespace NSUtils
                         }
                     }
                 }
+                state = "inactive";
+                SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
             }
 
+            
             else
             {
                 Console.WriteLine(_oModel.Get_language().sourcePathDoentExist.ToString());

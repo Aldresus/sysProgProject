@@ -42,7 +42,7 @@ namespace NSViews
                         foreach (int i in indexes)
                         {
                             Console.Write($"{i} ");
-                            M.Get_listSaveJob()[i - 1].Execute(M.Get_logFile(), M);
+                            M.Get_listSaveJob()[i-1].Execute(M.Get_listSaveJob()[i - 1], M.Get_logFile(), M.Get_workFile(), M);
                         }
                         Console.Write(M.Get_language().executed.ToString());
                         validInput = true;
