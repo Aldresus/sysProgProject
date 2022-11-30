@@ -122,5 +122,15 @@ namespace NSUtils
             Console.WriteLine($"\n\n{text}");
             Console.ReadKey();
         }
+
+        public string ReadPath(string promptText)
+        {
+            string path = this.ReadString(promptText, false);
+            if (path[^1] is not '\\' or not '/')
+            {
+                path += @"\";      
+            }
+            return path;
+        }
     }
 }
