@@ -19,24 +19,22 @@ namespace NSModel {
         //Constructor
         public M_Model()
         {
-            string pathApp = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).ToString() + @"\EasySave\Log";
-            if (!Directory.Exists(pathApp))
+            string pathDirectoryLog = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).ToString() + @"\EasySave\Log";
+            if (!Directory.Exists(pathDirectoryLog))
             {
-                Directory.CreateDirectory(pathApp);
+                Directory.CreateDirectory(pathDirectoryLog);
             }
-            //TEST
-            Console.WriteLine(Directory.Exists(pathApp));
-            Console.ReadLine();
-            string pathLog = pathApp + @"\Log.json";
+            string logFileName = @"\log" + DateTime.Now.ToString("ddMMyyyy") + ".json";
+            string pathLog = pathDirectoryLog + logFileName;
             this.Set_logFile(pathLog);
             if (!File.Exists(this.Get_logFile()))
             {
                 string initLogFile = "{\n\t\"logs\": []\n}";
                 File.WriteAllText(this.Get_logFile(), initLogFile);
             }
-            
 
-            string pathState = pathApp + @"\State.json";
+            string pathDirectoryState = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).ToString() + @"\EasySave";
+            string pathState = pathDirectoryState + @"\State.json";
             this.Set_workFile(pathState);
             if (!File.Exists(this.Get_workFile()))
             {
