@@ -3,12 +3,20 @@ using Newtonsoft.Json;
 using System.Text;
 using System.IO;
 using System.ComponentModel.Design;
+
 using NSModel;
 
 namespace NSUtils
 {
     public class U_Execute
     {
+        public M_Model _oModel;
+
+        public U_Execute(M_Model M)
+        {
+            this._oModel = M;
+        }
+        
         public void Execute(M_SaveJob SaveJob, string FileLogPath, string FileStatePath)
         {
             string fileName;
@@ -102,7 +110,7 @@ namespace NSUtils
             
             else
             {
-                Console.WriteLine("Source path does not exist!");
+                Console.WriteLine(_oModel.Get_language().sourcePathDoentExist.ToString());
             }
         }
 

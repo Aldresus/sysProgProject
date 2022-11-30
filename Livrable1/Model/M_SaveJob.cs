@@ -47,9 +47,10 @@ namespace NSModel
             this._strategy = strategy;
         }
 
-        public void Execute(M_SaveJob SaveJob, string logFilePath, string stateFilePath)
+        public void Execute(M_SaveJob SaveJob, string logFilePath, string stateFilePath, M_Model M)
         {
-            this._strategy.Execute(SaveJob, logFilePath, stateFilePath);
+            this._strategy.Execute(SaveJob, logFilePath, stateFilePath, M);
+
         }
 
         //Getter and Setter
