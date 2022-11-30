@@ -19,7 +19,7 @@ namespace NSModel {
         //Constructor
         public M_Model()
         {
-            string pathApp = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).ToString() + @"\Livrable1\Log";
+            string pathApp = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).ToString() + @"\EasySave\Log";
             if (!Directory.Exists(pathApp))
             {
                 Directory.CreateDirectory(pathApp);
@@ -34,9 +34,9 @@ namespace NSModel {
                 string initLogFile = "{\n\t\"logs\": []\n}";
                 File.WriteAllText(this.Get_logFile(), initLogFile);
             }
+            
 
-
-            string pathState = pathApp + @"\state.json";
+            string pathState = pathApp + @"\State.json";
             this.Set_workFile(pathState);
             if (!File.Exists(this.Get_workFile()))
             {
