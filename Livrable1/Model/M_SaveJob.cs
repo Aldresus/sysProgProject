@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace NSModel
@@ -34,8 +35,8 @@ namespace NSModel
             this.Set_saveJobDestinationDirectory(_saveJobDestinationDirectory);
             this.Set_saveJobType(_saveJobType);
             this.Set_state(_state);
-            this.Set_totalNbFile(_totalNbFile);
-            this.Set_totalSizeFile(_totalSizeFile);
+            this.Set_totalNbFile(CalculateFolderNB(_saveJobSourceDirectory));
+            this.Set_totalSizeFile((int)CalculateFolderSize(_saveJobSourceDirectory));
             this.Set_index(index);
         }
 
@@ -143,8 +144,7 @@ namespace NSModel
         //Setter _totalSizeFile
         public void Set_totalSizeFile(int value)
         {
-            long TotalSize = CalculateFolderSize(_saveJobSourceDirectory);
-            _totalSizeFile = (int)TotalSize;
+            _totalSizeFile = value;
         }
 
         //Getter _index
@@ -194,6 +194,9 @@ namespace NSModel
             //Get JSon file's content
             JObject objJSON = JObject.Parse(File.ReadAllText(JsonStatePath));
 
+            Set_totalNbFile(CalculateFolderNB(Get_saveJobSourceDirectory()));
+            Set_totalSizeFile((int)CalculateFolderSize(Get_saveJobSourceDirectory()));
+
             //Edit Name
             objJSON["State"][this.Get_index()]["Name"] = this.Get_saveJobName();
             //Edit SourceFilePath
@@ -207,7 +210,7 @@ namespace NSModel
             //Edit TotalFilesToCopy
             objJSON["State"][this.Get_index()]["TotalFilesToCopy"] = this.Get_totalNbFile();
             //Edit TotalFilesSize
-            objJSON["State"][this.Get_index()]["TotalFilesSize"] = CalculateFolderSize(this.Get_saveJobSourceDirectory());
+            objJSON["State"][this.Get_index()]["TotalFilesSize"] = this.Get_totalSizeFile();
             //Edit NbFilesLeftToDo
             objJSON["State"][this.Get_index()]["NbFilesLeftToDo"] = 30;
             //Edit Progression
@@ -255,6 +258,18 @@ namespace NSModel
                 Console.WriteLine("Unable to calculate folder size: {0}", e.Message);
             }
             return folderSize;
+        }
+
+        public int CalculateFolderNB(string source)
+        {
+            try
+            {
+                return Directory.GetFiles(source, "*", SearchOption.AllDirectories).Length;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
         }
 
         ~M_SaveJob()
