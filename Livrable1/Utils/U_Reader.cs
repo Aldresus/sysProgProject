@@ -13,7 +13,6 @@ namespace NSUtils
 
         public int ReadInt(string promptText)
         {
-            //TODO translate error messages
 
             bool validInput = false;
 
@@ -45,7 +44,6 @@ namespace NSUtils
         }
         public string ReadString(string promptText, bool canBeEmpty)
         {
-            //TODO translate error messages
 
             bool validInput = false;
 
@@ -73,7 +71,6 @@ namespace NSUtils
         }
         public List<int> ReadMany(string promptText)
         {
-            //TODO translate error messages
 
             bool validInput = false;
 

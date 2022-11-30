@@ -16,10 +16,8 @@ namespace NSViews
             M_Model M = VM.Get_Model();
 
             U_Reader Reader = new U_Reader(M);
-            U_Show Show = new U_Show();
+            U_Show Show = new U_Show(M);
             U_Checker Checker = new U_Checker();
-
-            //TODO check if there is at least 1 job
 
             if (Checker.CheckAnyJobs(M.Get_listSaveJob()) > 0)
             {

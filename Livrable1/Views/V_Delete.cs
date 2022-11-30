@@ -18,7 +18,7 @@ namespace NSViews
 
 
             U_Reader Reader = new U_Reader(M);
-            U_Show Show = new U_Show();
+            U_Show Show = new U_Show(M);
             U_Checker Checker = new U_Checker();
 
 

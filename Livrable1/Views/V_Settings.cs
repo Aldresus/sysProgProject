@@ -19,7 +19,6 @@ namespace NSViews
             U_Reader Reader = new U_Reader(M);
             bool validInput = false;
 
-            //TODO move code bellow to MODEL to become new language or something
             var assembly = Assembly.GetExecutingAssembly();
             var resourceName = "Livrable1.Locales.locales.json";
             Stream stream = assembly.GetManifestResourceStream(resourceName);

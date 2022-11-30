@@ -3,7 +3,16 @@
 using NSModel;
 using NSViewModel;
 using NSViews;
+using System;
 
-M_Model M = new M_Model();
-VM_ViewModel VM = new VM_ViewModel(M);
-V_Menu menu = new V_Menu(VM);
+class Program
+{
+    public static void Main(string[] args)
+    {
+        M_Model M = new M_Model();
+        VM_ViewModel VM = new VM_ViewModel(M);
+        V_Menu menu = new V_Menu(VM);
+    }
+}
+
+

@@ -28,7 +28,6 @@ namespace NSModel
     {
         public void Execute(M_SaveJob SaveJob, string FileLogPath, string FileStatePath, M_Model M)
         {
-            Console.WriteLine("Full strategy selected");
             U_Execute utilExecute = new U_Execute(M);
             utilExecute.Execute(SaveJob, FileLogPath, FileStatePath);
         }

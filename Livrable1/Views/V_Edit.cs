@@ -18,10 +18,10 @@ namespace NSViews
             M_Model M = VM.Get_Model();
 
             U_Reader Reader = new U_Reader(M);
-            U_Show Show = new U_Show();
+            U_Show Show = new U_Show(M);
             U_Checker Checker = new U_Checker();
 
-            if (Checker.CheckAnyJobs(M.Get_listSaveJob()) > 0)//TODO check if there is jobs
+            if (Checker.CheckAnyJobs(M.Get_listSaveJob()) > 0)
             {
 
                 bool validInput = false;
@@ -35,7 +35,7 @@ namespace NSViews
                     int i = Reader.ReadInt($"{M.Get_language().whichJobToEdit.ToString()}, {M.Get_language().enterZeroToAbort.ToString()}");
 
                     //check if job exists
-                    if (i >= 0 && i <= 5)//TODO change 5 by the total of jobs
+                    if (i >= 0 && i <= 5)
                     {
                         if (i == 0)
                         {
@@ -45,8 +45,8 @@ namespace NSViews
                         {
                             string name = Reader.ReadString(M.Get_language().enterJobName.ToString(), false);
                             //print save types
-                            Console.WriteLine($"1 - {M.Get_language().fullSave.ToString()}"); //placeholder
-                            Console.WriteLine($"2 - {M.Get_language().differentialSave.ToString()}"); //placeholder
+                            Console.WriteLine($"1 - {M.Get_language().fullSave.ToString()}");
+                            Console.WriteLine($"2 - {M.Get_language().differentialSave.ToString()}");
 
                             int type = Reader.ReadInt(M.Get_language().enterJobType.ToString());
                             string source = Reader.ReadPath(M.Get_language().enterJobSource.ToString(), false);

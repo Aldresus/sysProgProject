@@ -21,7 +21,7 @@ namespace NSViews
             M_Model M = VM.Get_Model();
             
             U_Reader Reader = new U_Reader(M);
-            U_Show Show = new U_Show();
+            U_Show Show = new U_Show(M);
             U_Checker Checker = new U_Checker();
 
             
@@ -32,13 +32,11 @@ namespace NSViews
                 string coeur = M.Get_language().coeur.ToString();
                 Console.WriteLine($"         ______________                                                                                   .----.      \r\n        |[]            |                                                                      .---------. | == |      \r\n        |  __________  |                  .                     .                     .       |.-\"\"\"\"\"-.| |----|      \r\n        |  |  Easy  |  |   .. ............;;.    .. ............;;.    .. ............;;.     ||{ordina}|| | == |      \r\n        |  |  Save! |  |    ..::::::::::::;;;;.   ..::::::::::::;;;;.   ..::::::::::::;;;;.   ||  {coeur}|| |----|      \r\n        |  |________|  |   . . ::::::::::::;;:'  . . ::::::::::::;;:'  . . ::::::::::::;;:'   |'-.....-'| |::::|      \r\n        |   ________   |                  :'                    :'                    :'      `\"\")---(\"\"` |___.|      \r\n        |   [ [ ]  ]   |                                                                     /:::::::::::\\\" _  \"      \r\n        \\___[_[_]__]___|                                                                    /:::=======:::\\`\\`\\       \r\n                                                                                            `\"\"\"\"\"\"\"\"\"\"\"\"\"`  '-'      ");
 
-                //TODO list all jobs
                 if (Checker.CheckAnyJobs(M.Get_listSaveJob()) > 0) { 
                     Console.WriteLine(M.Get_language().availableJobs.ToString());
                     Show.ShowJobs(M.Get_listSaveJob());
                 }
                 
-                //TODO hide options if there isnt any job to edit/execute/delete
                 Console.WriteLine($"\n\n1 - {M.Get_language().createJob.ToString()}");
                 Console.WriteLine($"2 - {M.Get_language().executeJob.ToString()}");
                 Console.WriteLine($"3 - {M.Get_language().editJob.ToString()}");

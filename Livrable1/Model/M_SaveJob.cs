@@ -240,17 +240,18 @@ namespace NSModel
             //Edit TotalFilesSize
             objJSON["State"][this.Get_index()]["TotalFilesSize"] = this.Get_totalSizeFile();
             //Edit NbFilesLeftToDo
-            objJSON["State"][this.Get_index()]["NbFilesLeftToDo"] = 30;
+            objJSON["State"][this.Get_index()]["NbFilesLeftToDo"] = this.Get_NbFilesLeftToDo();
             //Edit Progression
-            objJSON["State"][this.Get_index()]["Progression"] = 0;
+            objJSON["State"][this.Get_index()]["Progression"] = this.Get_progress();
 
             //Convert object JObject to string
             string json = objJSON.ToString();
 
             //Write json string to JSON file
             File.WriteAllText(JsonStatePath, json);
-        }        
-        
+        }
+
+        //method which is called when the save job is running
         public void WriteJSON(string JsonStatePath, string state, int FilesLeft, int progress)
         {
             //Get JSon file's content
@@ -300,13 +301,11 @@ namespace NSModel
                     }
                     catch (NotSupportedException e)
                     {
-                        Console.WriteLine("Unable to calculate folder size: {0}", e.Message);
                     }
                 }
             }
             catch (UnauthorizedAccessException e)
             {
-                Console.WriteLine("Unable to calculate folder size: {0}", e.Message);
             }
             return folderSize;
         }

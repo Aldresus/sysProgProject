@@ -51,7 +51,8 @@
     "enterExitToAbort": "entrer 'exit' pour annuler",
     "enterZeroToAbort": "entrer '0' pour annuler",
     "onlyNumbers": "entrez seulement des nombres",
-    "sourcePathDoentExist": "le chemin source n'existe pas"
+    "sourcePathDoentExist": "le chemin source n'existe pas",
+    "progress": "progression"
   },
   "en": {
     "destinationFolder": "destination",
@@ -105,7 +106,8 @@
     "enterExitToAbort": "enter 'exit' to abort",
     "enterZeroToAbort": "enter '0' to abort",
     "onlyNumbers": "enter only numbers",
-    "sourcePathDoentExist": "source path doesn't exist"
+    "sourcePathDoentExist": "source path doesn't exist",
+    "progress": "progress"
   },
   "de": {
     "destinationFolder": "Zielordner",
@@ -159,7 +161,8 @@
     "enterExitToAbort": "geben sie 'exit' ein, um abzubrechen",
     "enterZeroToAbort": "geben sie '0' ein, um abzubrechen",
     "onlyNumbers": "geben sie nur zahlen ein",
-    "sourcePathDoentExist": "quellpfad existiert nicht"
+    "sourcePathDoentExist": "quellpfad existiert nicht",
+    "progress": "fortschritt"
   }
 }
   

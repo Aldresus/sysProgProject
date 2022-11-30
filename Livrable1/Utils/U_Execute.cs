@@ -59,7 +59,7 @@ namespace NSUtils
                         NbFilesLeftToDo -= 1;
                         progress = (int)Math.Round((((float)total - (float)NbFilesLeftToDo) / (float)total) * 100.0f);
                         SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
-                        Console.WriteLine("progress: " + progress + " %");
+                        Console.WriteLine($"{_oModel.Get_language().progress.ToString()} {progress} %");
                     }
                     catch (Exception e)
                     {
@@ -95,6 +95,7 @@ namespace NSUtils
                             WriteLog(FileLogPath, fileName, sourcePath + dir.Name, destFile, sourcePath, copyTime);
                             NbFilesLeftToDo -= 1;
                             progress = (int)Math.Round((((float)total - (float)NbFilesLeftToDo) / (float)total) * 100.0f);
+                            Console.WriteLine($"{_oModel.Get_language().progress.ToString()} {progress} %");
                             SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
                         }
                         catch (Exception e)
@@ -114,7 +115,6 @@ namespace NSUtils
             }
         }
 
-        //TODO : d�placer la m�thode dans M_SaveJob et modifier les WriteValue n�cessaires.
         public void WriteLog(string JsonLogPath, string fileName, string fileSourcePath, string fileDestPath, string directorySource, TimeSpan copyTime)
         {
             long size;

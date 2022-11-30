@@ -15,10 +15,9 @@ namespace NSViews
             M_Model M = VM.Get_Model();
 
             U_Reader Reader = new U_Reader(M);
-            U_Show Show = new U_Show();
+            U_Show Show = new U_Show(M);
             U_Checker Checker = new U_Checker();
-
-            //TODO check if there is less than 5 save jobs
+  
             if (Checker.CheckAnyJobs(M.Get_listSaveJob()) < 5)
             {
                 Console.Clear();
@@ -29,8 +28,8 @@ namespace NSViews
                 {
 
                     //print save types
-                    Console.WriteLine($"1 - {M.Get_language().fullSave.ToString()}"); //placeholder
-                    Console.WriteLine($"2 - {M.Get_language().differentialSave.ToString()}"); //placeholder
+                    Console.WriteLine($"1 - {M.Get_language().fullSave.ToString()}");
+                    Console.WriteLine($"2 - {M.Get_language().differentialSave.ToString()}");
 
                     int type = Reader.ReadInt(M.Get_language().enterJobType.ToString());
                     string source = Reader.ReadPath(M.Get_language().enterJobSource.ToString(), false);
