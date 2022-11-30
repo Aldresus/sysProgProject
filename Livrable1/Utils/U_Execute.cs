@@ -102,8 +102,6 @@ namespace NSUtils
         {
             long size;
             //Get fileinfo
-            Console.Write("\n" + fileSourcePath + "\n");
-            Console.Write("\n" + fileName + "\n");
             try
             {
                 FileInfo fileInfo = new FileInfo(fileSourcePath);
