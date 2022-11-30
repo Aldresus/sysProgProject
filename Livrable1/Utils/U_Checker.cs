@@ -23,15 +23,9 @@ namespace NSUtils
             int i = 0;
             foreach (M_SaveJob saveJob in listSaveJob)
             {
-                Console.WriteLine(saveJob.Get_saveJobName());
-                Console.WriteLine(i);
-                Console.WriteLine(saveJob.Get_saveJobName() == "");
-                Console.WriteLine(" ");
-                
                 if (saveJob.Get_saveJobName() == "")
                 {
                     return i;
-                    
                 }
                 i++;
             }

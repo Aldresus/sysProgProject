@@ -24,8 +24,10 @@ namespace NSModel {
             {
                 Directory.CreateDirectory(pathDirectoryLog);
             }
+
             string logFileName = @"\log" + DateTime.Now.ToString("ddMMyyyy") + ".json";
             string pathLog = pathDirectoryLog + logFileName;
+
             this.Set_logFile(pathLog);
             if (!File.Exists(this.Get_logFile()))
             {

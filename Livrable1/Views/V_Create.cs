@@ -25,13 +25,17 @@ namespace NSViews
 
                 string name = Reader.ReadString(M.Get_language().enterJobName.ToString(), false);
                 //print types
-                Console.WriteLine("1 - type 1"); //placeholder
-                Console.WriteLine("2 - type 2"); //placeholder
+                Console.WriteLine("1 - Full Save"); //placeholder
+                Console.WriteLine("2 - Diffenrential Save"); //placeholder
                 
                 int type = Reader.ReadInt(M.Get_language().enterJobType.ToString());
                 string source = Reader.ReadPath(M.Get_language().enterJobSource.ToString(), false);
                 string dest = Reader.ReadPath(M.Get_language().enterJobDestination.ToString(), true);
-                Console.WriteLine($"{M.Get_language().jobCreated.ToString()} {M.Get_language().name.ToString()}: {name} {M.Get_language().sourceFolder.ToString()}:{source} {M.Get_language().destinationFolder.ToString()}:{dest} {M.Get_language().type.ToString()}:{type}");
+                Console.WriteLine($"\n{M.Get_language().jobCreated.ToString()}");
+                Console.WriteLine($"{M.Get_language().name.ToString()}: {name} ");
+                Console.WriteLine($"{M.Get_language().sourceFolder.ToString()}: {source} ");
+                Console.WriteLine($"{M.Get_language().destinationFolder.ToString()}: {dest} ");
+                Console.WriteLine($"{M.Get_language().type.ToString()}: {type}");
 
                 int jobIndex = Checker.GetEmptyJobIndex(M.Get_listSaveJob());
                 M.Get_listSaveJob()[jobIndex].Set_saveJobName(name);
