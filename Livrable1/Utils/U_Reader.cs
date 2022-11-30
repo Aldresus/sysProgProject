@@ -123,14 +123,24 @@ namespace NSUtils
             Console.ReadKey();
         }
 
-        public string ReadPath(string promptText)
+        public string ReadPath(string promptText, bool isDest)
         {
-            string path = this.ReadString(promptText, false);
-            if (path[^1] is not '\\' or not '/')
+            bool validInput = false;
+
+            while (!validInput)
             {
-                path += @"\";      
+                string path = this.ReadString(promptText, false);
+                if (path[^1] is not '\\' or not '/')
+                {
+                    path += @"\";
+                }
+                if (File.Exists(path) || Directory.Exists(path) || isDest)
+                {
+                    validInput = true;
+                    return path.Replace(@"/", @"\");
+                } 
             }
-            return path;
+            return null; // should never happen
         }
     }
 }
