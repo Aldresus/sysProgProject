@@ -20,17 +20,7 @@ namespace NSUtils
         }
         public int GetEmptyJobIndex(List<M_SaveJob> listSaveJob)
         {
-            int i = 0;
-            foreach (M_SaveJob saveJob in listSaveJob)
-            {
-                if (saveJob.Get_saveJobName() == "")
-                {
-                    return i;
-                }
-                i++;
-            }
-            Console.ReadLine();
-            return -1; // should never happen
+            return listSaveJob.Count(); // should never happen
         }
     }
 }

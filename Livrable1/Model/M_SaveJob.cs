@@ -29,6 +29,19 @@ namespace NSModel
         {
         }
 
+        //Constructor (Set all attributes when object instantiation except _totalNbFile, _totalSizeFile)
+        public M_SaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int index)
+        {
+            this.Set_saveJobName(_saveJobName);
+            this.Set_saveJobSourceDirectory(_saveJobSourceDirectory);
+            this.Set_saveJobDestinationDirectory(_saveJobDestinationDirectory);
+            this.Set_saveJobType(_saveJobType);
+            this.Set_state(_state);
+            this.Set_totalNbFile(CalculateFolderNB(_saveJobSourceDirectory));
+            this.Set_totalSizeFile((int)CalculateFolderSize(_saveJobSourceDirectory));
+            this.Set_index(index);
+        }
+        
         //Constructor (Set all attributes when object instantiation)
         public M_SaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int _totalNbFile, int _totalSizeFile, int index)
         {
@@ -225,30 +238,72 @@ namespace NSModel
             Set_totalNbFile(CalculateFolderNB(Get_saveJobSourceDirectory()));
             Set_totalSizeFile((int)CalculateFolderSize(Get_saveJobSourceDirectory()));
 
-            //Edit Name
-            objJSON["State"][this.Get_index()]["Name"] = this.Get_saveJobName();
-            //Edit SourceFilePath
-            objJSON["State"][this.Get_index()]["SourceFilePath"] = this.Get_saveJobSourceDirectory();
-            //Edit DestinationFilePath
-            objJSON["State"][this.Get_index()]["TargetFilePath"] = this.Get_saveJobDestinationDirectory();
-            //Edit State
-            objJSON["State"][this.Get_index()]["State"] = this.Get_state();
-            //Edit saveJobType
-            objJSON["State"][this.Get_index()]["Type"] = this.Get_saveJobType();
-            //Edit TotalFilesToCopy
-            objJSON["State"][this.Get_index()]["TotalFilesToCopy"] = this.Get_totalNbFile();
-            //Edit TotalFilesSize
-            objJSON["State"][this.Get_index()]["TotalFilesSize"] = this.Get_totalSizeFile();
-            //Edit NbFilesLeftToDo
-            objJSON["State"][this.Get_index()]["NbFilesLeftToDo"] = this.Get_NbFilesLeftToDo();
-            //Edit Progression
-            objJSON["State"][this.Get_index()]["Progression"] = this.Get_progress();
+            try
+            {
+                //Edit Name
+                objJSON["State"][this.Get_index()]["Name"] = this.Get_saveJobName();
+                //Edit SourceFilePath
+                objJSON["State"][this.Get_index()]["SourceFilePath"] = this.Get_saveJobSourceDirectory();
+                //Edit DestinationFilePath
+                objJSON["State"][this.Get_index()]["TargetFilePath"] = this.Get_saveJobDestinationDirectory();
+                //Edit State
+                objJSON["State"][this.Get_index()]["State"] = this.Get_state();
+                //Edit saveJobType
+                objJSON["State"][this.Get_index()]["Type"] = this.Get_saveJobType();
+                //Edit TotalFilesToCopy
+                objJSON["State"][this.Get_index()]["TotalFilesToCopy"] = this.Get_totalNbFile();
+                //Edit TotalFilesSize
+                objJSON["State"][this.Get_index()]["TotalFilesSize"] = this.Get_totalSizeFile();
+                //Edit NbFilesLeftToDo
+                objJSON["State"][this.Get_index()]["NbFilesLeftToDo"] = this.Get_NbFilesLeftToDo();
+                //Edit Progression
+                objJSON["State"][this.Get_index()]["Progression"] = this.Get_progress();
+            }
+            catch (Exception e)
+            {
+                StringBuilder sb = new StringBuilder();
+                StringWriter sw = new StringWriter(sb);
+                JsonWriter writer = new JsonTextWriter(sw);
+                writer.Formatting = Formatting.Indented;
+                writer.WriteStartObject();
+                writer.WritePropertyName("Name");
+                writer.WriteValue(this.Get_saveJobName());
+                writer.WritePropertyName("SourceFilePath");
+                writer.WriteValue(this.Get_saveJobSourceDirectory());
+                writer.WritePropertyName("TargetFilePath");
+                writer.WriteValue(this.Get_saveJobDestinationDirectory());
+                writer.WritePropertyName("State");
+                writer.WriteValue(this.Get_state());
+                writer.WritePropertyName("Type");
+                writer.WriteValue(this.Get_saveJobType());
+                writer.WritePropertyName("TotalFilesToCopy");
+                writer.WriteValue(this.Get_totalNbFile());
+                writer.WritePropertyName("TotalFilesSize");
+                writer.WriteValue(this.Get_totalSizeFile());
+                writer.WritePropertyName("NbFilesLeftToDo");
+                writer.WriteValue(this.Get_NbFilesLeftToDo());
+                writer.WritePropertyName("Progression");
+                writer.WriteValue(this.Get_progress());
+                writer.WriteEndObject();
+
+                //Convert object JsonWriter to string
+                string json = sb.ToString();
+
+                //Convert string to JObject
+                JObject newState = JObject.Parse(json);
+
+                //Get JObject "logs" of Json Lof file
+                JArray arrayStates = (JArray)objJSON["State"];
+
+                //Add newLog to allLog
+                arrayStates.Add(newState);
+            }
 
             //Convert object JObject to string
-            string json = objJSON.ToString();
+            string finalState = objJSON.ToString();
 
             //Write json string to JSON file
-            File.WriteAllText(JsonStatePath, json);
+            File.WriteAllText(JsonStatePath, finalState);
         }
 
         //method which is called when the save job is running
