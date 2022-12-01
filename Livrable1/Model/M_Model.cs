@@ -87,10 +87,11 @@ namespace NSModel {
 
             JObject objJSON = JObject.Parse(File.ReadAllText(this.Get_workFile()));
 
-
-            for (int i = 0; i < 5; i++)
+            int identationIndex = 0;
+            foreach (JObject i in objJSON["State"])
             {
-                this._listSaveJob.Add(new M_SaveJob(objJSON["State"][i]["Name"].ToString(), objJSON["State"][i]["SourceFilePath"].ToString(), objJSON["State"][i]["TargetFilePath"].ToString(), objJSON["State"][i]["Type"].Value<int>(), objJSON["State"][i]["State"].ToString(), objJSON["State"][i]["TotalFilesToCopy"].Value<int>(), objJSON["State"][i]["TotalFilesSize"].Value<int>(), i));
+                this._listSaveJob.Add(new M_SaveJob(i["Name"].ToString(), i["SourceFilePath"].ToString(), i["TargetFilePath"].ToString(), i["Type"].Value<int>(), i["State"].ToString(), i["TotalFilesToCopy"].Value<int>(), i["TotalFilesSize"].Value<int>(), identationIndex));
+                identationIndex += 1;
             }
 
             //Parse language
@@ -179,6 +180,11 @@ namespace NSModel {
         public void Set_language(dynamic value)
         {
             this._language = value;
+        }
+
+        public void InstanceNewSaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int index)
+        {
+            this._listSaveJob.Add(new M_SaveJob(_saveJobName, _saveJobSourceDirectory, _saveJobDestinationDirectory, _saveJobType, _state, index));
         }
     }
 }
