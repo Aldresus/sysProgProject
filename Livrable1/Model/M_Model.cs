@@ -7,6 +7,8 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Reflection;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace NSModel {
     public class M_Model
@@ -26,7 +28,19 @@ namespace NSModel {
             }
 
             string logFileName = @"\log" + DateTime.Now.ToString("ddMMyyyy") + ".json";
+            string logXmlFileName = pathDirectoryLog + logFileName.Replace(".json", ".xml");
+            
             string pathLog = pathDirectoryLog + logFileName;
+
+            if (!File.Exists(logXmlFileName))
+            {
+                using (XmlWriter X = XmlWriter.Create(logXmlFileName, new XmlWriterSettings { Indent = true }))
+                {
+                    X.WriteStartElement("logs");
+                    X.WriteEndElement();
+                    X.Flush();
+                }
+            }
 
             this.Set_logFile(pathLog);
             if (!File.Exists(this.Get_logFile()))
@@ -34,7 +48,7 @@ namespace NSModel {
                 string initLogFile = "{\n\t\"logs\": []\n}";
                 File.WriteAllText(this.Get_logFile(), initLogFile);
             }
-
+           
             string pathDirectoryState = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).ToString() + @"\EasySave";
             string pathState = pathDirectoryState + @"\State.json";
             this.Set_workFile(pathState);
@@ -43,7 +57,7 @@ namespace NSModel {
                 StringBuilder sb = new StringBuilder();
                 StringWriter sw = new StringWriter(sb);
                 JsonWriter writer = new JsonTextWriter(sw);
-                writer.Formatting = Formatting.Indented;
+                writer.Formatting = Newtonsoft.Json.Formatting.Indented;
                 writer.WriteStartObject();
                 writer.WritePropertyName("Name");
                 writer.WriteValue("");
@@ -86,7 +100,6 @@ namespace NSModel {
             }
 
             JObject objJSON = JObject.Parse(File.ReadAllText(this.Get_workFile()));
-
 
             for (int i = 0; i < 5; i++)
             {

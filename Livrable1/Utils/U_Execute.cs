@@ -2,9 +2,16 @@
 using Newtonsoft.Json;
 using System.Text;
 using System.IO;
+using System.Xml;
 using System.ComponentModel.Design;
 
 using NSModel;
+using System.Xml;
+using static System.Net.Mime.MediaTypeNames;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Xml.Linq;
+using System.Reflection.Metadata;
 
 namespace NSUtils
 {
@@ -50,16 +57,16 @@ namespace NSUtils
                     try
                     {
                         // Copy the files and overwrite destination files if they already exist.
+                        NbFilesLeftToDo -= 1;
+                        progress = (int)Math.Round((((float)total - (float)NbFilesLeftToDo) / (float)total) * 100.0f);
+                        SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
+                        Console.Clear();
+                        Console.WriteLine($"{_oModel.Get_language().progress.ToString()} {progress} %");
                         DateTime startCopyTime = DateTime.Now;
-
                         System.IO.File.Copy(file, destFile, isFullSave);
                         DateTime endCopyTime = DateTime.Now;
                         TimeSpan copyTime = endCopyTime - startCopyTime;
                         WriteLog(FileLogPath, fileName, sourcePath + fileName, destFile, sourcePath, copyTime);
-                        NbFilesLeftToDo -= 1;
-                        progress = (int)Math.Round((((float)total - (float)NbFilesLeftToDo) / (float)total) * 100.0f);
-                        SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
-                        Console.WriteLine($"{_oModel.Get_language().progress.ToString()} {progress} %");
                     }
                     catch (Exception e)
                     {
@@ -88,15 +95,16 @@ namespace NSUtils
                         try
                         {
                             // Copy the files and overwrite destination files if they already exist.
+                            NbFilesLeftToDo -= 1;
+                            progress = (int)Math.Round((((float)total - (float)NbFilesLeftToDo) / (float)total) * 100.0f);
+                            SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
+                            Console.Clear();
+                            Console.WriteLine($"{_oModel.Get_language().progress.ToString()} {progress} %");
                             DateTime startCopyTime = DateTime.Now;
                             System.IO.File.Copy(file, destFile, isFullSave);
                             DateTime endCopyTime = DateTime.Now;
                             TimeSpan copyTime = endCopyTime - startCopyTime;
                             WriteLog(FileLogPath, fileName, sourcePath + dir.Name, destFile, sourcePath, copyTime);
-                            NbFilesLeftToDo -= 1;
-                            progress = (int)Math.Round((((float)total - (float)NbFilesLeftToDo) / (float)total) * 100.0f);
-                            Console.WriteLine($"{_oModel.Get_language().progress.ToString()} {progress} %");
-                            SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
                         }
                         catch (Exception e)
                         {
@@ -126,51 +134,67 @@ namespace NSUtils
             }
             catch (Exception)
             {
-                FileInfo fileInfo = new FileInfo(fileSourcePath+"\\"+fileName);
+                FileInfo fileInfo = new FileInfo(fileSourcePath + "\\" + fileName);
                 size = fileInfo.Length;
             }
+                //Get JSON file's content
+                JObject allLog = JObject.Parse(File.ReadAllText(JsonLogPath));
 
-            //Get JSON file's content
-            JObject allLog = JObject.Parse(File.ReadAllText(JsonLogPath));
+                StringBuilder sb = new StringBuilder();
+                StringWriter sw = new StringWriter(sb);
+                JsonWriter writer = new JsonTextWriter(sw);
+                writer.Formatting = Newtonsoft.Json.Formatting.Indented;
+                writer.WriteStartObject();
+                writer.WritePropertyName("Name");
+                writer.WriteValue(fileName);
+                writer.WritePropertyName("FileSource");
+                writer.WriteValue(fileSourcePath);
+                writer.WritePropertyName("FileTarget");
+                writer.WriteValue(fileDestPath);
+                writer.WritePropertyName("destPath");
+                writer.WriteValue(directorySource);
+                writer.WritePropertyName("FileSize");
+                writer.WriteValue(size);
+                writer.WritePropertyName("FileTransferTime");
+                writer.WriteValue(copyTime);
+                writer.WritePropertyName("DateTime");
+                writer.WriteValue(DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy"));
+                writer.WriteEndObject();
 
-            StringBuilder sb = new StringBuilder();
-            StringWriter sw = new StringWriter(sb);
-            JsonWriter writer = new JsonTextWriter(sw);
-            writer.Formatting = Formatting.Indented;
-            writer.WriteStartObject();
-            writer.WritePropertyName("Name");
-            writer.WriteValue(fileName);
-            writer.WritePropertyName("FileSource");
-            writer.WriteValue(fileSourcePath);
-            writer.WritePropertyName("FileTarget");
-            writer.WriteValue(fileDestPath);
-            writer.WritePropertyName("destPath");
-            writer.WriteValue(directorySource);
-            writer.WritePropertyName("FileSize");
-            writer.WriteValue(size);
-            writer.WritePropertyName("FileTransferTime");
-            writer.WriteValue(copyTime);
-            writer.WritePropertyName("time");
-            writer.WriteValue(DateTime.Now);
-            writer.WriteEndObject();
+                //Convert object JsonWriter to string
+                string json = sb.ToString();
 
-            //Convert object JsonWriter to string
-            string json = sb.ToString();
+                //Convert string to JObject
+                JObject newLog = JObject.Parse(json);
 
-            //Convert string to JObject
-            JObject newLog = JObject.Parse(json);
+                //Get JObject "logs" of Json Lof file
+                JArray arrayLogs = (JArray)allLog["logs"];
 
-            //Get JObject "logs" of Json Lof file
-            JArray arrayLogs = (JArray)allLog["logs"];
+                //Add newLog to allLog
+                arrayLogs.Add(newLog);
 
-            //Add newLog to allLog
-            arrayLogs.Add(newLog);
+                //Convert object JObject to string
+                string newLogFile = allLog.ToString();
 
-            //Convert object JObject to string
-            string newLogFile = allLog.ToString();
+                //Write newLogFile string to log JSON file
+                File.WriteAllText(JsonLogPath, newLogFile);
 
-            //Write newLogFile string to log JSON file
-            File.WriteAllText(JsonLogPath, newLogFile);
+
+                //Write log to xml file
+                var xmlDoc = XDocument.Load(JsonLogPath.Replace(".json", ".xml"));
+                var parentElement = new XElement("log");
+                parentElement.Add(new XElement("Name", $"{fileName}"));
+                parentElement.Add(new XElement("FileSource", $"{fileSourcePath}"));
+                parentElement.Add(new XElement("FileTarget", $"{fileDestPath}"));
+                parentElement.Add(new XElement("DestPath", $"{directorySource}"));
+                parentElement.Add(new XElement("FileSize", $"{size}"));
+                parentElement.Add(new XElement("FileTransferTime", $"{copyTime}"));
+                parentElement.Add(new XElement("DateTime", DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy")));
+
+                var rootElement = xmlDoc.Element("logs");
+                rootElement?.Add(parentElement);
+
+                xmlDoc.Save(JsonLogPath.Replace(".json", ".xml"));
         }
     }
 }
