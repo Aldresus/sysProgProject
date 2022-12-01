@@ -89,7 +89,7 @@ namespace NSUtils
                         foreach (string i in temp)
                         {
                             int j = int.Parse(i);
-                            if (j >= 0 && j <= 5)
+                            if (j >= 0 && j <= _oModel.Get_listSaveJob().Count())
                             {
                                 output.Add(j);
                             }

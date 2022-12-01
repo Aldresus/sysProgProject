@@ -186,5 +186,24 @@ namespace NSModel {
         {
             this._listSaveJob.Add(new M_SaveJob(_saveJobName, _saveJobSourceDirectory, _saveJobDestinationDirectory, _saveJobType, _state, index));
         }
+
+        public void RemoveSaveJob(int index)
+        {
+            List<M_SaveJob> oldListSaveJob = this.Get_listSaveJob();
+            oldListSaveJob.RemoveAt(index);
+            this._listSaveJob = oldListSaveJob;
+
+            JObject objJSON = JObject.Parse(File.ReadAllText(this.Get_workFile()));
+
+            JArray arrayStates = (JArray)objJSON["State"];
+            
+            arrayStates.RemoveAt(index);
+
+            //Convert object JObject to string
+            string finalState = objJSON.ToString();
+
+            //Write json string to JSON file
+            File.WriteAllText(this.Get_workFile(), finalState);
+        }
     }
 }

@@ -305,6 +305,7 @@ namespace NSModel
             //Write json string to JSON file
             File.WriteAllText(JsonStatePath, finalState);
         }
+        
 
         //method which is called when the save job is running
         public void WriteJSON(string JsonStatePath, string state, int FilesLeft, int progress)
