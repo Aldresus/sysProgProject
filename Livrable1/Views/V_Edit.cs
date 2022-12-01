@@ -35,7 +35,7 @@ namespace NSViews
                     int i = Reader.ReadInt($"{M.Get_language().whichJobToEdit.ToString()}, {M.Get_language().enterZeroToAbort.ToString()}");
 
                     //check if job exists
-                    if (i >= 0 && i <= 5)
+                    if (i >= 0 && i <= M.Get_listSaveJob().Count())
                     {
                         if (i == 0)
                         {

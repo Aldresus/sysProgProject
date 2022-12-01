@@ -30,7 +30,7 @@ namespace NSViews
                     Console.Clear();
                     Console.WriteLine(M.Get_language().availableJobs.ToString());
                     Show.ShowJobs(M.Get_listSaveJob());
-                    List<int> indexes = Reader.ReadMany($"{M.Get_language().enterJobIndexToDelete.ToString()}, {M.Get_language().enterZeroToAbort.ToString()}");
+                    List<int> indexes = Reader.ReadMany($"{M.Get_language().whichJobToExecute.ToString()}, {M.Get_language().enterZeroToAbort.ToString()}");
                     if (indexes[0] == 0)
                     {
                         break;

@@ -18,7 +18,7 @@ namespace NSViews
             U_Show Show = new U_Show(M);
             U_Checker Checker = new U_Checker();
   
-            if (Checker.CheckAnyJobs(M.Get_listSaveJob()) < 5)
+            if (Checker.CheckAnyJobs(M.Get_listSaveJob()) < 10)
             {
                 Console.Clear();
 
@@ -43,10 +43,7 @@ namespace NSViews
                     Console.WriteLine($"{M.Get_language().type.ToString()}: {type}");
 
                     int jobIndex = Checker.GetEmptyJobIndex(M.Get_listSaveJob());
-                    M.Get_listSaveJob()[jobIndex].Set_saveJobName(name);
-                    M.Get_listSaveJob()[jobIndex].Set_saveJobSourceDirectory(source);
-                    M.Get_listSaveJob()[jobIndex].Set_saveJobDestinationDirectory(dest);
-                    M.Get_listSaveJob()[jobIndex].Set_saveJobType(type);
+                    M.InstanceNewSaveJob(name, source, dest, type, "idle", jobIndex);
                     M.GetSelectedSaveJob(jobIndex).WriteJSON(M.Get_workFile());
                     Reader.PressAnyKeyToContinue(M.Get_language().pressAnyToContinue.ToString());
                 }
