@@ -16,24 +16,32 @@ namespace CryptoSoft
             // Function that takes in the source file to encrypt (or decrypt) to a destination file
             void EncryptFile(string inputFile, string outputFile)
             {
-                // Opens the source file, and creates or replaces the destination file if already existing
-                using (var fin = new FileStream(inputFile, FileMode.Open))
-                using (var fout = new FileStream(outputFile, FileMode.Create))
+                try
                 {
-                    // Buffer is used to read the source file in chunks of 4096 bytes (to avoid memory issues)
-                    byte[] buffer = new byte[4096];
-                    while (true)
+                    // Opens the source file, and creates or replaces the destination file if already existing
+                    using (var fin = new FileStream(inputFile, FileMode.Open))
+                    using (var fout = new FileStream(outputFile, FileMode.Create))
                     {
-                        // Reads the source file using the buffer and returns the number of bytes read
-                        int bytesRead = fin.Read(buffer);
-                        if (bytesRead == 0)
-                            // If no bytes were read, then the end of the file has been reached, so the loop is broken
-                            break;
-                        // Encrypts the bytes read in the buffer
-                        EncryptBytes(buffer, bytesRead);
-                        // Writes the encrypted bytes to the destination file
-                        fout.Write(buffer, 0, bytesRead);
+                        // Buffer is used to read the source file in chunks of 4096 bytes (to avoid memory issues)
+                        byte[] buffer = new byte[4096];
+                        while (true)
+                        {
+                            // Reads the source file using the buffer and returns the number of bytes read
+                            int bytesRead = fin.Read(buffer);
+                            if (bytesRead == 0)
+                                // If no bytes were read, then the end of the file has been reached, so the loop is broken
+                                break;
+                            // Encrypts the bytes read in the buffer
+                            EncryptBytes(buffer, bytesRead);
+                            // Writes the encrypted bytes to the destination file
+                            fout.Write(buffer, 0, bytesRead);
+                        }
                     }
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e); //temporaire
+                    Console.ReadLine();
                 }
             }
 
@@ -47,9 +55,7 @@ namespace CryptoSoft
                     buffer[i] = (byte)(buffer[i] ^ Secret);
             }
 
-            EncryptFile(@"C:\Users\quent\Desktop\icon.png", @"C:\Users\quent\Desktop\icon2.png");
-            //EncryptFile(@"C:\\Users\\tomst\\OneDrive\\Bureau\\cesi_CMJN_blanc2.png", @"C:\\Users\\tomst\\OneDrive\\Bureau\\cesi_CMJN_blanc3.png");
-
+            EncryptFile(args[0], args[1]);
         }
     }
 }
