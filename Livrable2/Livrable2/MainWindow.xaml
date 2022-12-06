@@ -4,10 +4,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Livrable2"
-        mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}"/>
+        <DataGrid Name="DG1" ItemsSource="{Binding}" AutoGenerateColumns="False">
+            <DataGrid.Columns>
 
+                <DataGridTextColumn Header="Name"  Binding="{Binding _saveJobName}"/>
+                <DataGridTextColumn Header="Source Folder" Binding="{Binding _saveJobSourceDirectory}" />
+                <DataGridTextColumn Header="Target Folder" Binding="{Binding _saveJobDestinationDirectory}" />
+                <DataGridTextColumn Header="Type" Binding="{Binding _saveJobType}" />
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>

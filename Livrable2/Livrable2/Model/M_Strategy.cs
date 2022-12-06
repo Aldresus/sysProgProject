@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System;
 using NSUtils;
-using NSViews;
 using System.Diagnostics.Tracing;
 
 namespace NSModel

@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using System.Reflection.Metadata;
+using System;
 
 namespace NSUtils
 {

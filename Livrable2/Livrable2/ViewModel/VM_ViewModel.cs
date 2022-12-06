@@ -1,6 +1,7 @@
 ﻿// Class ViewModel
 // Interacts with the View and the Model
 using NSModel;
+using System.Collections.ObjectModel;
 
 namespace NSViewModel
 {
@@ -11,6 +12,11 @@ namespace NSViewModel
         private string? _destinationDirectory;
         private string? _type;
         private M_Model _oModel;
+        public ObservableCollection<M_SaveJob> data
+        {
+            get;
+            set;
+        } = new ObservableCollection<M_SaveJob>();
 
         public string Get_Name()
         {
@@ -77,6 +83,14 @@ namespace NSViewModel
             this.Set_SourceDirectory(sourceDirectory);
             this.Set_DestinationDirectory(destinationDirectory);
             this.Set_Type(type);
+        }
+
+        public void setupObsCollection()
+        {
+            foreach (M_SaveJob saveJob in _oModel.Get_listSaveJob())
+            {
+                this.data.Add(saveJob);
+            }
         }
     }
 }

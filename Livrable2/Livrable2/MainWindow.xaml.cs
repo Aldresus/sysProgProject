@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using NSModel;
+using NSViewModel;
 
 namespace Livrable2
 {
@@ -23,6 +25,15 @@ namespace Livrable2
         public MainWindow()
         {
             InitializeComponent();
+            M_Model model = new M_Model();
+            VM_ViewModel viewModel = new VM_ViewModel(model);
+            viewModel.setupObsCollection();
+            DG1.DataContext = viewModel.data;
+
+
+
+
+
         }
     }
 }

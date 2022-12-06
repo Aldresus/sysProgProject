@@ -110,7 +110,7 @@ namespace NSModel {
 
             //Parse language
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "Livrable1.Locales.locales.json";
+            var resourceName = "Livrable2.Locales.locales.json";
             Stream stream = assembly.GetManifestResourceStream(resourceName);
             StreamReader reader = new StreamReader(stream);
              this._language = JObject.Parse(reader.ReadToEnd())[objJSON["lang"].ToString()];

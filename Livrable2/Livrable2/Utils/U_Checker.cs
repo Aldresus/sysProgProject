@@ -1,6 +1,8 @@
 ﻿using NSModel;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+
 namespace NSUtils
 {
     public class U_Checker

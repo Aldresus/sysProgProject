@@ -12,10 +12,10 @@ namespace NSModel
 {
     public class M_SaveJob
     {
-        private string _saveJobName;
-        private string _saveJobSourceDirectory;
-        private string _saveJobDestinationDirectory;
-        private int _saveJobType;
+        public string _saveJobName { get; set; }
+        public string _saveJobSourceDirectory { get; set; }
+        public string _saveJobDestinationDirectory { get; set; }
+        public int _saveJobType { get; set; }
         private string _state;
         private int _totalNbFile;
         private int _totalSizeFile;
