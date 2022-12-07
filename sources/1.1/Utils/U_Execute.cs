@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using System.Reflection.Metadata;
+using System.Diagnostics;
 
 namespace NSUtils
 {
@@ -54,19 +55,30 @@ namespace NSUtils
                     fileName = System.IO.Path.GetFileName(file);
                     destFile = System.IO.Path.Combine(targetPath, fileName);
 
+
                     try
                     {
+                        DateTime startCopyTime = DateTime.Now;
                         // Copy the files and overwrite destination files if they already exist.
+                        if (fileName.EndsWith(".png"))
+                        {
+                            Process myProcess = Process.Start("C:\\Users\\quent\\Desktop\\exe\\Cryptosoft.exe", sourcePath + fileName + " " + targetPath + fileName + " " + "azertyui");
+                            myProcess.WaitForExit();
+                            myProcess.Close();
+                        }
+                        else
+                        {
+                            System.IO.File.Copy(file, destFile, isFullSave);
+                        }
                         NbFilesLeftToDo -= 1;
                         progress = (int)Math.Round((((float)total - (float)NbFilesLeftToDo) / (float)total) * 100.0f);
                         SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
                         Console.Clear();
                         Console.WriteLine($"{_oModel.Get_language().progress.ToString()} {progress} %");
-                        DateTime startCopyTime = DateTime.Now;
-                        System.IO.File.Copy(file, destFile, isFullSave);
                         DateTime endCopyTime = DateTime.Now;
                         TimeSpan copyTime = endCopyTime - startCopyTime;
                         WriteLog(FileLogPath, fileName, sourcePath + fileName, destFile, sourcePath, copyTime);
+
                     }
                     catch (Exception e)
                     {
