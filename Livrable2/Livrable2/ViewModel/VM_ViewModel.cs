@@ -2,6 +2,7 @@
 // Interacts with the View and the Model
 using NSModel;
 using System.Collections.ObjectModel;
+using System.Windows.Controls;
 
 namespace NSViewModel
 {
@@ -14,6 +15,8 @@ namespace NSViewModel
         private M_Model _oModel;
         public ObservableCollection<M_SaveJob> data { get; set; } = new ObservableCollection<M_SaveJob>();
         public ObservableCollection<string> extension { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<ComboBoxItem> cbLanguageItems { get; set; } = new ObservableCollection<ComboBoxItem>();
+
 
         public string Get_Name()
         {

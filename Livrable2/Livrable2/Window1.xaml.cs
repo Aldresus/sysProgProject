@@ -1,18 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Newtonsoft.Json.Linq;
 using NSModel;
 using NSViewModel;
 
@@ -32,7 +21,10 @@ namespace Livrable2
             this.viewModel = viewModel;
 
             viewModel.setupExtensionObsCollection();
+      /*      viewModel.setupLanguageObsCollection();*/
             DG_EXT.DataContext = viewModel.extension;
+            /*  C_Lang.DataContext = viewModel.cbLanguageItems;*/
+            var t = System.Threading.Thread.CurrentThread.CurrentUICulture;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
