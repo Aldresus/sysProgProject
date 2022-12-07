@@ -20,7 +20,8 @@ namespace Livrable2
         private M_Model model;
         private VM_ViewModel viewModel;
         private U_Checker checker = new U_Checker();
-        private U_Reader reader = new U_Reader();
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -28,6 +29,8 @@ namespace Livrable2
             viewModel = new VM_ViewModel(model);
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
+            
+
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -48,7 +51,7 @@ namespace Livrable2
         {
             DataGrid dataGrid = DG1;
             model.Get_listSaveJob()[dataGrid.SelectedIndex].Execute(model.Get_listSaveJob()[dataGrid.SelectedIndex], model.Get_logFile(), model.Get_workFile(), model);
-            System.Windows.Forms.MessageBox.Show($"{viewModel.data[dataGrid.SelectedIndex]._saveJobName} executed");
+            System.Windows.Forms.MessageBox.Show($"{viewModel.data[dataGrid.SelectedIndex]._saveJobName} {Properties.Resources.executed}");
 
         }
         private void Ajouter_Click(object sender, RoutedEventArgs e)
@@ -77,7 +80,7 @@ namespace Livrable2
                 model.GetSelectedSaveJob(indexJob).WriteJSON(model.Get_workFile());
                 viewModel.setupObsCollection();
                 DG1.DataContext = viewModel.data;
-                System.Windows.Forms.MessageBox.Show($"{name} created");
+                System.Windows.Forms.MessageBox.Show($"{name} {Properties.Resources.created}");
                 
                 txtBoxName.Text = "";
                 txtBoxSourceDir.Text = "";
@@ -86,7 +89,7 @@ namespace Livrable2
             }
             else
             {
-                System.Windows.Forms.MessageBox.Show("Please fill all the fields");
+                System.Windows.Forms.MessageBox.Show(Properties.Resources.pleaseFillAll);
             }
             
 

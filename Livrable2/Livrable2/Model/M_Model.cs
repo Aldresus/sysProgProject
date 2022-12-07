@@ -10,6 +10,8 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using System.Text.RegularExpressions;
+using System.Globalization;
+
 
 namespace NSModel {
     public class M_Model
@@ -72,13 +74,6 @@ namespace NSModel {
                 identationIndex += 1;
             }
 
-            //Parse language
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "Livrable2.Locales.locales.json";
-            Stream stream = assembly.GetManifestResourceStream(resourceName);
-            StreamReader reader = new StreamReader(stream);
-             this._language = JObject.Parse(reader.ReadToEnd())[objJSON["lang"].ToString()];
-
             //Get extensions to crypt in json file
             foreach (string i in objJSON["extToCrypt"])
             {
@@ -87,6 +82,7 @@ namespace NSModel {
 
             //Set _extensionToCryptRegex
             this.Set_extensionToCryptRegex();
+
         }
 
         public void WriteLanguage(string language) {
@@ -99,8 +95,6 @@ namespace NSModel {
             //Write json string to JSON file
             File.WriteAllText(this.Get_workFile(), json);
         }
-
-        //Getter and Setter
 
         //Getter _listSaveJob
         public List<M_SaveJob> Get_listSaveJob()

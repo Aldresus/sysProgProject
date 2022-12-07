@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:Livrable2"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        
     </Application.Resources>
 </Application>

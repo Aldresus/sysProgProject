@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Livrable2"
+        xmlns:p = "clr-namespace:Livrable2.Properties"
         Title="EasySave" Height="500" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -12,38 +13,38 @@
         </Grid.ColumnDefinitions>
         <DataGrid Name="DG1" ItemsSource="{Binding}" AutoGenerateColumns="False" CanUserAddRows="false" Margin="0,23,0,140" Grid.ColumnSpan="2" CellEditEnding="DG1_CellEditEnding">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name"  Binding="{Binding _saveJobName}"/>
-                <DataGridTextColumn Header="Source Folder" Binding="{Binding _saveJobSourceDirectory}" />
-                <DataGridTextColumn Header="Target Folder" Binding="{Binding _saveJobDestinationDirectory}" />
-                <DataGridTextColumn Header="Type" Binding="{Binding _saveJobType}" />
+                <DataGridTextColumn Header="{x:Static p:Resources.name}"  Binding="{Binding _saveJobName}"/>
+                <DataGridTextColumn Header="{x:Static p:Resources.sourceFolder}" Binding="{Binding _saveJobSourceDirectory}" />
+                <DataGridTextColumn Header="{x:Static p:Resources.targetFolder}" Binding="{Binding _saveJobDestinationDirectory}" />
+                <DataGridTextColumn Header="{x:Static p:Resources.type}" Binding="{Binding _saveJobType}" />
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Delete" Name="Delete" Click="Delete_Click" />
+                            <Button Content="{x:Static p:Resources.delete}" Name="Delete" Click="Delete_Click" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Execute" Name="Execute" Click="Execute_Click" />
+                            <Button Content="{x:Static p:Resources.execute}" Name="Execute" Click="Execute_Click" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Button Content="Settings" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click"/>
-        <Label Content="Name" HorizontalAlignment="Left" Margin="4,355,0,0" VerticalAlignment="Top"/>
-        <Label Content="Source Directory" HorizontalAlignment="Left" Margin="5,386,0,0" VerticalAlignment="Top"/>
-        <Label Content="Destination Directory" HorizontalAlignment="Left" Margin="10,417,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
-        <Label Content="Type" HorizontalAlignment="Left" Margin="10,448,0,0" VerticalAlignment="Top"/>
+        <Button Content="{x:Static p:Resources.settings}" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click"/>
+        <Label Content="{x:Static p:Resources.name}" HorizontalAlignment="Left" Margin="4,355,0,0" VerticalAlignment="Top"/>
+        <Label Content="{x:Static p:Resources.sourceFolder}" HorizontalAlignment="Left" Margin="5,386,0,0" VerticalAlignment="Top"/>
+        <Label Content="{x:Static p:Resources.targetFolder}" HorizontalAlignment="Left" Margin="10,417,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <Label Content="{x:Static p:Resources.type}" HorizontalAlignment="Left" Margin="10,448,0,0" VerticalAlignment="Top"/>
         <TextBox Name="txtBoxName" HorizontalAlignment="Left" Margin="52,359,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
         <TextBox Name="txtBoxSourceDir" HorizontalAlignment="Left" Margin="52,390,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="456" Grid.Column="1"/>
         <TextBox Name="txtBoxDestDir" HorizontalAlignment="Left" Margin="52,421,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="456" Grid.Column="1"/>
-        <Button Content="Ajouter" HorizontalAlignment="Left" Margin="208,450,0,0" VerticalAlignment="Top" Width="100" Click="Ajouter_Click" Grid.Column="1"/>
+        <Button Content="{x:Static p:Resources.add}" HorizontalAlignment="Left" Margin="208,450,0,0" VerticalAlignment="Top" Width="100" Click="Ajouter_Click" Grid.Column="1"/>
         <ComboBox Name="comboBoxType" HorizontalAlignment="Left" Margin="52,452,0,0" VerticalAlignment="Top" Width="120" Height="22" Grid.Column="1">
-            <ComboBoxItem Content="Complete" IsSelected="true"/>
-            <ComboBoxItem Content="Differential"/>
+            <ComboBoxItem Content="{x:Static p:Resources.complete}" IsSelected="true"/>
+            <ComboBoxItem Content="{x:Static p:Resources.differential}"/>
         </ComboBox>
         <Button Content="..." HorizontalAlignment="Left" Margin="514,390,0,0" VerticalAlignment="Top" Click="SourceClic" Grid.Column="1"/>
         <Button Content="..." HorizontalAlignment="Left" Margin="514,421,0,0" VerticalAlignment="Top" Click="DestClic" Grid.Column="1"/>
