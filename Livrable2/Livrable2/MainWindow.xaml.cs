@@ -1,22 +1,9 @@
 ﻿using NSModel;
 using NSUtils;
 using NSViewModel;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Livrable2
 {
@@ -61,8 +48,8 @@ namespace Livrable2
         {
             //TODO : Check entry values with readers class
             string name = txtBoxName.Text;
-            string sourceDirectory = reader.ReadPath(txtBoxSourceDir.Text, false);
-            string destinationDirectory = reader.ReadPath(txtBoxDestDir.Text, true);
+            string sourceDirectory = txtBoxSourceDir.Text;
+            string destinationDirectory = txtBoxDestDir.Text;
             string type = comboBoxType.Text;
             int SaveJobeType = 1;
             switch (type)
@@ -120,6 +107,7 @@ namespace Livrable2
 
                     if (!string.IsNullOrWhiteSpace(fbd.SelectedPath))
                     {
+                        fbd.SelectedPath += @"\";
                         return fbd.SelectedPath;
                     }
                 }
