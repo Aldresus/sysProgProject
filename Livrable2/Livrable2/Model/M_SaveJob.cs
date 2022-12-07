@@ -213,6 +213,15 @@ namespace NSModel
             this.Set_totalSizeFile(_totalSizeFile);
         }
 
+        public void Update(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType)
+        {
+            //Edit attributes
+            this.Set_saveJobName(_saveJobName);
+            this.Set_saveJobSourceDirectory(_saveJobSourceDirectory);
+            this.Set_saveJobDestinationDirectory(_saveJobDestinationDirectory);
+            this.Set_saveJobType(_saveJobType);
+        }
+
         //Get all attributes of object M_SaveJob
         public Dictionary<string, dynamic> Read()
         {

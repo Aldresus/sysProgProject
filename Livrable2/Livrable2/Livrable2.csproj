@@ -9,11 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Properties\locales.json" />
+    <None Remove="Locales\locales.json" />
+    <None Remove="Resources\Cryptosoft.exe" />
   </ItemGroup>
-
   <ItemGroup>
-    <EmbeddedResource Include="Properties\locales.json" />
+    <EmbeddedResource Include="Locales\locales.json" />
+    <Content Include="Resources\Cryptosoft.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
