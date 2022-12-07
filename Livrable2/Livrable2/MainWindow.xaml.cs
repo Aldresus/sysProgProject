@@ -1,9 +1,14 @@
-﻿using NSModel;
+﻿using System;
+using Microsoft.VisualBasic.ApplicationServices;
+using NSModel;
 using NSUtils;
 using NSViewModel;
+using System.Reflection.Metadata;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using TextBox = System.Windows.Controls.TextBox;
 
 namespace Livrable2
 {
@@ -35,6 +40,8 @@ namespace Livrable2
         {
             DataGrid dataGrid = DG1;
             model.RemoveSaveJob(dataGrid.SelectedIndex);
+            viewModel.setupObsCollection();
+            DG1.DataContext = viewModel.data;
         }
 
         private void Execute_Click(object sender, RoutedEventArgs e)
@@ -113,6 +120,63 @@ namespace Livrable2
                 }
                 return "";
             }
+        }
+
+        private void DG1_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            DataGrid dataGrid = DG1;
+            DataGridRow Row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(dataGrid.SelectedIndex);
+            
+            DataGridCell RowAndColumnName = (DataGridCell)dataGrid.Columns[0].GetCellContent(Row).Parent;
+            string name;
+            if (RowAndColumnName.Content is TextBox)
+            {
+                name = ((TextBox)RowAndColumnName.Content).Text;
+            }
+            else
+            {
+                name = ((TextBlock)RowAndColumnName.Content).Text;
+            }
+
+            DataGridCell RowAndColumnSourceDirectory = (DataGridCell)dataGrid.Columns[1].GetCellContent(Row).Parent;
+            string sourceDirectory;
+            if (RowAndColumnSourceDirectory.Content is TextBox)
+            {
+                sourceDirectory = ((TextBox)RowAndColumnSourceDirectory.Content).Text;
+            }
+            else
+            {
+                sourceDirectory = ((TextBlock)RowAndColumnSourceDirectory.Content).Text;
+            }
+            
+
+            DataGridCell RowAndColumnDestDirectory = (DataGridCell)dataGrid.Columns[2].GetCellContent(Row).Parent;
+            string destDirectory;
+            if (RowAndColumnDestDirectory.Content is TextBox)
+            {
+                destDirectory = ((TextBox)RowAndColumnDestDirectory.Content).Text;
+            }
+            else
+            {
+                destDirectory = ((TextBlock)RowAndColumnDestDirectory.Content).Text;
+            }
+            
+
+            DataGridCell RowAndColumnType = (DataGridCell)dataGrid.Columns[3].GetCellContent(Row).Parent;
+            int type;
+            if (RowAndColumnType.Content is TextBox)
+            {
+                type = Convert.ToInt32(((TextBox)RowAndColumnType.Content).Text);
+            }
+            else
+            {
+                type = Convert.ToInt32(((TextBlock)RowAndColumnType.Content).Text);
+            }
+            
+            model.GetSelectedSaveJob(dataGrid.SelectedIndex).Update(name, sourceDirectory, destDirectory, type);
+            model.GetSelectedSaveJob(dataGrid.SelectedIndex).WriteJSON(model.Get_workFile());
+            viewModel.setupObsCollection();
+            DG1.DataContext = viewModel.data;
         }
     }
 }
