@@ -103,7 +103,7 @@ namespace NSUtils
                         if (output.Any())
                         {
                             validInput = true;
-                            return output;
+                            return output.Distinct().ToList();
                         }
                     }
                     catch (System.FormatException e)
