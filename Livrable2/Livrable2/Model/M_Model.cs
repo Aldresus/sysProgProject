@@ -19,7 +19,7 @@ namespace NSModel {
         private string _workFile;
         private dynamic _language;
         private List<string> _extensionToCrypt { get; set; } = new List<string>();
-        private Regex _extensionToCryptRegex { get; set; }
+        public Regex _extensionToCryptRegex { get; set; }
 
         //Constructor
         public M_Model()
