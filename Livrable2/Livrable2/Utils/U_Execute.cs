@@ -4,7 +4,6 @@ using NSModel;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Xml.Linq;
@@ -34,9 +33,6 @@ namespace NSUtils
             }
             if (proceed)
             {
-                string fileName;
-                string destFile;
-
                 string sourcePath = SaveJob.Get_saveJobSourceDirectory();
                 string targetPath = SaveJob.Get_saveJobDestinationDirectory();
                 bool isFullSave = (SaveJob.Get_saveJobType() == 1) ? true : false;
@@ -44,111 +40,50 @@ namespace NSUtils
                 // Check if the source directory exists.
                 if (System.IO.Directory.Exists(sourcePath))
                 {
-                    // Create a new target folder.
-                    // If the directory already exists, this method does not create a new directory.
-                    System.IO.Directory.CreateDirectory(targetPath);
-
                     string state = "active";
                     int total = SaveJob.Get_totalNbFile();
                     int NbFilesLeftToDo = total;
                     float progress = 0;
-
-                    // Get files in source directory
-                    string[] files = System.IO.Directory.GetFiles(sourcePath);
-
-                    foreach (string file in files)
+                    //Now Create all of the directories
+                    foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
                     {
-                        // Use static Path methods to extract only the file name from the path.
-                        fileName = System.IO.Path.GetFileName(file);
-                        destFile = System.IO.Path.Combine(targetPath, fileName);
-
-                        try
-                        {
-                            DateTime startCopyTime = DateTime.Now;
-                            // Copy the files and overwrite destination files if they already exist.
-                            if (_oModel._extensionToCryptRegex.IsMatch(fileName))
-                            {
-                                Process myProcess = Process.Start("Resources\\Cryptosoft.exe", sourcePath + fileName + " " + targetPath + fileName + " " + "azertyui");
-                                myProcess.WaitForExit();
-                                myProcess.Close();
-                            }
-                            else
-                            {
-                                System.IO.File.Copy(file, destFile, isFullSave);
-                            }
-                            NbFilesLeftToDo -= 1;
-                            progress = (int)Math.Round((((float)total - (float)NbFilesLeftToDo) / (float)total) * 100.0f);
-                            SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
-                            DateTime endCopyTime = DateTime.Now;
-                            TimeSpan copyTime = endCopyTime - startCopyTime;
-                            WriteLog(FileLogPath, fileName, sourcePath + fileName, destFile, sourcePath, copyTime);
-
-                        }
-                        catch (Exception e)
-                        {
-                            MessageBox.Show(e.Message + "\n\nStackTrace : " + e.StackTrace + "\n\nInnerException :" + e.InnerException);
-                        }
+                        Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
                     }
 
-                    // get subdirectories in the source directory
-                    DirectoryInfo di = new DirectoryInfo(sourcePath);
-                    DirectoryInfo[] arrDir = di.GetDirectories();
-
-                    foreach (DirectoryInfo dir in arrDir)
+                    //Copy all the files & Replaces any files with the same name
+                    foreach (string newPath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
                     {
-                        // Get all files in the sub directory iteratively
-                        string[] subFiles = System.IO.Directory.GetFiles(dir.FullName);
-                        foreach (string file in subFiles)
+                        DateTime startCopyTime = DateTime.Now;
+                        if (_oModel._extensionToCryptRegex.IsMatch(newPath))
                         {
-                            // Create new sub folders in target directory.
-                            string targetNewFolder = System.IO.Path.Combine(targetPath, dir.Name);
-                            System.IO.Directory.CreateDirectory(targetNewFolder);
-
-                            // Use static Path methods to extract only the file name from the path.
-                            fileName = System.IO.Path.GetFileName(file);
-                            destFile = System.IO.Path.Combine(targetNewFolder, fileName);
-
-                            try
-                            {
-                                DateTime startCopyTime = DateTime.Now;
-                                // Copy the files and overwrite destination files if they already exist.
-                                if (_oModel._extensionToCryptRegex.IsMatch(fileName))
-                                {
-                                    Process myProcess = Process.Start("Resources\\Cryptosoft.exe", sourcePath + dir.Name + "\\" + fileName + " " + destFile + " " + "azertyui");
-                                    myProcess.WaitForExit();
-                                    myProcess.Close();
-                                }
-                                else
-                                {
-                                    System.IO.File.Copy(file, destFile, isFullSave);
-                                }
-                                NbFilesLeftToDo -= 1;
-                                progress = (int)Math.Round((((float)total - (float)NbFilesLeftToDo) / (float)total) * 100.0f);
-                                SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
-                                DateTime endCopyTime = DateTime.Now;
-                                TimeSpan copyTime = endCopyTime - startCopyTime;
-                                WriteLog(FileLogPath, fileName, sourcePath + dir.Name + "\\" + fileName, destFile, sourcePath + dir.Name, copyTime);
-
-                            }
-                            catch (Exception e)
-                            {
-                                MessageBox.Show(e.Message + "\n\nStackTrace : " + e.StackTrace + "\n\nInnerException :" + e.InnerException);
-                            }
+                            Process myProcess = Process.Start("Resources\\Cryptosoft.exe", newPath + " " + newPath.Replace(sourcePath, targetPath) + " " + "azertyui");
+                            myProcess.WaitForExit();
+                            myProcess.Close();
                         }
+                        else
+                        {
+                            File.Copy(newPath, newPath.Replace(sourcePath, targetPath), isFullSave);
+                        }
+                        string fileName = newPath.Replace(sourcePath, null);
+                        NbFilesLeftToDo -= 1;
+                        progress = (int)Math.Round((((float)total - (float)NbFilesLeftToDo) / (float)total) * 100.0f);
+                        SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
+                        DateTime endCopyTime = DateTime.Now;
+                        TimeSpan copyTime = endCopyTime - startCopyTime;
+                        WriteLog(FileLogPath, fileName, newPath, newPath.Replace(sourcePath, targetPath), sourcePath, copyTime);
                     }
                     state = "inactive";
                     SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
-
-
                 }
 
-                else
-                {
-                    MessageBox.Show($"{noExecutionIfRunning} is running and forbids execution.");
-                }
+            }
+            else
+            {
+                MessageBox.Show($"{noExecutionIfRunning} is running and forbids execution.");
             }
 
         }
+
         public void WriteLog(string JsonLogPath, string fileName, string fileSourcePath, string fileDestPath, string directorySource, TimeSpan copyTime)
         {
             long size;
