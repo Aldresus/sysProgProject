@@ -76,10 +76,10 @@ namespace NSUtils
                     SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
                 }
 
-                else
-                {
-                    MessageBox.Show($"{noExecutionIfRunning} is running and forbids execution.");
-                }
+            }
+            else
+            {
+                MessageBox.Show($"{noExecutionIfRunning} is running and forbids execution.");
             }
 
         }
