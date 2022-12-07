@@ -4,9 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Livrable2"
-        Title="MainWindow" Height="450" Width="800">
+        Title="EasySave" Height="500" Width="800">
     <Grid>
-        <DataGrid Name="DG1" ItemsSource="{Binding}" AutoGenerateColumns="False" Margin="0,23,0,140">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="13*"/>
+            <ColumnDefinition Width="87*"/>
+        </Grid.ColumnDefinitions>
+        <DataGrid Name="DG1" ItemsSource="{Binding}" AutoGenerateColumns="False" CanUserAddRows="false" Margin="0,23,0,140" Grid.ColumnSpan="2">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name"  Binding="{Binding _saveJobName}"/>
                 <DataGridTextColumn Header="Source Folder" Binding="{Binding _saveJobSourceDirectory}" />
@@ -29,18 +33,19 @@
             </DataGrid.Columns>
         </DataGrid>
         <Button Content="Settings" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click"/>
-        <Label Content="Name" HorizontalAlignment="Left" Margin="4,299,0,0" VerticalAlignment="Top"/>
-        <Label Content="Source Directory" HorizontalAlignment="Left" Margin="5,330,0,0" VerticalAlignment="Top"/>
-        <Label Content="Destination Directory" HorizontalAlignment="Left" Margin="10,361,0,0" VerticalAlignment="Top"/>
-        <Label Content="Type" HorizontalAlignment="Left" Margin="10,392,0,0" VerticalAlignment="Top"/>
-        <TextBox Name="txtBoxName" HorizontalAlignment="Left" Margin="156,303,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-        <TextBox Name="txtBoxSourceDir" HorizontalAlignment="Left" Margin="156,334,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="456"/>
-        <TextBox Name="txtBoxDestDir" HorizontalAlignment="Left" Margin="156,365,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="456"/>
-        <Button Content="Ajouter" HorizontalAlignment="Left" Margin="312,394,0,0" VerticalAlignment="Top" Width="100" Click="Ajouter_Click"/>
-        <ComboBox Name="comboBoxType" HorizontalAlignment="Left" Margin="156,396,0,0" VerticalAlignment="Top" Width="120" Height="22">
+        <Label Content="Name" HorizontalAlignment="Left" Margin="4,355,0,0" VerticalAlignment="Top"/>
+        <Label Content="Source Directory" HorizontalAlignment="Left" Margin="5,386,0,0" VerticalAlignment="Top"/>
+        <Label Content="Destination Directory" HorizontalAlignment="Left" Margin="10,417,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <Label Content="Type" HorizontalAlignment="Left" Margin="10,448,0,0" VerticalAlignment="Top"/>
+        <TextBox Name="txtBoxName" HorizontalAlignment="Left" Margin="52,359,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <TextBox Name="txtBoxSourceDir" HorizontalAlignment="Left" Margin="52,390,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="456" Grid.Column="1"/>
+        <TextBox Name="txtBoxDestDir" HorizontalAlignment="Left" Margin="52,421,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="456" Grid.Column="1"/>
+        <Button Content="Ajouter" HorizontalAlignment="Left" Margin="208,450,0,0" VerticalAlignment="Top" Width="100" Click="Ajouter_Click" Grid.Column="1"/>
+        <ComboBox Name="comboBoxType" HorizontalAlignment="Left" Margin="52,452,0,0" VerticalAlignment="Top" Width="120" Height="22" Grid.Column="1">
             <ComboBoxItem Content="Complete" IsSelected="true"/>
             <ComboBoxItem Content="Differential"/>
         </ComboBox>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="675,361,0,0" VerticalAlignment="Top" Click="Button_Click_1"/>
+        <Button Content="..." HorizontalAlignment="Left" Margin="514,390,0,0" VerticalAlignment="Top" Click="SourceClic" Grid.Column="1"/>
+        <Button Content="..." HorizontalAlignment="Left" Margin="514,421,0,0" VerticalAlignment="Top" Click="DestClic" Grid.Column="1"/>
     </Grid>
 </Window>

@@ -1,5 +1,9 @@
-﻿using System;
+﻿using NSModel;
+using NSUtils;
+using NSViewModel;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,14 +11,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using NSModel;
-using NSViewModel;
-using NSUtils;
 
 namespace Livrable2
 {
@@ -30,8 +32,8 @@ namespace Livrable2
         public MainWindow()
         {
             InitializeComponent();
-            this.model = new M_Model();
-            this.viewModel = new VM_ViewModel(model);
+            model = new M_Model();
+            viewModel = new VM_ViewModel(model);
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
         }
@@ -51,16 +53,16 @@ namespace Livrable2
         private void Execute_Click(object sender, RoutedEventArgs e)
         {
             DataGrid dataGrid = DG1;
-            this.model.Get_listSaveJob()[dataGrid.SelectedIndex].Execute(this.model.Get_listSaveJob()[dataGrid.SelectedIndex], this.model.Get_logFile(), this.model.Get_workFile(), this.model);
+            model.Get_listSaveJob()[dataGrid.SelectedIndex].Execute(model.Get_listSaveJob()[dataGrid.SelectedIndex], model.Get_logFile(), model.Get_workFile(), model);
+            System.Windows.Forms.MessageBox.Show($"{viewModel.data[dataGrid.SelectedIndex]._saveJobName} executed");
+
         }
         private void Ajouter_Click(object sender, RoutedEventArgs e)
         {
             //TODO : Check entry values with readers class
             string name = txtBoxName.Text;
-            string sourceDirectory = txtBoxSourceDir.Text;
-            sourceDirectory = reader.ReadPath(sourceDirectory, false);
-            string destinationDirectory = txtBoxDestDir.Text;
-            destinationDirectory = reader.ReadPath(destinationDirectory, true);
+            string sourceDirectory = reader.ReadPath(txtBoxSourceDir.Text, false);
+            string destinationDirectory = reader.ReadPath(txtBoxDestDir.Text, true);
             string type = comboBoxType.Text;
             int SaveJobeType = 1;
             switch (type)
@@ -74,25 +76,55 @@ namespace Livrable2
                 default:
                     break;
             }
+            if (checker.CheckStringInput(name, false) && checker.CheckStringInput(sourceDirectory, false) && checker.CheckStringInput(destinationDirectory, false) && checker.CheckStringInput(type, false))
+            {
+                int indexJob = checker.GetEmptyJobIndex(model.Get_listSaveJob());
+                model.InstanceNewSaveJob(name, sourceDirectory, destinationDirectory, SaveJobeType, "idle", indexJob);
+                model.GetSelectedSaveJob(indexJob).WriteJSON(model.Get_workFile());
+                viewModel.setupObsCollection();
+                DG1.DataContext = viewModel.data;
+                System.Windows.Forms.MessageBox.Show($"{name} created");
+                
+                txtBoxName.Text = "";
+                txtBoxSourceDir.Text = "";
+                txtBoxDestDir.Text = "";
+                comboBoxType.Text = "Complete";
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show("Please fill all the fields");
+            }
+            
 
-            int indexJob = checker.GetEmptyJobIndex(model.Get_listSaveJob());
-            this.model.InstanceNewSaveJob(name, sourceDirectory, destinationDirectory, SaveJobeType, "idle", indexJob);
-            this.model.GetSelectedSaveJob(indexJob).WriteJSON(this.model.Get_workFile());
-            this.viewModel.setupObsCollection();
-            DG1.DataContext = this.viewModel.data;
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void SourceClic(object sender, RoutedEventArgs e)
         {
-            // Create OpenFileDialog 
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
 
-            // Set filter for file extension and default file extension 
-            dlg.DefaultExt = ".png";
-            dlg.Filter = "JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|JPG Files (*.jpg)|*.jpg|GIF Files (*.gif)|*.gif";
+            txtBoxSourceDir.Text = AskForFolder();
 
-            // Display OpenFileDialog by calling ShowDialog method 
-            Nullable<bool> result = dlg.ShowDialog();
+        }
+        private void DestClic(object sender, RoutedEventArgs e)
+        {
+            txtBoxDestDir.Text = AskForFolder();
+        }
+
+        private string AskForFolder()
+        {
+            bool validInput = false;
+            using (var fbd = new FolderBrowserDialog())
+            {
+                while (!validInput)
+                {
+                    DialogResult result = fbd.ShowDialog();
+
+                    if (!string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                    {
+                        return fbd.SelectedPath;
+                    }
+                }
+                return "";
+            }
         }
     }
 }

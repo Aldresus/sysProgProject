@@ -24,5 +24,25 @@ namespace NSUtils
         {
             return listSaveJob.Count(); // should never happen
         }
+        public bool CheckStringInput(string promptText, bool canBeEmpty)
+        {
+
+            {
+
+                if (promptText.Length == 0 && canBeEmpty)
+                {
+                    return true;
+                }
+                else if (promptText.Length > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+        }
     }
 }
