@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
+using System.Text.RegularExpressions;
 
 namespace NSModel {
     public class M_Model
@@ -17,6 +18,8 @@ namespace NSModel {
         private string _logFile;
         private string _workFile;
         private dynamic _language;
+        private List<string> _extensionToCrypt { get; set; } = new List<string>();
+        private Regex _extensionToCryptRegex;
 
         //Constructor
         public M_Model()
@@ -54,48 +57,9 @@ namespace NSModel {
             this.Set_workFile(pathState);
             if (!File.Exists(this.Get_workFile()))
             {
-                StringBuilder sb = new StringBuilder();
-                StringWriter sw = new StringWriter(sb);
-                JsonWriter writer = new JsonTextWriter(sw);
-                writer.Formatting = Newtonsoft.Json.Formatting.Indented;
-                writer.WriteStartObject();
-                writer.WritePropertyName("Name");
-                writer.WriteValue("");
-                writer.WritePropertyName("SourceFilePath");
-                writer.WriteValue("");
-                writer.WritePropertyName("TargetFilePath");
-                writer.WriteValue("");
-                writer.WritePropertyName("State");
-                writer.WriteValue("");
-                writer.WritePropertyName("Type");
-                writer.WriteValue(0);
-                writer.WritePropertyName("TotalFilesToCopy");
-                writer.WriteValue(0);
-                writer.WritePropertyName("TotalFilesSize");
-                writer.WriteValue(0);
-                writer.WritePropertyName("NbFilesLeftToDo");
-                writer.WriteValue(0);
-                writer.WritePropertyName("Progression");
-                writer.WriteValue(0);
-                writer.WriteEndObject();
-
-                //Create start State Json file
-                string startJson = "{\n\"lang\": \"en\",\n\"State\": [\n";
-
-                //Convert object JObject to string
-                string json = sb.ToString();
-
-                string file = json;
-                for (int i = 0; i < 4; i++)
-                {
-                    file += ",\n" + json;
-                }
-
-                //Create end State Json file
-                string endJson = "\n]\n}";
 
                 //Write json string to JSON file
-                File.WriteAllText(this.Get_workFile(), startJson + file + endJson);
+                File.WriteAllText(this.Get_workFile(), "{\n\"lang\": \"en\",\n\"extToCrypt\": [], \n\"State\": []\n}");
 
             }
 
@@ -114,8 +78,17 @@ namespace NSModel {
             Stream stream = assembly.GetManifestResourceStream(resourceName);
             StreamReader reader = new StreamReader(stream);
              this._language = JObject.Parse(reader.ReadToEnd())[objJSON["lang"].ToString()];
+
+            //Get extensions to crypt in json file
+            foreach (string i in objJSON["extToCrypt"])
+            {
+                this._extensionToCrypt.Add(i);
+            }
+
+            //Set _extensionToCryptRegex
+            this.Set_extensionToCryptRegex();
         }
-        
+
         public void WriteLanguage(string language) {
             JObject objJSON = JObject.Parse(File.ReadAllText(this.Get_workFile()));
             objJSON["lang"] = language;
@@ -196,6 +169,29 @@ namespace NSModel {
             this._language = value;
         }
 
+        //Getter _extensionToCrypt
+        public List<string> Get_extensionToCrypt()
+        {
+            return this._extensionToCrypt;
+        }
+
+        //Add _extensionToCrypt
+        public void Add_extensionToCrypt(string value)
+        {
+            this._extensionToCrypt.Add(value);
+        }
+
+        //Remove _extensionToCrypt
+        public void Remove_extensionToCrypt(int index)
+        {
+            this._extensionToCrypt.RemoveAt(index);
+        }
+
+        public void Edit_extensionToCrypt(int index, string value)
+        {
+            this._extensionToCrypt[index] = value;
+        }
+
         public void InstanceNewSaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int index)
         {
             this._listSaveJob.Add(new M_SaveJob(_saveJobName, _saveJobSourceDirectory, _saveJobDestinationDirectory, _saveJobType, _state, index));
@@ -218,6 +214,50 @@ namespace NSModel {
 
             //Write json string to JSON file
             File.WriteAllText(this.Get_workFile(), finalState);
+        }
+
+        public void AddExtensionToCryptState(string extension)
+        {
+            JObject objJSON = JObject.Parse(File.ReadAllText(this.Get_workFile()));
+            JArray arrayExtToCrypt = (JArray)objJSON["extToCrypt"];
+            arrayExtToCrypt.Add(extension);
+            //Convert object JObject to string
+            string modifiedExtToCrypt = objJSON.ToString();
+
+            //Write json string to JSON file
+            File.WriteAllText(this.Get_workFile(), modifiedExtToCrypt);
+        }
+
+        public void RemoveExtensionToCryptState(int index)
+        {
+
+            JObject objJSON = JObject.Parse(File.ReadAllText(this.Get_workFile()));
+            JArray arrayExtToCrypt = (JArray)objJSON["extToCrypt"];
+            arrayExtToCrypt.RemoveAt(index);
+            //Convert object JObject to string
+            string modifiedExtToCrypt = objJSON.ToString();
+
+            //Write json string to JSON file
+            File.WriteAllText(this.Get_workFile(), modifiedExtToCrypt);
+        }
+
+        public void EditExtensionToCryptState(int index, string value)
+        {
+            JObject objJSON = JObject.Parse(File.ReadAllText(this.Get_workFile()));
+            JArray arrayExtToCrypt = (JArray)objJSON["extToCrypt"];
+            arrayExtToCrypt[index] = value;
+            //Convert object JObject to string
+            string modifiedExtToCrypt = objJSON.ToString();
+
+            //Write json string to JSON file
+            File.WriteAllText(this.Get_workFile(), modifiedExtToCrypt);
+        }
+
+        public void Set_extensionToCryptRegex()
+        {
+            var result = String.Join("|", this._extensionToCrypt.ToArray());
+            string regex = @$"\b({result})\b";
+            this._extensionToCryptRegex = new Regex(regex);
         }
     }
 }

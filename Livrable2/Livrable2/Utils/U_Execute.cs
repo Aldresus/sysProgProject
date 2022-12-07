@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using System.Reflection.Metadata;
 using System;
+using System.Windows;
 
 namespace NSUtils
 {
@@ -61,8 +62,7 @@ namespace NSUtils
                         NbFilesLeftToDo -= 1;
                         progress = (int)Math.Round((((float)total - (float)NbFilesLeftToDo) / (float)total) * 100.0f);
                         SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
-                        Console.Clear();
-                        Console.WriteLine($"{_oModel.Get_language().progress.ToString()} {progress} %");
+                        //Console.WriteLine($"{_oModel.Get_language().progress.ToString()} {progress} %");
                         DateTime startCopyTime = DateTime.Now;
                         System.IO.File.Copy(file, destFile, isFullSave);
                         DateTime endCopyTime = DateTime.Now;
@@ -71,7 +71,8 @@ namespace NSUtils
                     }
                     catch (Exception e)
                     {
-                        Console.Out.WriteLine(e.Message + "\n\nStackTrace : " + e.StackTrace + "\n\nInnerException :" + e.InnerException);
+                        //Console.Out.WriteLine(e.Message + "\n\nStackTrace : " + e.StackTrace + "\n\nInnerException :" + e.InnerException);
+                        MessageBox.Show(e.Message + "\n\nStackTrace : " + e.StackTrace + "\n\nInnerException :" + e.InnerException);
                     }
                 }
 
@@ -99,8 +100,7 @@ namespace NSUtils
                             NbFilesLeftToDo -= 1;
                             progress = (int)Math.Round((((float)total - (float)NbFilesLeftToDo) / (float)total) * 100.0f);
                             SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
-                            Console.Clear();
-                            Console.WriteLine($"{_oModel.Get_language().progress.ToString()} {progress} %");
+                            //Console.WriteLine($"{_oModel.Get_language().progress.ToString()} {progress} %");
                             DateTime startCopyTime = DateTime.Now;
                             System.IO.File.Copy(file, destFile, isFullSave);
                             DateTime endCopyTime = DateTime.Now;
@@ -109,7 +109,8 @@ namespace NSUtils
                         }
                         catch (Exception e)
                         {
-                            Console.Out.WriteLine(e.Message + "\n\nStackTrace : " + e.StackTrace + "\n\nInnerException :" + e.InnerException);
+                            //Console.Out.WriteLine(e.Message + "\n\nStackTrace : " + e.StackTrace + "\n\nInnerException :" + e.InnerException);
+                            MessageBox.Show(e.Message + "\n\nStackTrace : " + e.StackTrace + "\n\nInnerException :" + e.InnerException);
                         }
                     }
                 }
@@ -120,7 +121,7 @@ namespace NSUtils
             
             else
             {
-                Console.WriteLine(_oModel.Get_language().sourcePathDoentExist.ToString());
+                //Console.WriteLine(_oModel.Get_language().sourcePathDoentExist.ToString());
             }
         }
 

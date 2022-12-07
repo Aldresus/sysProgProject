@@ -7,11 +7,9 @@ namespace NSUtils
 {
     public class U_Reader
     {
-        private M_Model _oModel;
 
-        public U_Reader(M_Model M)
+        public U_Reader()
         {
-            this._oModel = M;
         }
 
         public int ReadInt(string promptText)
@@ -34,13 +32,11 @@ namespace NSUtils
                     }
                     catch (System.FormatException e)
                     {
-                        Console.WriteLine(_oModel.Get_language().onlyNumbers.ToString());
                     }
                     
                 }
                 else
                 {
-                    Console.WriteLine(_oModel.Get_language().cannotBeEmpty.ToString());
                 }
             }
             return -1; // should never happen
@@ -52,27 +48,24 @@ namespace NSUtils
 
             while (!validInput)
             {
-                Console.WriteLine(promptText);
-                string userInput = Console.ReadLine();
 
-                if (userInput.Length == 0 && canBeEmpty)
+                if (promptText.Length == 0 && canBeEmpty)
                 {
                     validInput = true;
-                    return userInput;
+                    return promptText;
                 }
-                else if (userInput.Length > 0)
+                else if (promptText.Length > 0)
                 {
                     validInput = true;
-                    return userInput;
+                    return promptText;
                 }
                 else
                 {
-                    Console.WriteLine(_oModel.Get_language().cannotBeEmpty.ToString());
                 }
             }
             return null; // should never happen
         }
-        public List<int> ReadMany(string promptText)
+        public List<int> ReadMany(string promptText, M_Model model)
         {
 
             bool validInput = false;
@@ -92,13 +85,12 @@ namespace NSUtils
                         foreach (string i in temp)
                         {
                             int j = int.Parse(i);
-                            if (j >= 0 && j <= _oModel.Get_listSaveJob().Count())
+                            if (j >= 0 && j <= model.Get_listSaveJob().Count())
                             {
                                 output.Add(j);
                             }
                             else
                             {
-                                Console.WriteLine(_oModel.Get_language().indexOutOfRange.ToString());
                                 output.Clear();
                                 break;
                             }
@@ -111,14 +103,12 @@ namespace NSUtils
                     }
                     catch (System.FormatException e)
                     {
-                        Console.WriteLine(_oModel.Get_language().onlyNumbers.ToString());
                     }
 
 
                 }
                 else
                 {
-                    Console.WriteLine(_oModel.Get_language().cannotBeEmpty.ToString());
                 }
             }
             return null; // should never happen
@@ -149,7 +139,6 @@ namespace NSUtils
                 }
                 else
                 {
-                    Console.WriteLine(_oModel.Get_language().sourcePathDoentExist.ToString());
                 }
             }
             return null; // should never happen

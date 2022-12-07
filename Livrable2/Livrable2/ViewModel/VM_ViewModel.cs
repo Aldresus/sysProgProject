@@ -12,11 +12,8 @@ namespace NSViewModel
         private string? _destinationDirectory;
         private string? _type;
         private M_Model _oModel;
-        public ObservableCollection<M_SaveJob> data
-        {
-            get;
-            set;
-        } = new ObservableCollection<M_SaveJob>();
+        public ObservableCollection<M_SaveJob> data { get; set; } = new ObservableCollection<M_SaveJob>();
+        public ObservableCollection<string> extension { get; set; } = new ObservableCollection<string>();
 
         public string Get_Name()
         {
@@ -87,9 +84,19 @@ namespace NSViewModel
 
         public void setupObsCollection()
         {
+            this.data.Clear();
             foreach (M_SaveJob saveJob in _oModel.Get_listSaveJob())
             {
                 this.data.Add(saveJob);
+            }
+        }
+
+        public void setupExtensionObsCollection()
+        {
+            this.extension.Clear();
+            foreach (string extension in _oModel.Get_extensionToCrypt())
+            {
+                this.extension.Add(extension);
             }
         }
     }
