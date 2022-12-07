@@ -4,6 +4,7 @@ using NSModel;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Xml.Linq;
@@ -67,7 +68,7 @@ namespace NSUtils
                             // Copy the files and overwrite destination files if they already exist.
                             if (_oModel._extensionToCryptRegex.IsMatch(fileName))
                             {
-                                Process myProcess = Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).ToString() + @"\EasySave\exe\Cryptosoft.exe", sourcePath + fileName + " " + targetPath + fileName + " " + "azertyui");
+                                Process myProcess = Process.Start("Resources\\Cryptosoft.exe", sourcePath + fileName + " " + targetPath + fileName + " " + "azertyui");
                                 myProcess.WaitForExit();
                                 myProcess.Close();
                             }
@@ -113,7 +114,7 @@ namespace NSUtils
                                 // Copy the files and overwrite destination files if they already exist.
                                 if (_oModel._extensionToCryptRegex.IsMatch(fileName))
                                 {
-                                    Process myProcess = Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).ToString() + @"\EasySave\exe\Cryptosoft.exe", sourcePath + dir.Name + "\\" + fileName + " " + destFile + " " + "azertyui");
+                                    Process myProcess = Process.Start("Resources\\Cryptosoft.exe", sourcePath + dir.Name + "\\" + fileName + " " + destFile + " " + "azertyui");
                                     myProcess.WaitForExit();
                                     myProcess.Close();
                                 }
