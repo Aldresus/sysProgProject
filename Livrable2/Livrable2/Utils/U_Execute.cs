@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
+using Livrable2.Properties;
 using System.Xml.Linq;
 
 namespace NSUtils
@@ -75,11 +77,11 @@ namespace NSUtils
                     state = "inactive";
                     SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
                 }
-
+                System.Windows.Forms.MessageBox.Show($"{Resources.executed}");
             }
             else
             {
-                MessageBox.Show($"{noExecutionIfRunning} is running and forbids execution.");
+                System.Windows.Forms.MessageBox.Show($"{Resources.pleaseCloseCalculatator}");
             }
 
         }

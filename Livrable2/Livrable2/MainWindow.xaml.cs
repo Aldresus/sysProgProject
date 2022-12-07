@@ -51,7 +51,6 @@ namespace Livrable2
         {
             DataGrid dataGrid = DG1;
             model.Get_listSaveJob()[dataGrid.SelectedIndex].Execute(model.Get_listSaveJob()[dataGrid.SelectedIndex], model.Get_logFile(), model.Get_workFile(), model);
-            System.Windows.Forms.MessageBox.Show($"{viewModel.data[dataGrid.SelectedIndex]._saveJobName} {Properties.Resources.executed}");
 
         }
         private void Ajouter_Click(object sender, RoutedEventArgs e)

@@ -156,6 +156,9 @@
   <data name="name" xml:space="preserve">
     <value>Nom</value>
   </data>
+  <data name="pleaseCloseCalculatator" xml:space="preserve">
+    <value>Fermez la calculatrice</value>
+  </data>
   <data name="pleaseFillAll" xml:space="preserve">
     <value>Remplissez tout les champs</value>
   </data>

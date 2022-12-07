@@ -178,6 +178,15 @@ namespace Livrable2.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Please close the calculator.
+        /// </summary>
+        public static string pleaseCloseCalculatator {
+            get {
+                return ResourceManager.GetString("pleaseCloseCalculatator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Please fill all the fields.
         /// </summary>
         public static string pleaseFillAll {
