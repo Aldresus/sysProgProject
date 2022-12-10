@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Livrable2.Properties;
 using System.Xml.Linq;
+using System.Collections.Generic;
 
 namespace NSUtils
 {
@@ -46,6 +47,10 @@ namespace NSUtils
                     int total = SaveJob.Get_totalNbFile();
                     int NbFilesLeftToDo = total;
                     float progress = 0;
+                    List<string> AllFiles= new();
+                    string fileName;
+                    string targetFilePath;
+                    string directoryTarget;
                     //Now Create all of the directories
                     foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
                     {
@@ -53,26 +58,41 @@ namespace NSUtils
                     }
 
                     //Copy all the files & Replaces any files with the same name
-                    foreach (string newPath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
+                    foreach (string file in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
                     {
+                        if (file.EndsWith(".txt"))
+                        {
+                            AllFiles.Insert(0, file);
+                        }
+                        else
+                        {
+                            AllFiles.Add(file);
+                        }
+                    }
+                    foreach (string newPath in AllFiles)
+                    {  
                         DateTime startCopyTime = DateTime.Now;
+                        
+                        fileName = Path.GetFileName(newPath);
+                        targetFilePath = newPath.Replace(sourcePath, targetPath);
+                        directoryTarget = targetFilePath.Replace(fileName, null);
+                        
                         if (_oModel._extensionToCryptRegex.IsMatch(newPath))
                         {
-                            Process myProcess = Process.Start("Resources\\Cryptosoft.exe", newPath + " " + newPath.Replace(sourcePath, targetPath) + " " + "azertyui");
+                            Process myProcess = Process.Start("Resources\\Cryptosoft.exe", newPath + " " + targetFilePath + " " + "azertyui");
                             myProcess.WaitForExit();
                             myProcess.Close();
                         }
                         else
                         {
-                            File.Copy(newPath, newPath.Replace(sourcePath, targetPath), isFullSave);
+                            File.Copy(newPath, targetFilePath, isFullSave);
                         }
-                        string fileName = newPath.Replace(sourcePath, null);
                         NbFilesLeftToDo -= 1;
                         progress = (int)Math.Round((((float)total - (float)NbFilesLeftToDo) / (float)total) * 100.0f);
                         SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
                         DateTime endCopyTime = DateTime.Now;
                         TimeSpan copyTime = endCopyTime - startCopyTime;
-                        WriteLog(FileLogPath, fileName, newPath, newPath.Replace(sourcePath, targetPath), sourcePath, copyTime);
+                        WriteLog(FileLogPath, fileName, newPath, targetFilePath, directoryTarget, copyTime);
                     }
                     state = "inactive";
                     SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
@@ -86,7 +106,7 @@ namespace NSUtils
 
         }
 
-        public void WriteLog(string JsonLogPath, string fileName, string fileSourcePath, string fileDestPath, string directorySource, TimeSpan copyTime)
+        public void WriteLog(string JsonLogPath, string fileName, string fileSourcePath, string fileDestPath, string directoryTarget, TimeSpan copyTime)
         {
             long size;
             //Get fileinfo
@@ -115,7 +135,7 @@ namespace NSUtils
             writer.WritePropertyName("FileTarget");
             writer.WriteValue(fileDestPath);
             writer.WritePropertyName("destPath");
-            writer.WriteValue(directorySource);
+            writer.WriteValue(directoryTarget);
             writer.WritePropertyName("FileSize");
             writer.WriteValue(size);
             writer.WritePropertyName("FileTransferTime");
@@ -149,7 +169,7 @@ namespace NSUtils
             parentElement.Add(new XElement("Name", $"{fileName}"));
             parentElement.Add(new XElement("FileSource", $"{fileSourcePath}"));
             parentElement.Add(new XElement("FileTarget", $"{fileDestPath}"));
-            parentElement.Add(new XElement("DestPath", $"{directorySource}"));
+            parentElement.Add(new XElement("DestPath", $"{directoryTarget}"));
             parentElement.Add(new XElement("FileSize", $"{size}"));
             parentElement.Add(new XElement("FileTransferTime", $"{copyTime}"));
             parentElement.Add(new XElement("DateTime", DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy")));
