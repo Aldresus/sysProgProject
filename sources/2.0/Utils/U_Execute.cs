@@ -60,7 +60,7 @@ namespace NSUtils
                     //Copy all the files & Replaces any files with the same name
                     foreach (string file in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
                     {
-                        if (file.EndsWith(".txt"))
+                        if (_oModel._extensionPriorityRegex.IsMatch(file))
                         {
                             AllFiles.Insert(0, file);
                         }

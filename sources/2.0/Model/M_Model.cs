@@ -22,7 +22,9 @@ namespace NSModel
         private string _workFile;
         private dynamic _language;
         private List<string> _extensionToCrypt { get; set; } = new List<string>();
+        private List<string> _extensionPriority { get; set; } = new List<string>();
         public Regex _extensionToCryptRegex { get; set; }
+        public Regex _extensionPriorityRegex { get; set; }
 
         //Constructor
         public M_Model()
@@ -62,7 +64,7 @@ namespace NSModel
             {
 
                 //Write json string to JSON file
-                File.WriteAllText(Get_workFile(), "{\n\"lang\": \"en\",\n\"extToCrypt\": [], \n\"State\": []\n}");
+                File.WriteAllText(Get_workFile(), "{\n\"lang\": \"en\",\n\"extToCrypt\": [], \n\"extPrio\": [], \n\"State\": []\n}");
 
             }
 
@@ -83,6 +85,15 @@ namespace NSModel
 
             //Set _extensionToCryptRegex
             Set_extensionToCryptRegex();
+            
+            //Get extensions to prioritize in json file
+            foreach (string y in objJSON["extPrio"])
+            {
+                _extensionPriority.Add(y);
+            }
+
+            //Set _extensionPrioRegex
+            Set_extensionPriorityRegex();
 
         }
 
@@ -186,6 +197,27 @@ namespace NSModel
         public void Edit_extensionToCrypt(int index, string value)
         {
             _extensionToCrypt[index] = value;
+        } 
+        public List<string> Get_extensionPriority()
+        {
+            return _extensionPriority;
+        }
+
+        //Add _extensionToCrypt
+        public void Add_extensionPriority(string value)
+        {
+            _extensionPriority.Add(value);
+        }
+
+        //Remove _extensionToCrypt
+        public void Remove_extensionPriority(int index)
+        {
+            _extensionPriority.RemoveAt(index);
+        }
+
+        public void Edit_extensionPriority(int index, string value)
+        {
+            _extensionPriority[index] = value;
         }
 
         public void InstanceNewSaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int index)
@@ -262,6 +294,57 @@ namespace NSModel
             }
             string regex = @$"\b({result})\b";
             _extensionToCryptRegex = new Regex(regex);
+        }
+        public void AddExtensionPriorityState(string extension)
+        {
+            JObject objJSON = JObject.Parse(File.ReadAllText(Get_workFile()));
+            JArray arrayExtPrio = (JArray)objJSON["extPrio"];
+            arrayExtPrio.Add(extension);
+            //Convert object JObject to string
+            string modifiedExtPrio = objJSON.ToString();
+
+            //Write json string to JSON file
+            File.WriteAllText(Get_workFile(), modifiedExtPrio);
+        }
+
+        public void RemoveExtensionPriorityState(int index)
+        {
+
+            JObject objJSON = JObject.Parse(File.ReadAllText(Get_workFile()));
+            JArray arrayExtPrio = (JArray)objJSON["extPrio"];
+            arrayExtPrio.RemoveAt(index);
+            //Convert object JObject to string
+            string modifiedExtPrio = objJSON.ToString();
+
+            //Write json string to JSON file
+            File.WriteAllText(Get_workFile(), modifiedExtPrio);
+        }
+
+        public void EditExtensionPriorityState(int index, string value)
+        {
+            JObject objJSON = JObject.Parse(File.ReadAllText(Get_workFile()));
+            JArray arrayExtPrio = (JArray)objJSON["extPrio"];
+            arrayExtPrio[index] = value;
+            //Convert object JObject to string
+            string modifiedExtPrio = objJSON.ToString();
+
+            //Write json string to JSON file
+            File.WriteAllText(Get_workFile(), modifiedExtPrio);
+        }
+        
+        public void Set_extensionPriorityRegex()
+        {
+            string result;
+            if (_extensionPriority.Count() > 0)
+            {
+                result = String.Join("|", _extensionPriority.ToArray());
+            }
+            else
+            {
+                result = "jesuisvide";
+            }
+            string regex = @$"\b({result})\b";
+            _extensionPriorityRegex = new Regex(regex);
         }
     }
 }
