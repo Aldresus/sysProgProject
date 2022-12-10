@@ -22,8 +22,8 @@
         </DataGrid>
         <TextBox Name ="textBoxExtToAdd" HorizontalAlignment="Left" Margin="283,66,0,0" TextWrapping="Wrap" Text="."  VerticalAlignment="Top" Width="159" Height="22"/>
         <Button Content="{x:Static p:Resources.add}" HorizontalAlignment="Left" Margin="447,66,0,0" VerticalAlignment="Top" Width="47" Click="Button_Click"/>
-        
-        <Label Content="Extension prioritaires" HorizontalAlignment="Left" Margin="542,37,0,0" VerticalAlignment="Top"/>
+
+        <Label Content="{x:Static p:Resources.extensionPrio}" HorizontalAlignment="Left" Margin="542,37,0,0" VerticalAlignment="Top"/>
         <TextBox Name ="textBoxExtToAddPrio" HorizontalAlignment="Left" Margin="542,66,0,0" TextWrapping="Wrap" Text="." VerticalAlignment="Top" Width="159" Height="22"/>
         <Button Content="{x:Static p:Resources.add}" HorizontalAlignment="Left" Margin="708,66,0,0" VerticalAlignment="Top" Width="47" Click="Button_Prio_Click"/>
         <DataGrid x:Name="DG_EXT_Prio" ItemsSource="{Binding Path=.}" AutoGenerateColumns="False" Margin="541,105,100,160">

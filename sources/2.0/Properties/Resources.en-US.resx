@@ -141,6 +141,9 @@
   <data name="executed" xml:space="preserve">
     <value>Executed</value>
   </data>
+  <data name="extensionPrio" xml:space="preserve">
+    <value>Priority extension :</value>
+  </data>
   <data name="extensions" xml:space="preserve">
     <value>Extensions</value>
   </data>
