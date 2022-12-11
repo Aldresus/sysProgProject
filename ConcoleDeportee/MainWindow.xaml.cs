@@ -15,6 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -29,7 +30,7 @@ namespace ConcoleDeportee
     {
         private Client client = new Client();
         private Socket socket;
-        private string _receiveMessage;
+        private string _receiveMessage = "";
         private M_Model model;
         private VM_ViewModel viewModel;
 
@@ -39,40 +40,42 @@ namespace ConcoleDeportee
         }
         public void Set_receiveMessage(string value)
         {
-            string output = value.Substring(value.IndexOf('{'));
             this._receiveMessage = value;
-            OnPropertyChanged(Get_receiveMessage());
+            OnPropertyChanged();
         }
 
-        private void OnPropertyChanged(string propertyName)
+        private void OnPropertyChanged()
         {
-            MessageBox.Show("Message reçu : " + propertyName);
-            //ConvertStringToList(propertyName);
+            model = new M_Model(this._receiveMessage);
+            viewModel = new VM_ViewModel(model);
+            MessageBox.Show("Message reçu : " + this._receiveMessage);
+            model.Set_workFile(this._receiveMessage);
+            viewModel.setupObsCollection();
+            try
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    DG_Deportee.DataContext = viewModel.data;
+                });
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            //DG_Deportee.DataContext = viewModel.data;
         }
         public MainWindow()
         {
             InitializeComponent();
             this.socket = Client.SeConnecter();
-            Thread threadEcouteReseau = new Thread(() => this.Set_receiveMessage(Client.EcouterReseau(this.socket)));
-            threadEcouteReseau.Start();
-            threadEcouteReseau.Join();
-            model = new M_Model(this._receiveMessage);
-            viewModel = new VM_ViewModel(model);
-            viewModel.setupObsCollection();
-            DG_Deportee.DataContext = viewModel.data;
+            Thread threadEcouteReseau = new Thread(() => this.Set_receiveMessage(client.EcouterReseau(this.socket)));
+            threadEcouteReseau.Start();  
         }
 
-/*        public void ConvertStringToList(string message)
+        private void Button_OnClick(object sender, RoutedEventArgs e)
         {
-            List<dynamic> list = new List<dynamic>();
-            JObject json = JObject.Parse(message);
-            JArray arrayState = (JArray)json["State"];
-            foreach (var i in arrayState)
-            {
-                list.Add(i);
-                MessageBox.Show(i.ToString());
-            }
-            this._data = new ObservableCollection<dynamic>(list);
-        }*/
+            string messageToSend = "Execute" + DG_Deportee.SelectedIndex.ToString();
+            Thread threadEnvoiMessage = new Thread(() => Client.EnvoyerMessage(this.socket, messageToSend));
+        }
     }
 }

@@ -16,7 +16,7 @@
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="{x:Static p:Resources.execute}" Name="Execute"/>
+                            <Button Content="{x:Static p:Resources.execute}" Name="Execute" Click="Button_OnClick"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

@@ -10,6 +10,17 @@ namespace NSClient
     class Client
     {
         private Socket clientSocket;
+        private string _receiveMessage;
+
+        public string Get_receiveMessage()
+        {
+            return _receiveMessage;
+        }
+
+        public void Set_receiveMessage(string value)
+        {
+            this._receiveMessage = value;
+        }
 
         public static Socket SeConnecter()
         {
@@ -22,12 +33,11 @@ namespace NSClient
             return clientSocket;
         }
 
-        public static string EcouterReseau(Socket client)
+        public string EcouterReseau(Socket client)
         {
-            bool nothingCame = true;
-            string message = "";
-            while (nothingCame)
+            while (true)
             {
+                string message = "";
                 while (client.Available == 0)
                 {
                 }
@@ -38,18 +48,13 @@ namespace NSClient
                     int nbOctetsRecus = client.Receive(buffer);
                     message += System.Text.Encoding.ASCII.GetString(buffer, 0, nbOctetsRecus);
                 }
-                nothingCame = false;
+                return message;
             }
-            return message;
         }
-
-        public static void EnvoyerMessage(Socket client)
+        
+        public static void EnvoyerMessage(Socket client, string message)
         {
-            while (true)
-            {
-                string messageEnvoye = Console.ReadLine();
-                client.Send(System.Text.Encoding.ASCII.GetBytes(messageEnvoye));
-            }
+                client.Send(System.Text.Encoding.ASCII.GetBytes(message));
         }
 
         public static void Deconnecter(Socket socket)
