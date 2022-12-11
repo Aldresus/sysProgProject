@@ -1,0 +1,26 @@
+﻿<Window x:Class="ConcoleDeportee.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ConcoleDeportee"
+        xmlns:p = "clr-namespace:ConcoleDeportee.Properties"
+        Title="EasySave" Height="500" Width="800">
+    <Grid>
+        <DataGrid Name="DG_Deportee" ItemsSource="{Binding}" AutoGenerateColumns="False" CanUserAddRows="false" Margin="0,23,0,140" Grid.ColumnSpan="2">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="{x:Static p:Resources.name}"  Binding="{Binding _saveJobName}"/>
+                <DataGridTextColumn Header="{x:Static p:Resources.sourceFolder}" Binding="{Binding _saveJobSourceDirectory}" />
+                <DataGridTextColumn Header="{x:Static p:Resources.targetFolder}" Binding="{Binding _saveJobDestinationDirectory}" />
+                <DataGridTextColumn Header="{x:Static p:Resources.type}" Binding="{Binding _saveJobType}" />
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="{x:Static p:Resources.execute}" Name="Execute"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

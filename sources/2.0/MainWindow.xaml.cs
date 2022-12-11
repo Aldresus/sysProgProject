@@ -9,6 +9,11 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using TextBox = System.Windows.Controls.TextBox;
+using Newtonsoft.Json.Linq;
+using System.Threading;
+using System.IO;
+using System.Net.Sockets;
+using NSServer;
 
 namespace Livrable2
 {
@@ -20,7 +25,8 @@ namespace Livrable2
         private M_Model model;
         private VM_ViewModel viewModel;
         private U_Checker checker = new U_Checker();
-
+        private Socket serverSocket;
+        private Socket socket;
 
         public MainWindow()
         {
@@ -29,8 +35,16 @@ namespace Livrable2
             viewModel = new VM_ViewModel(model);
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
-            
-
+            JObject objJSON = JObject.Parse(File.ReadAllText(model.Get_workFile()));
+            string jsonState = objJSON.ToString();
+            Thread threadConnexion = new Thread(() => this.serverSocket = Server.SeConnecter());
+            Thread threadAccepterConnexion = new Thread(() => this.socket = Server.AccepterConnexion(this.serverSocket));
+            threadConnexion.Start();
+            threadConnexion.Join();
+            threadAccepterConnexion.Start();
+            threadAccepterConnexion.Join();
+            Thread threadEnvoyerMessage = new Thread(() => Server.EnvoyerMessage(this.socket, jsonState));
+            threadEnvoyerMessage.Start();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
