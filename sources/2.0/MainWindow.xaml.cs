@@ -14,6 +14,7 @@ using System.Threading;
 using System.IO;
 using System.Net.Sockets;
 using NSServer;
+using System.Linq.Expressions;
 
 namespace Livrable2
 {
@@ -41,6 +42,17 @@ namespace Livrable2
             string type = this._receivedMessage.Substring(0, 4);
             int saveJobNumber = Convert.ToInt32(this._receivedMessage.Substring(4));
             System.Windows.MessageBox.Show("type : " + type + "    saveJobNumber : " + saveJobNumber.ToString());
+            switch (type)
+            {
+                case "Exec":
+                    DataGrid dataGrid = DG1;
+                    model.Get_listSaveJob()[saveJobNumber].Execute(model.Get_listSaveJob()[saveJobNumber], model.Get_logFile(), model.Get_workFile(), model);
+                    break;
+                default:
+                    // Should never append
+                    break;
+            }
+
         }
 
         public MainWindow()
