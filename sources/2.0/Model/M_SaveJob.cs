@@ -3,6 +3,7 @@
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NSUtils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,7 +20,6 @@ namespace NSModel
         private string _state;
         private int _totalNbFile;
         private int _totalSizeFile;
-        private IStrategy? _strategy;
         private int _index;
         private int _NbFilesLeftToDo;
         private int _progress;
@@ -55,15 +55,10 @@ namespace NSModel
             this.Set_index(index);
         }
 
-        private void _SetStrategy(IStrategy strategy)
-        {
-            this._strategy = strategy;
-        }
-
         public void Execute(M_SaveJob SaveJob, string logFilePath, string stateFilePath, M_Model M)
         {
-            this._strategy.Execute(SaveJob, logFilePath, stateFilePath, M);
 
+            M.utilExecute.StartThread(SaveJob, M);
         }
 
         //Getter and Setter
@@ -113,18 +108,7 @@ namespace NSModel
         //Setter _saveJobType
         public void Set_saveJobType(int value)
         {
-            _saveJobType = value;
-            switch (value)
-            {
-                case 1:
-                    this._SetStrategy(new FullSave());
-                    break;
-                case 2:
-                    this._SetStrategy(new DiffentialSave());
-                    break;
-                default:
-                    break;
-            }
+            this._saveJobType = value;
         }
 
         //Getter _state

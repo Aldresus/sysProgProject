@@ -13,5 +13,8 @@ namespace Livrable2
     /// </summary>
     public partial class App : Application
     {
-    }
+        public App()
+        {
+        }
+}
 }

@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using TextBox = System.Windows.Controls.TextBox;
+using System.Threading;
 
 namespace Livrable2
 {
@@ -20,6 +21,8 @@ namespace Livrable2
         private M_Model model;
         private VM_ViewModel viewModel;
         private U_Checker checker = new U_Checker();
+        private delegate void Update_label_background_callback(int state);
+
 
 
         public MainWindow()
@@ -30,7 +33,6 @@ namespace Livrable2
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
             
-
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -51,11 +53,14 @@ namespace Livrable2
         {
             DataGrid dataGrid = DG1;
             model.Get_listSaveJob()[dataGrid.SelectedIndex].Execute(model.Get_listSaveJob()[dataGrid.SelectedIndex], model.Get_logFile(), model.Get_workFile(), model);
+            for (int i = 0; i < model.utilExecute.indexes.Count - 1; i++)
+            {
+                var t = 0 == model.utilExecute.indexes[i];
+            }
 
         }
         private void Ajouter_Click(object sender, RoutedEventArgs e)
         {
-            //TODO : Check entry values with readers class
             string name = txtBoxName.Text;
             string sourceDirectory = txtBoxSourceDir.Text;
             string destinationDirectory = txtBoxDestDir.Text;
@@ -82,7 +87,7 @@ namespace Livrable2
                 System.Windows.Forms.MessageBox.Show($"{name} {Properties.Resources.created}");
                 
                 txtBoxName.Text = "";
-                txtBoxSourceDir.Text = "";
+                txtBoxSourceDir.Text = ""; 
                 txtBoxDestDir.Text = "";
                 comboBoxType.Text = "Complete";
             }
@@ -177,6 +182,19 @@ namespace Livrable2
             
             model.GetSelectedSaveJob(dataGrid.SelectedIndex).Update(name, sourceDirectory, destDirectory, type);
             model.GetSelectedSaveJob(dataGrid.SelectedIndex).WriteJSON(model.Get_workFile());
+            viewModel.setupObsCollection();
+            DG1.DataContext = viewModel.data;
+        }
+
+        private void progress_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            DataGrid dataGrid = DG1;
+            for (int i = 0; i < model.utilExecute.indexes.Count-1; i++)
+            {
+                var t = dataGrid.SelectedIndex == model.utilExecute.indexes[i];
+            }
+
+            model.RemoveSaveJob(dataGrid.SelectedIndex);
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
         }

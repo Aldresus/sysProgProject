@@ -2,6 +2,7 @@
 //Description : This class is used to write log file and to move files about different save.
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NSUtils;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -18,6 +19,7 @@ namespace NSModel
     public class M_Model
     {
         private List<M_SaveJob> _listSaveJob = new List<M_SaveJob>();
+        public U_Execute utilExecute { get; } = new U_Execute();
         private string _logFile;
         private string _workFile;
         private dynamic _language;

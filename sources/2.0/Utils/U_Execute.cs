@@ -1,29 +1,45 @@
-﻿using Newtonsoft.Json;
+﻿using Livrable2.Properties;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NSModel;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using Livrable2.Properties;
+using System.Windows.Threading;
 using System.Xml.Linq;
-using System.Collections.Generic;
+using static System.Windows.Forms.AxHost;
+using Livrable2;
 
 namespace NSUtils
 {
     public class U_Execute
     {
-        public M_Model _oModel;
+        
+        [ThreadStatic] static List<string>? prio;
+        [ThreadStatic] static List<string>? pasprio;
+        [ThreadStatic] static int total;
+        [ThreadStatic] static int threadIndex;
+        [ThreadStatic] static string fileName;
+        [ThreadStatic] static string targetFilePath;
+        [ThreadStatic] static string directoryTarget;
+        [ThreadStatic] static int NbFilesLeftToDo;
+        List<int> progress = new() { };
+        public List<int> indexes { get; } = new() { };
+        List<bool> pasprioencour = new() { };
+        public List<Thread> threads { get; set; } = new();
 
-        public U_Execute(M_Model M)
+        public U_Execute()
         {
-            this._oModel = M;
         }
-
-        public void Execute(M_SaveJob SaveJob, string FileLogPath, string FileStatePath)
+        public void StartThread(M_SaveJob _oSaveJobs, M_Model _oModel)
         {
+
             bool proceed = true;
             string noExecutionIfRunning = "CalculatorApp";
             var processes = System.Diagnostics.Process.GetProcesses();
@@ -36,6 +52,132 @@ namespace NSUtils
             }
             if (proceed)
             {
+
+
+                List<string> tempPrio = new() { };
+                List<string>? tempNotPrio = new() { };
+
+                foreach (string dirPath in Directory.GetDirectories(_oSaveJobs.Get_saveJobSourceDirectory(), "*", SearchOption.AllDirectories))
+                {
+                    Directory.CreateDirectory(dirPath.Replace(_oSaveJobs.Get_saveJobSourceDirectory(), _oSaveJobs.Get_saveJobDestinationDirectory()));
+                }
+                foreach (string file in Directory.GetFiles(_oSaveJobs.Get_saveJobSourceDirectory(), "*.*", SearchOption.AllDirectories))
+                {
+                    if (_oModel._extensionPriorityRegex.IsMatch(file))
+                    {
+                        tempPrio.Add(file);
+                    }
+                    else
+                    {
+                        tempNotPrio.Add(file);
+                    }
+                }
+
+
+                pasprioencour.Add(tempPrio.Count == 0);
+                int threadIndex = pasprioencour.Count - 1;
+
+                var t = new Thread(() => { ThreadContent(_oSaveJobs, _oModel, tempPrio, tempNotPrio, threadIndex); });
+                t.Start();
+                threads.Add(t);
+                progress.Add(0);
+                indexes.Add(_oSaveJobs.Get_index());
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show($"{Resources.pleaseCloseCalculatator}");
+            }
+
+
+        }
+
+        public void ThreadContent(M_SaveJob _oSaveJobs, M_Model _oModel, List<string> prioEntrant, List<string> pasprioEntrant, int index)
+        {
+
+            static int progessCalc(int total, int prioEntrant, int pasprioEntrant)
+            {
+                
+                return (int)Math.Round(((float)total - (float)(prioEntrant + pasprioEntrant)) / (float)total * 100f);
+            }
+            void copy(string newPath)
+            {
+                string state = "active";
+                DateTime startCopyTime = DateTime.Now;
+
+                fileName = Path.GetFileName(newPath);
+                targetFilePath = newPath.Replace(_oSaveJobs.Get_saveJobSourceDirectory(), _oSaveJobs.Get_saveJobDestinationDirectory());
+                directoryTarget = targetFilePath.Replace(fileName, null);
+
+
+
+                if (_oModel._extensionToCryptRegex.IsMatch(newPath))
+                {
+                    Process myProcess = Process.Start("Resources\\Cryptosoft.exe", newPath + " " + targetFilePath + " " + "azertyui");
+                    myProcess.WaitForExit();
+                    myProcess.Close();
+                }
+                else
+                {
+                    File.Copy(newPath, targetFilePath, _oSaveJobs.Get_saveJobType() == 1);
+                }
+                NbFilesLeftToDo -= 1;
+                progress[threadIndex] = progessCalc(total, prioEntrant.Count, pasprioEntrant.Count);
+                _oSaveJobs.WriteJSON(_oModel.Get_workFile(), state, NbFilesLeftToDo, progress[threadIndex]);
+                DateTime endCopyTime = DateTime.Now;
+                TimeSpan copyTime = endCopyTime - startCopyTime;
+                WriteLog(_oModel.Get_logFile(), fileName, newPath, targetFilePath, directoryTarget, copyTime);
+                
+            }
+
+
+            prio = prioEntrant;
+            pasprio = pasprioEntrant;
+            threadIndex = index;
+            total = prioEntrant.Count + pasprioEntrant.Count;
+            NbFilesLeftToDo = total;
+
+
+            while (NbFilesLeftToDo>0)
+            {
+
+                while (!pasprioencour.ToArray().All((e) => e))
+                {
+
+                    bool test = !pasprioencour.ToArray().All((e) => e);
+                    foreach (var s in prio.ToArray())
+                    {
+                        copy(s);
+                        prio.Remove(s);
+
+                    }
+                    if (prio.Count == 0)
+                    {
+                        pasprioencour[threadIndex] = true;
+                    }
+                }
+                while (pasprio.Count > 0)
+                {
+                    foreach (var s in pasprio.ToArray())
+                    {
+                        copy(s);
+                        pasprio.Remove(s);
+                    }
+                    if (!pasprioencour.ToArray().All((e) => e))
+                    {
+                        break;
+                    }
+                }
+
+            }
+            _oSaveJobs.WriteJSON(_oModel.Get_workFile(), "inactive", NbFilesLeftToDo, progress[threadIndex]);
+
+        }
+
+        public void Execute(M_SaveJob SaveJob, string FileLogPath, string FileStatePath)
+        {
+
+            /*var t = new Thread(() =>
+            {
                 string sourcePath = SaveJob.Get_saveJobSourceDirectory();
                 string targetPath = SaveJob.Get_saveJobDestinationDirectory();
                 bool isFullSave = (SaveJob.Get_saveJobType() == 1) ? true : false;
@@ -43,67 +185,20 @@ namespace NSUtils
                 // Check if the source directory exists.
                 if (System.IO.Directory.Exists(sourcePath))
                 {
-                    string state = "active";
-                    int total = SaveJob.Get_totalNbFile();
-                    int NbFilesLeftToDo = total;
-                    float progress = 0;
-                    List<string> AllFiles= new();
-                    string fileName;
-                    string targetFilePath;
-                    string directoryTarget;
                     //Now Create all of the directories
-                    foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
-                    {
-                        Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
-                    }
+
 
                     //Copy all the files & Replaces any files with the same name
-                    foreach (string file in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
-                    {
-                        if (_oModel._extensionPriorityRegex.IsMatch(file))
-                        {
-                            AllFiles.Insert(0, file);
-                        }
-                        else
-                        {
-                            AllFiles.Add(file);
-                        }
-                    }
-                    foreach (string newPath in AllFiles)
-                    {  
-                        DateTime startCopyTime = DateTime.Now;
-                        
-                        fileName = Path.GetFileName(newPath);
-                        targetFilePath = newPath.Replace(sourcePath, targetPath);
-                        directoryTarget = targetFilePath.Replace(fileName, null);
-                        
-                        if (_oModel._extensionToCryptRegex.IsMatch(newPath))
-                        {
-                            Process myProcess = Process.Start("Resources\\Cryptosoft.exe", newPath + " " + targetFilePath + " " + "azertyui");
-                            myProcess.WaitForExit();
-                            myProcess.Close();
-                        }
-                        else
-                        {
-                            File.Copy(newPath, targetFilePath, isFullSave);
-                        }
-                        NbFilesLeftToDo -= 1;
-                        progress = (int)Math.Round((((float)total - (float)NbFilesLeftToDo) / (float)total) * 100.0f);
-                        SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
-                        DateTime endCopyTime = DateTime.Now;
-                        TimeSpan copyTime = endCopyTime - startCopyTime;
-                        WriteLog(FileLogPath, fileName, newPath, targetFilePath, directoryTarget, copyTime);
-                    }
-                    state = "inactive";
-                    SaveJob.WriteJSON(FileStatePath, state, NbFilesLeftToDo, (int)progress);
-                }
-                System.Windows.Forms.MessageBox.Show($"{Resources.executed}");
-            }
-            else
-            {
-                System.Windows.Forms.MessageBox.Show($"{Resources.pleaseCloseCalculatator}");
-            }
 
+                    foreach (string newPath in AllFiles)
+                    {
+
+                    }
+                    
+                }
+            });
+            t.Start();
+            System.Windows.Forms.MessageBox.Show($"{Resources.executed}");*/
         }
 
         public void WriteLog(string JsonLogPath, string fileName, string fileSourcePath, string fileDestPath, string directoryTarget, TimeSpan copyTime)
@@ -125,8 +220,10 @@ namespace NSUtils
 
             StringBuilder sb = new StringBuilder();
             StringWriter sw = new StringWriter(sb);
-            JsonWriter writer = new JsonTextWriter(sw);
-            writer.Formatting = Newtonsoft.Json.Formatting.Indented;
+            JsonWriter writer = new JsonTextWriter(sw)
+            {
+                Formatting = Newtonsoft.Json.Formatting.Indented
+            };
             writer.WriteStartObject();
             writer.WritePropertyName("Name");
             writer.WriteValue(fileName);
