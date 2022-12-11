@@ -22,11 +22,26 @@ namespace Livrable2
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Server server = new Server();
         private M_Model model;
         private VM_ViewModel viewModel;
         private U_Checker checker = new U_Checker();
         private Socket serverSocket;
         private Socket socket;
+        private string _receivedMessage;
+
+        public void Set_ReceivedMessage(string receivedMessage)
+        {
+            _receivedMessage = receivedMessage;
+            OnMessageReceived();
+        }
+        
+        public void OnMessageReceived()
+        {
+            string type = this._receivedMessage.Substring(0, 4);
+            int saveJobNumber = Convert.ToInt32(this._receivedMessage.Substring(4));
+            System.Windows.MessageBox.Show("type : " + type + "    saveJobNumber : " + saveJobNumber.ToString());
+        }
 
         public MainWindow()
         {
@@ -45,6 +60,8 @@ namespace Livrable2
             threadAccepterConnexion.Join();
             Thread threadEnvoyerMessage = new Thread(() => Server.EnvoyerMessage(this.socket, jsonState));
             threadEnvoyerMessage.Start();
+            Thread threadEcouteReseau = new Thread(() => this.Set_ReceivedMessage(server.EcouterReseau(this.socket)));
+            threadEcouteReseau.Start();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

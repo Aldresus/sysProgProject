@@ -25,14 +25,22 @@ namespace NSServer
         }
 
 
-        public static void EcouterReseau(Socket server)
+        public string EcouterReseau(Socket server)
         {
             while (true)
             {
+                string message = "";
+                while (server.Available == 0)
+                {
+                }
+                    
                 byte[] buffer = new byte[1024];
-                int bytesReceived = server.Receive(buffer);
-                //Console.WriteLine("Message recu: " + System.Text.Encoding.ASCII.GetString(buffer, 0, bytesReceived));
-                MessageBox.Show("Message recu");
+                while (server.Available != 0)
+                {
+                    int nbOctetsRecus = server.Receive(buffer);
+                    message += System.Text.Encoding.ASCII.GetString(buffer, 0, nbOctetsRecus);
+                }
+                return message;
             }
         }
 

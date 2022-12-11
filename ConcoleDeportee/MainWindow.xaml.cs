@@ -74,8 +74,8 @@ namespace ConcoleDeportee
 
         private void Button_OnClick(object sender, RoutedEventArgs e)
         {
-            string messageToSend = "Execute" + DG_Deportee.SelectedIndex.ToString();
-            Thread threadEnvoiMessage = new Thread(() => Client.EnvoyerMessage(this.socket, messageToSend));
+            string messageToSend = "Exec" + DG_Deportee.SelectedIndex.ToString();
+            Client.EnvoyerMessage(this.socket, messageToSend);
         }
     }
 }
