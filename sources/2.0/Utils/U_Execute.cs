@@ -3,7 +3,6 @@ using Livrable2.Properties;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NSModel;
-using NSViewModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace NSUtils
@@ -96,7 +96,7 @@ namespace NSUtils
                 App.Current.Dispatcher.BeginInvoke(() =>
                 {
                     MW.testCoucou.Value = p;
-                }); 
+                });
                 Debug.WriteLine(App.Current.Dispatcher);
             }
             void copy(string newPath)
@@ -125,10 +125,8 @@ namespace NSUtils
                 _oSaveJobs.WriteJSON(_oModel.Get_workFile(), state, NbFilesLeftToDo, _oSaveJobs.Get_progress());
                 DateTime endCopyTime = DateTime.Now;
                 TimeSpan copyTime = endCopyTime - startCopyTime;
-                WriteLog(_oSaveJobs.Get_saveJobName(), _oModel.Get_logFile(), fileName, newPath, targetFilePath, directoryTarget, copyTime);
-
+                WriteLog(_oModel, _oSaveJobs.Get_saveJobName(), _oModel.Get_logFile(), fileName, newPath, targetFilePath, directoryTarget, copyTime);
             }
-
 
             prio = prioEntrant;
             pasprio = pasprioEntrant;
@@ -202,8 +200,35 @@ namespace NSUtils
             System.Windows.Forms.MessageBox.Show($"{Resources.executed}");*/
         }
 
-        public void WriteLog(string JobName, string JsonLogPath, string fileName, string fileSourcePath, string fileDestPath, string directoryTarget, TimeSpan copyTime)
+        public void WriteLog(M_Model M, string JobName, string JsonLogPath, string fileName, string fileSourcePath, string fileDestPath, string directoryTarget, TimeSpan copyTime)
         {
+
+            string pathDirectoryLog = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).ToString() + @"\EasySave\Log";
+            Directory.CreateDirectory(pathDirectoryLog);
+            Directory.CreateDirectory(pathDirectoryLog + @"\" + DateTime.Now.ToString("ddMMyyyy"));
+            string logFileName = @"\" + DateTime.Now.ToString("ddMMyyyy") + @$"\log_{JobName.Replace(" ", "_")}" + ".json";
+            string logXmlFileName = pathDirectoryLog + logFileName.Replace(".json", ".xml");
+
+            string pathLog = pathDirectoryLog + logFileName;
+
+            if (!File.Exists(logXmlFileName))
+            {
+                using (XmlWriter X = XmlWriter.Create(logXmlFileName, new XmlWriterSettings { Indent = true }))
+                {
+                    X.WriteStartElement("logs");
+                    X.WriteEndElement();
+                    X.Flush();
+                }
+            }
+
+            M.Set_logFile(pathLog);
+            if (!File.Exists(M.Get_logFile()))
+            {
+                string initLogFile = "{\n\t\"logs\": []\n}";
+                File.WriteAllText(M.Get_logFile(), initLogFile);
+            }
+
+
             long size;
             //Get fileinfo
             try
@@ -217,7 +242,7 @@ namespace NSUtils
                 size = fileInfo.Length;
             }
             //Get JSON file's content
-            JObject allLog = JObject.Parse(File.ReadAllText(JsonLogPath));
+            JObject allLog = JObject.Parse(File.ReadAllText(pathLog));
 
             StringBuilder sb = new StringBuilder();
             StringWriter sw = new StringWriter(sb);
@@ -262,7 +287,7 @@ namespace NSUtils
 
 
             //Write log to xml file
-            var xmlDoc = XDocument.Load(JsonLogPath.Replace(".json", ".xml"));
+            var xmlDoc = XDocument.Load(pathLog.Replace(".json", ".xml"));
             var parentElement = new XElement("log");
             parentElement.Add(new XElement("Name", $"{fileName}"));
             parentElement.Add(new XElement("FileSource", $"{fileSourcePath}"));
