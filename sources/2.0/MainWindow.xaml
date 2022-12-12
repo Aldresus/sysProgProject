@@ -55,7 +55,6 @@
         </ComboBox>
         <Button Content="..." HorizontalAlignment="Left" Margin="514,390,0,0" VerticalAlignment="Top" Click="SourceClic" Grid.Column="1"/>
         <Button Content="..." HorizontalAlignment="Left" Margin="514,421,0,0" VerticalAlignment="Top" Click="DestClic" Grid.Column="1"/>
-        <ProgressBar Name="testCoucou" Grid.Column="1" HorizontalAlignment="Left" Height="10" Margin="558,380,0,0" VerticalAlignment="Top" Width="100"/>
 
     </Grid>
 </Window>

@@ -34,9 +34,6 @@ namespace Livrable2
             viewModel = new VM_ViewModel(model);
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
-            foreach (M_SaveJob e in model.Get_listSaveJob()) {
-                Debug.WriteLine(e);
-            };
             //testCoucou.DataContext = model.Get_listSaveJob()[0].Get_progress();
         }
 
@@ -57,7 +54,7 @@ namespace Livrable2
         private void Execute_Click(object sender, RoutedEventArgs e)
         {
             DataGrid dataGrid = DG1;
-            model.Get_listSaveJob()[dataGrid.SelectedIndex].Execute(this, model.Get_listSaveJob()[dataGrid.SelectedIndex], model.Get_logFile(), model.Get_workFile(), model);
+            model.Get_listSaveJob()[dataGrid.SelectedIndex].Execute(viewModel, model.Get_listSaveJob()[dataGrid.SelectedIndex], model.Get_logFile(), model.Get_workFile(), model);
             for (int i = 0; i < model.utilExecute.indexes.Count - 1; i++)
             {
                 var t = 0 == model.utilExecute.indexes[i];
@@ -189,11 +186,6 @@ namespace Livrable2
             model.GetSelectedSaveJob(dataGrid.SelectedIndex).WriteJSON(model.Get_workFile());
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
-        }
-
-        private void ProgressAddValue(int value)
-        {
-            testCoucou.Value = value;
         }
     }
 }

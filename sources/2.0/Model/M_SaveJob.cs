@@ -5,6 +5,7 @@ using Livrable2;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NSUtils;
+using NSViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -45,10 +46,10 @@ namespace NSModel
         }
        
 
-        public void Execute(MainWindow MW, M_SaveJob SaveJob, string logFilePath, string stateFilePath, M_Model M)
+        public void Execute(VM_ViewModel _oViewModel, M_SaveJob SaveJob, string logFilePath, string stateFilePath, M_Model M)
         {
 
-            M.utilExecute.StartThread(SaveJob, M, MW);
+            M.utilExecute.StartThread(SaveJob, M, _oViewModel);
         }
 
         //Getter and Setter

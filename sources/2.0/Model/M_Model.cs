@@ -75,7 +75,7 @@ namespace NSModel
             int identationIndex = 0;
             foreach (JObject i in objJSON["State"])
             {
-                _listSaveJob.Add(new M_SaveJob(i["Name"].ToString(), i["SourceFilePath"].ToString(), i["TargetFilePath"].ToString(), i["Type"].Value<int>(), i["State"].ToString(), i["Progression"].Value<int>(), identationIndex));
+                _listSaveJob.Add(new M_SaveJob(i["Name"].ToString(), i["SourceFilePath"].ToString(), i["TargetFilePath"].ToString(), i["Type"].Value<int>(), i["State"].ToString(), 0, identationIndex));
                 identationIndex += 1;
             }
 

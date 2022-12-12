@@ -3,6 +3,7 @@ using Livrable2.Properties;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NSModel;
+using NSViewModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -33,7 +34,7 @@ namespace NSUtils
         public U_Execute()
         {
         }
-        public void StartThread(M_SaveJob _oSaveJobs, M_Model _oModel, MainWindow MW)
+        public void StartThread(M_SaveJob _oSaveJobs, M_Model _oModel, VM_ViewModel _oViewModel)
         {
 
             bool proceed = true;
@@ -73,7 +74,7 @@ namespace NSUtils
                 pasprioencour.Add(tempPrio.Count == 0);
                 int threadIndex = pasprioencour.Count - 1;
 
-                var t = new Thread(() => { ThreadContent(MW, _oSaveJobs, _oModel, tempPrio, tempNotPrio, threadIndex); });
+                var t = new Thread(() => { ThreadContent(_oViewModel, _oSaveJobs, _oModel, tempPrio, tempNotPrio, threadIndex); });
                 t.Start();
                 threads.Add(t);
                 indexes.Add(_oSaveJobs.Get_index());
@@ -86,7 +87,7 @@ namespace NSUtils
 
         }
 
-        public void ThreadContent(MainWindow MW, M_SaveJob _oSaveJobs, M_Model _oModel, List<string> prioEntrant, List<string> pasprioEntrant, int index)
+        public void ThreadContent(VM_ViewModel _oViewModel, M_SaveJob _oSaveJobs, M_Model _oModel, List<string> prioEntrant, List<string> pasprioEntrant, int index)
         {
 
             void progessCalc(int total, int prioEntrant, int pasprioEntrant)
@@ -95,7 +96,7 @@ namespace NSUtils
                 _oSaveJobs.Set_progress(p);
                 App.Current.Dispatcher.BeginInvoke(() =>
                 {
-                    MW.testCoucou.Value = p;
+                    _oViewModel.setupObsCollection();
                 });
                 Debug.WriteLine(App.Current.Dispatcher);
             }
