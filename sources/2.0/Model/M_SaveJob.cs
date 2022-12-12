@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace NSModel
 {
@@ -19,15 +20,17 @@ namespace NSModel
         public string _saveJobSourceDirectory { get; set; }
         public string _saveJobDestinationDirectory { get; set; }
         public int _saveJobType { get; set; }
-        private string _state;
+        public string _state { get; set; }
         private int _totalNbFile;
         private int _totalSizeFile;
         private int _index;
         private int _NbFilesLeftToDo;
         public int _progress { get; set; }
+        public Thread? RunningThread { get; set; }
+        public ManualResetEvent ThreadPaused { get; set; } = new ManualResetEvent(true);
 
-        // default Constructor
-        public M_SaveJob()
+    // default Constructor
+    public M_SaveJob()
         {
         }
 
@@ -48,7 +51,6 @@ namespace NSModel
 
         public void Execute(VM_ViewModel _oViewModel, M_SaveJob SaveJob, string logFilePath, string stateFilePath, M_Model M)
         {
-
             M.utilExecute.StartThread(SaveJob, M, _oViewModel);
         }
 
@@ -365,6 +367,29 @@ namespace NSModel
         ~M_SaveJob()
         {
             //Destructor
+        }
+        
+        public void pauseThread()
+        {
+            if (this.RunningThread != null)
+            {
+                this._state = "Paused";
+                ThreadPaused.Reset();
+            }
+        }
+        public void resumeThread()
+        {
+            if (this.RunningThread != null)
+            {
+                ThreadPaused.Set();
+            }
+        }
+        public void stopThread()
+        {
+            if (this.RunningThread != null)
+            {
+                this._state = "Stopped";
+            }
         }
     }
 }

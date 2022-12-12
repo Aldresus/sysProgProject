@@ -29,8 +29,6 @@ namespace NSUtils
         [ThreadStatic] static int NbFilesLeftToDo;
         public List<int> indexes { get; } = new() { };
         List<bool> pasprioencour = new() { };
-        public List<Thread> threads { get; set; } = new();
-
         public U_Execute()
         {
         }
@@ -76,8 +74,14 @@ namespace NSUtils
 
                 var t = new Thread(() => { ThreadContent(_oViewModel, _oSaveJobs, _oModel, tempPrio, tempNotPrio, threadIndex); });
                 t.Start();
-                threads.Add(t);
+                _oSaveJobs.RunningThread = t;
                 indexes.Add(_oSaveJobs.Get_index());
+                
+                // send notification to enable the pause button
+                App.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    _oViewModel.setupObsCollection();
+                });
             }
             else
             {
@@ -102,6 +106,8 @@ namespace NSUtils
             }
             void copy(string newPath)
             {
+                _oSaveJobs.ThreadPaused.WaitOne();                  
+
                 string state = "active";
                 DateTime startCopyTime = DateTime.Now;
 
@@ -134,17 +140,23 @@ namespace NSUtils
             threadIndex = index;
             total = prioEntrant.Count + pasprioEntrant.Count;
             NbFilesLeftToDo = total;
+            bool keepLooping = true;
 
 
-            while (NbFilesLeftToDo > 0)
+            while (NbFilesLeftToDo > 0 && keepLooping)
             {
 
-                while (!pasprioencour.ToArray().All((e) => e))
+                while (!pasprioencour.ToArray().All((e) => e) && keepLooping)
                 {
 
                     bool test = !pasprioencour.ToArray().All((e) => e);
                     foreach (var s in prio.ToArray())
                     {
+                        if (_oSaveJobs._state == "Stopped")
+                        {
+                            keepLooping = false;
+                            break;
+                        }
                         copy(s);
                         prio.Remove(s);
 
@@ -154,10 +166,16 @@ namespace NSUtils
                         pasprioencour[threadIndex] = true;
                     }
                 }
-                while (pasprio.Count > 0)
+                while (pasprio.Count > 0 && keepLooping)
                 {
                     foreach (var s in pasprio.ToArray())
                     {
+                        Debug.WriteLine(_oSaveJobs._state);
+                        if (_oSaveJobs._state == "Stopped")
+                        {
+                            keepLooping = false;
+                            break;
+                        }
                         copy(s);
                         pasprio.Remove(s);
                     }
@@ -170,6 +188,7 @@ namespace NSUtils
             }
             _oSaveJobs.WriteJSON(_oModel.Get_workFile(), "inactive", NbFilesLeftToDo, _oSaveJobs.Get_progress());
             progessCalc(total, prioEntrant.Count, pasprioEntrant.Count);
+            _oSaveJobs.RunningThread = null;
 
         }
 

@@ -27,7 +27,7 @@
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="{x:Static p:Resources.execute}" Name="Execute" Click="Execute_Click" />
+                            <Button Content="▶️" Name="Execute" Click="Execute_Click" Visibility="Visible"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -35,6 +35,27 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ProgressBar Name="progress" Grid.Column="1" HorizontalAlignment="Left" Width="100" Value="{Binding _progress}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="⏸" Name="Pause" Click="Pause_Click" Visibility="Visible"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="⏹" Name="Stop" Click="Stop_Click" Visibility="Visible"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding _state}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -48,7 +69,7 @@
         <TextBox Name="txtBoxName" HorizontalAlignment="Left" Margin="52,359,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
         <TextBox Name="txtBoxSourceDir" HorizontalAlignment="Left" Margin="52,390,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="456" Grid.Column="1"/>
         <TextBox Name="txtBoxDestDir" HorizontalAlignment="Left" Margin="52,421,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="456" Grid.Column="1"/>
-        <Button Content="{x:Static p:Resources.add}" HorizontalAlignment="Left" Margin="208,450,0,0" VerticalAlignment="Top" Width="100" Click="Ajouter_Click" Grid.Column="1"/>
+        <Button Content="{x:Static p:Resources.add}" HorizontalAlignment="Right" Margin="0,455,170,0" VerticalAlignment="Top" Width="100" Click="Ajouter_Click" Grid.Column="1"/>
         <ComboBox Name="comboBoxType" HorizontalAlignment="Left" Margin="52,452,0,0" VerticalAlignment="Top" Width="120" Height="22" Grid.Column="1">
             <ComboBoxItem Content="{x:Static p:Resources.complete}" IsSelected="true"/>
             <ComboBoxItem Content="{x:Static p:Resources.differential}"/>

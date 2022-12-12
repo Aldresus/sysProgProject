@@ -54,12 +54,15 @@ namespace Livrable2
         private void Execute_Click(object sender, RoutedEventArgs e)
         {
             DataGrid dataGrid = DG1;
-            model.Get_listSaveJob()[dataGrid.SelectedIndex].Execute(viewModel, model.Get_listSaveJob()[dataGrid.SelectedIndex], model.Get_logFile(), model.Get_workFile(), model);
-            for (int i = 0; i < model.utilExecute.indexes.Count - 1; i++)
+            M_SaveJob job = model.Get_listSaveJob()[dataGrid.SelectedIndex];
+            if (job.RunningThread != null)
             {
-                var t = 0 == model.utilExecute.indexes[i];
+                job.ThreadPaused.Set();
             }
-
+            else
+            {
+                job.Execute(viewModel, model.Get_listSaveJob()[dataGrid.SelectedIndex], model.Get_logFile(), model.Get_workFile(), model);
+            }
         }
         private void Ajouter_Click(object sender, RoutedEventArgs e)
         {
@@ -186,6 +189,19 @@ namespace Livrable2
             model.GetSelectedSaveJob(dataGrid.SelectedIndex).WriteJSON(model.Get_workFile());
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
+        }
+
+        private void Pause_Click(object sender, RoutedEventArgs e)
+        {
+            DataGrid dataGrid = DG1;
+            model.Get_listSaveJob()[dataGrid.SelectedIndex].pauseThread();
+        }
+        private void Stop_Click(object sender, RoutedEventArgs e)
+        {
+
+            //TODO make it happen
+            DataGrid dataGrid = DG1;
+            model.Get_listSaveJob()[dataGrid.SelectedIndex].stopThread();
         }
     }
 }
