@@ -109,17 +109,7 @@ namespace Livrable2
             viewModel = new VM_ViewModel(model);
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
-            JObject objJSON = JObject.Parse(File.ReadAllText(model.Get_workFile()));
-            string jsonState = objJSON.ToString();
-            Thread threadConnexion = new Thread(() => this.serverSocket = Server.SeConnecter());
-            Thread threadAccepterConnexion = new Thread(() => this.socket = Server.AccepterConnexion(this.serverSocket));
-            threadConnexion.Start();
-            threadConnexion.Join();
-            threadAccepterConnexion.Start();
-            threadAccepterConnexion.Join();
-            Thread threadEnvoyerMessage = new Thread(() => Server.EnvoyerMessage(this.socket, jsonState));
-            threadEnvoyerMessage.Start();
-            Thread threadStartListening = new Thread(() => EcouterReseauEnContinue());
+            Thread threadStartListening = new Thread(() => StartServer());
             threadStartListening.Start();
         }
 
@@ -272,6 +262,22 @@ namespace Livrable2
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
             SendToClient();
+        }
+
+        private void StartServer()
+        {
+            Thread threadConnexion = new Thread(() => this.serverSocket = Server.SeConnecter());
+            Thread threadAccepterConnexion = new Thread(() => this.socket = Server.AccepterConnexion(this.serverSocket));
+            threadConnexion.Start();
+            threadConnexion.Join();
+            threadAccepterConnexion.Start();
+            threadAccepterConnexion.Join();
+            JObject objJSON = JObject.Parse(File.ReadAllText(model.Get_workFile()));
+            string jsonState = objJSON.ToString();
+            Thread threadEnvoyerMessage = new Thread(() => Server.EnvoyerMessage(this.socket, jsonState));
+            threadEnvoyerMessage.Start();
+            Thread threadStartListening = new Thread(() => EcouterReseauEnContinue());
+            threadStartListening.Start();
         }
         
         private void SendToClient()
