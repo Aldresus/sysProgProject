@@ -1,6 +1,7 @@
 //Class SaveJob
 //Description : This class is used to store information and save the files
 
+using Livrable2;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NSUtils;
@@ -22,7 +23,7 @@ namespace NSModel
         private int _totalSizeFile;
         private int _index;
         private int _NbFilesLeftToDo;
-        private int _progress;
+        public int _progress { get; set; }
 
         // default Constructor
         public M_SaveJob()
@@ -30,7 +31,7 @@ namespace NSModel
         }
 
         //Constructor (Set all attributes when object instantiation except _totalNbFile, _totalSizeFile)
-        public M_SaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int index)
+        public M_SaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int _progress, int index)
         {
             this.Set_saveJobName(_saveJobName);
             this.Set_saveJobSourceDirectory(_saveJobSourceDirectory);
@@ -39,26 +40,15 @@ namespace NSModel
             this.Set_state(_state);
             this.Set_totalNbFile(CalculateFolderNB(_saveJobSourceDirectory));
             this.Set_totalSizeFile((int)CalculateFolderSize(_saveJobSourceDirectory));
+            this.Set_progress(_progress);
             this.Set_index(index);
         }
-        
-        //Constructor (Set all attributes when object instantiation)
-        public M_SaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int _totalNbFile, int _totalSizeFile, int index)
-        {
-            this.Set_saveJobName(_saveJobName);
-            this.Set_saveJobSourceDirectory(_saveJobSourceDirectory);
-            this.Set_saveJobDestinationDirectory(_saveJobDestinationDirectory);
-            this.Set_saveJobType(_saveJobType);
-            this.Set_state(_state);
-            this.Set_totalNbFile(CalculateFolderNB(_saveJobSourceDirectory));
-            this.Set_totalSizeFile((int)CalculateFolderSize(_saveJobSourceDirectory));
-            this.Set_index(index);
-        }
+       
 
-        public void Execute(M_SaveJob SaveJob, string logFilePath, string stateFilePath, M_Model M)
+        public void Execute(MainWindow MW, M_SaveJob SaveJob, string logFilePath, string stateFilePath, M_Model M)
         {
 
-            M.utilExecute.StartThread(SaveJob, M);
+            M.utilExecute.StartThread(SaveJob, M, MW);
         }
 
         //Getter and Setter

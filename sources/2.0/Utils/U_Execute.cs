@@ -1,7 +1,9 @@
-﻿using Livrable2.Properties;
+﻿using Livrable2;
+using Livrable2.Properties;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NSModel;
+using NSViewModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,18 +11,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Threading;
 using System.Xml.Linq;
-using static System.Windows.Forms.AxHost;
-using Livrable2;
 
 namespace NSUtils
 {
     public class U_Execute
     {
-        
+
         [ThreadStatic] static List<string>? prio;
         [ThreadStatic] static List<string>? pasprio;
         [ThreadStatic] static int total;
@@ -29,7 +26,6 @@ namespace NSUtils
         [ThreadStatic] static string targetFilePath;
         [ThreadStatic] static string directoryTarget;
         [ThreadStatic] static int NbFilesLeftToDo;
-        List<int> progress = new() { };
         public List<int> indexes { get; } = new() { };
         List<bool> pasprioencour = new() { };
         public List<Thread> threads { get; set; } = new();
@@ -37,7 +33,7 @@ namespace NSUtils
         public U_Execute()
         {
         }
-        public void StartThread(M_SaveJob _oSaveJobs, M_Model _oModel)
+        public void StartThread(M_SaveJob _oSaveJobs, M_Model _oModel, MainWindow MW)
         {
 
             bool proceed = true;
@@ -77,10 +73,9 @@ namespace NSUtils
                 pasprioencour.Add(tempPrio.Count == 0);
                 int threadIndex = pasprioencour.Count - 1;
 
-                var t = new Thread(() => { ThreadContent(_oSaveJobs, _oModel, tempPrio, tempNotPrio, threadIndex); });
+                var t = new Thread(() => { ThreadContent(MW, _oSaveJobs, _oModel, tempPrio, tempNotPrio, threadIndex); });
                 t.Start();
                 threads.Add(t);
-                progress.Add(0);
                 indexes.Add(_oSaveJobs.Get_index());
             }
             else
@@ -91,13 +86,18 @@ namespace NSUtils
 
         }
 
-        public void ThreadContent(M_SaveJob _oSaveJobs, M_Model _oModel, List<string> prioEntrant, List<string> pasprioEntrant, int index)
+        public void ThreadContent(MainWindow MW, M_SaveJob _oSaveJobs, M_Model _oModel, List<string> prioEntrant, List<string> pasprioEntrant, int index)
         {
 
-            static int progessCalc(int total, int prioEntrant, int pasprioEntrant)
+            void progessCalc(int total, int prioEntrant, int pasprioEntrant)
             {
-                
-                return (int)Math.Round(((float)total - (float)(prioEntrant + pasprioEntrant)) / (float)total * 100f);
+                int p = (int)Math.Round(((float)total - (float)(prioEntrant + pasprioEntrant)) / (float)total * 100f);
+                _oSaveJobs.Set_progress(p);
+                App.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    MW.testCoucou.Value = p;
+                }); 
+                Debug.WriteLine(App.Current.Dispatcher);
             }
             void copy(string newPath)
             {
@@ -121,12 +121,12 @@ namespace NSUtils
                     File.Copy(newPath, targetFilePath, _oSaveJobs.Get_saveJobType() == 1);
                 }
                 NbFilesLeftToDo -= 1;
-                progress[threadIndex] = progessCalc(total, prioEntrant.Count, pasprioEntrant.Count);
-                _oSaveJobs.WriteJSON(_oModel.Get_workFile(), state, NbFilesLeftToDo, progress[threadIndex]);
+                progessCalc(total, prioEntrant.Count, pasprioEntrant.Count);
+                _oSaveJobs.WriteJSON(_oModel.Get_workFile(), state, NbFilesLeftToDo, _oSaveJobs.Get_progress());
                 DateTime endCopyTime = DateTime.Now;
                 TimeSpan copyTime = endCopyTime - startCopyTime;
-                WriteLog(_oModel.Get_logFile(), fileName, newPath, targetFilePath, directoryTarget, copyTime);
-                
+                WriteLog(_oSaveJobs.Get_saveJobName(), _oModel.Get_logFile(), fileName, newPath, targetFilePath, directoryTarget, copyTime);
+
             }
 
 
@@ -137,7 +137,7 @@ namespace NSUtils
             NbFilesLeftToDo = total;
 
 
-            while (NbFilesLeftToDo>0)
+            while (NbFilesLeftToDo > 0)
             {
 
                 while (!pasprioencour.ToArray().All((e) => e))
@@ -169,7 +169,8 @@ namespace NSUtils
                 }
 
             }
-            _oSaveJobs.WriteJSON(_oModel.Get_workFile(), "inactive", NbFilesLeftToDo, progress[threadIndex]);
+            _oSaveJobs.WriteJSON(_oModel.Get_workFile(), "inactive", NbFilesLeftToDo, _oSaveJobs.Get_progress());
+            progessCalc(total, prioEntrant.Count, pasprioEntrant.Count);
 
         }
 
@@ -201,7 +202,7 @@ namespace NSUtils
             System.Windows.Forms.MessageBox.Show($"{Resources.executed}");*/
         }
 
-        public void WriteLog(string JsonLogPath, string fileName, string fileSourcePath, string fileDestPath, string directoryTarget, TimeSpan copyTime)
+        public void WriteLog(string JobName, string JsonLogPath, string fileName, string fileSourcePath, string fileDestPath, string directoryTarget, TimeSpan copyTime)
         {
             long size;
             //Get fileinfo

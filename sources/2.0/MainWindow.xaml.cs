@@ -1,15 +1,13 @@
-﻿using System;
-using Microsoft.VisualBasic.ApplicationServices;
-using NSModel;
+﻿using NSModel;
 using NSUtils;
 using NSViewModel;
-using System.Reflection.Metadata;
+using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
-using System.Xml.Linq;
+using System.Windows.Threading;
 using TextBox = System.Windows.Controls.TextBox;
-using System.Threading;
 
 namespace Livrable2
 {
@@ -21,7 +19,11 @@ namespace Livrable2
         private M_Model model;
         private VM_ViewModel viewModel;
         private U_Checker checker = new U_Checker();
-        private delegate void Update_label_background_callback(int state);
+        public object RunOnUiThread(Delegate method)
+        {
+            return Dispatcher.Invoke(DispatcherPriority.Normal, method);
+        }
+
 
 
 
@@ -32,7 +34,10 @@ namespace Livrable2
             viewModel = new VM_ViewModel(model);
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
-            
+            foreach (M_SaveJob e in model.Get_listSaveJob()) {
+                Debug.WriteLine(e);
+            };
+            //testCoucou.DataContext = model.Get_listSaveJob()[0].Get_progress();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -52,7 +57,7 @@ namespace Livrable2
         private void Execute_Click(object sender, RoutedEventArgs e)
         {
             DataGrid dataGrid = DG1;
-            model.Get_listSaveJob()[dataGrid.SelectedIndex].Execute(model.Get_listSaveJob()[dataGrid.SelectedIndex], model.Get_logFile(), model.Get_workFile(), model);
+            model.Get_listSaveJob()[dataGrid.SelectedIndex].Execute(this, model.Get_listSaveJob()[dataGrid.SelectedIndex], model.Get_logFile(), model.Get_workFile(), model);
             for (int i = 0; i < model.utilExecute.indexes.Count - 1; i++)
             {
                 var t = 0 == model.utilExecute.indexes[i];
@@ -80,14 +85,14 @@ namespace Livrable2
             if (checker.CheckStringInput(name, false) && checker.CheckStringInput(sourceDirectory, false) && checker.CheckStringInput(destinationDirectory, false) && checker.CheckStringInput(type, false))
             {
                 int indexJob = checker.GetEmptyJobIndex(model.Get_listSaveJob());
-                model.InstanceNewSaveJob(name, sourceDirectory, destinationDirectory, SaveJobeType, "idle", indexJob);
+                model.InstanceNewSaveJob(name, sourceDirectory, destinationDirectory, SaveJobeType, "idle", 0, indexJob);
                 model.GetSelectedSaveJob(indexJob).WriteJSON(model.Get_workFile());
                 viewModel.setupObsCollection();
                 DG1.DataContext = viewModel.data;
                 System.Windows.Forms.MessageBox.Show($"{name} {Properties.Resources.created}");
-                
+
                 txtBoxName.Text = "";
-                txtBoxSourceDir.Text = ""; 
+                txtBoxSourceDir.Text = "";
                 txtBoxDestDir.Text = "";
                 comboBoxType.Text = "Complete";
             }
@@ -95,7 +100,7 @@ namespace Livrable2
             {
                 System.Windows.Forms.MessageBox.Show(Properties.Resources.pleaseFillAll);
             }
-            
+
 
         }
 
@@ -133,7 +138,7 @@ namespace Livrable2
         {
             DataGrid dataGrid = DG1;
             DataGridRow Row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(dataGrid.SelectedIndex);
-            
+
             DataGridCell RowAndColumnName = (DataGridCell)dataGrid.Columns[0].GetCellContent(Row).Parent;
             string name;
             if (RowAndColumnName.Content is TextBox)
@@ -155,7 +160,7 @@ namespace Livrable2
             {
                 sourceDirectory = ((TextBlock)RowAndColumnSourceDirectory.Content).Text;
             }
-            
+
 
             DataGridCell RowAndColumnDestDirectory = (DataGridCell)dataGrid.Columns[2].GetCellContent(Row).Parent;
             string destDirectory;
@@ -167,7 +172,7 @@ namespace Livrable2
             {
                 destDirectory = ((TextBlock)RowAndColumnDestDirectory.Content).Text;
             }
-            
+
 
             DataGridCell RowAndColumnType = (DataGridCell)dataGrid.Columns[3].GetCellContent(Row).Parent;
             int type;
@@ -179,24 +184,16 @@ namespace Livrable2
             {
                 type = Convert.ToInt32(((TextBlock)RowAndColumnType.Content).Text);
             }
-            
+
             model.GetSelectedSaveJob(dataGrid.SelectedIndex).Update(name, sourceDirectory, destDirectory, type);
             model.GetSelectedSaveJob(dataGrid.SelectedIndex).WriteJSON(model.Get_workFile());
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
         }
 
-        private void progress_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void ProgressAddValue(int value)
         {
-            DataGrid dataGrid = DG1;
-            for (int i = 0; i < model.utilExecute.indexes.Count-1; i++)
-            {
-                var t = dataGrid.SelectedIndex == model.utilExecute.indexes[i];
-            }
-
-            model.RemoveSaveJob(dataGrid.SelectedIndex);
-            viewModel.setupObsCollection();
-            DG1.DataContext = viewModel.data;
+            testCoucou.Value = value;
         }
     }
 }
