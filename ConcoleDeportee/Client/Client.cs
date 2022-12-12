@@ -24,11 +24,11 @@ namespace NSClient
 
         public static Socket SeConnecter()
         {
-            EndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("192.168.1.13"), 50000);
+            EndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("192.168.1.13"), 40000);
             Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            clientSocket.Bind(new IPEndPoint(IPAddress.Parse("192.168.1.13"), 50002));
+            //clientSocket.Bind(new IPEndPoint(IPAddress.Parse("192.168.1.13"), 50002));
+            clientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             clientSocket.Connect(serverEndPoint);
-            //Console.WriteLine("Client is connected to server");
             MessageBox.Show("Connecte au serveur");
             return clientSocket;
         }
@@ -38,17 +38,24 @@ namespace NSClient
             while (true)
             {
                 string message = "";
-                while (client.Available == 0)
+                try
                 {
+                    while (client.Available == 0)
+                    {
+                    }
+                    MessageBox.Show("Message reçu client");
+                    byte[] buffer = new byte[1024];
+                    while (client.Available != 0)
+                    {
+                        int nbOctetsRecus = client.Receive(buffer);
+                        message += System.Text.Encoding.ASCII.GetString(buffer, 0, nbOctetsRecus);
+                    }
+                    return message;
                 }
-                MessageBox.Show("Message reçu client");
-                byte[] buffer = new byte[1024];
-                while (client.Available != 0)
+                catch (Exception e)
                 {
-                    int nbOctetsRecus = client.Receive(buffer);
-                    message += System.Text.Encoding.ASCII.GetString(buffer, 0, nbOctetsRecus);
+                    return null;
                 }
-                return message;
             }
         }
         
@@ -59,7 +66,7 @@ namespace NSClient
 
         public static void Deconnecter(Socket socket)
         {
-            socket.Close();
+            socket.Disconnect(true);
         }
     }
 }

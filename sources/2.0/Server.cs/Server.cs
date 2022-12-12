@@ -12,8 +12,8 @@ namespace NSServer
         public static Socket SeConnecter()
         {
             Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            serverSocket.Bind(new IPEndPoint(IPAddress.Parse("192.168.1.13"), 50000));
-            serverSocket.Listen(1);
+            serverSocket.Bind(new IPEndPoint(IPAddress.Parse("192.168.1.13"), 40000));
+            serverSocket.Listen(2);
             return serverSocket;
         }
 
@@ -25,7 +25,7 @@ namespace NSServer
         }
 
 
-        public string EcouterReseau(Socket server)
+        public string EcouterReseau(Socket server, Socket serverSocket)
         {
             while (true)
             {
@@ -50,9 +50,15 @@ namespace NSServer
             MessageBox.Show("Message envoye");
         }
 
-        public static void Deconnecter(Socket socket)
+        public static void Deconnecter(Socket socket, Socket serverSocket)
         {
+            while (socket.Connected == true)
+            {  
+            }
+            socket.Shutdown(SocketShutdown.Both);
+            serverSocket.Shutdown(SocketShutdown.Both);
             socket.Close();
+            serverSocket.Close();
         }
     }
 }

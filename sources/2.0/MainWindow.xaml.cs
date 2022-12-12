@@ -1,20 +1,16 @@
-﻿using System;
-using Microsoft.VisualBasic.ApplicationServices;
+﻿using Newtonsoft.Json.Linq;
 using NSModel;
+using NSServer;
 using NSUtils;
 using NSViewModel;
-using System.Reflection.Metadata;
+using System;
+using System.IO;
+using System.Net.Sockets;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
-using System.Xml.Linq;
 using TextBox = System.Windows.Controls.TextBox;
-using Newtonsoft.Json.Linq;
-using System.Threading;
-using System.IO;
-using System.Net.Sockets;
-using NSServer;
-using System.Linq.Expressions;
 
 namespace Livrable2
 {
@@ -36,7 +32,7 @@ namespace Livrable2
             _receivedMessage = receivedMessage;
             OnMessageReceived();
         }
-        
+
         public void OnMessageReceived()
         {
             string type = this._receivedMessage.Substring(0, 4);
@@ -121,8 +117,13 @@ namespace Livrable2
                         }
                     }
                     break;
+                case "Quit":
+                    {
+                        socket.Close();
+                        serverSocket.Close();
+                    }
+                    break;
                 default:
-                    // Should never append
                     break;
             }
 
@@ -193,7 +194,7 @@ namespace Livrable2
                     SendToClient();
                 }
                 System.Windows.Forms.MessageBox.Show($"{name} {Properties.Resources.created}");
-                
+
                 txtBoxName.Text = "";
                 txtBoxSourceDir.Text = "";
                 txtBoxDestDir.Text = "";
@@ -203,7 +204,7 @@ namespace Livrable2
             {
                 System.Windows.Forms.MessageBox.Show(Properties.Resources.pleaseFillAll);
             }
-            
+
 
         }
 
@@ -241,7 +242,7 @@ namespace Livrable2
         {
             DataGrid dataGrid = DG1;
             DataGridRow Row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(dataGrid.SelectedIndex);
-            
+
             DataGridCell RowAndColumnName = (DataGridCell)dataGrid.Columns[0].GetCellContent(Row).Parent;
             string name;
             if (RowAndColumnName.Content is TextBox)
@@ -263,7 +264,7 @@ namespace Livrable2
             {
                 sourceDirectory = ((TextBlock)RowAndColumnSourceDirectory.Content).Text;
             }
-            
+
 
             DataGridCell RowAndColumnDestDirectory = (DataGridCell)dataGrid.Columns[2].GetCellContent(Row).Parent;
             string destDirectory;
@@ -275,7 +276,7 @@ namespace Livrable2
             {
                 destDirectory = ((TextBlock)RowAndColumnDestDirectory.Content).Text;
             }
-            
+
 
             DataGridCell RowAndColumnType = (DataGridCell)dataGrid.Columns[3].GetCellContent(Row).Parent;
             int type;
@@ -287,7 +288,7 @@ namespace Livrable2
             {
                 type = Convert.ToInt32(((TextBlock)RowAndColumnType.Content).Text);
             }
-            
+
             model.GetSelectedSaveJob(dataGrid.SelectedIndex).Update(name, sourceDirectory, destDirectory, type);
             model.GetSelectedSaveJob(dataGrid.SelectedIndex).WriteJSON(model.Get_workFile());
             viewModel.setupObsCollection();
@@ -300,20 +301,26 @@ namespace Livrable2
 
         private void StartServer()
         {
-            Thread threadConnexion = new Thread(() => this.serverSocket = Server.SeConnecter());
-            Thread threadAccepterConnexion = new Thread(() => this.socket = Server.AccepterConnexion(this.serverSocket));
-            threadConnexion.Start();
-            threadConnexion.Join();
-            threadAccepterConnexion.Start();
-            threadAccepterConnexion.Join();
-            JObject objJSON = JObject.Parse(File.ReadAllText(model.Get_workFile()));
-            string jsonState = objJSON.ToString();
-            Thread threadEnvoyerMessage = new Thread(() => Server.EnvoyerMessage(this.socket, jsonState));
-            threadEnvoyerMessage.Start();
-            Thread threadStartListening = new Thread(() => EcouterReseauEnContinue());
-            threadStartListening.Start();
+            while (true)
+            {
+
+                Thread threadConnexion = new Thread(() => this.serverSocket = Server.SeConnecter());
+                Thread threadAccepterConnexion = new Thread(() => this.socket = Server.AccepterConnexion(this.serverSocket));
+                threadConnexion.Start();
+                threadConnexion.Join();
+                threadAccepterConnexion.Start();
+                threadAccepterConnexion.Join();
+                JObject objJSON = JObject.Parse(File.ReadAllText(model.Get_workFile()));
+                string jsonState = objJSON.ToString();
+                Thread threadEnvoyerMessage = new Thread(() => Server.EnvoyerMessage(this.socket, jsonState));
+                threadEnvoyerMessage.Start();
+                //Thread verifyConnection = new Thread(() => Server.Deconnecter(socket, serverSocket));
+                Thread threadStartListening = new Thread(() => EcouterReseauEnContinue());
+                threadStartListening.Start();
+                threadStartListening.Join();
+            }
         }
-        
+
         private void SendToClient()
         {
             JObject objJSON = JObject.Parse(File.ReadAllText(model.Get_workFile()));
@@ -324,12 +331,12 @@ namespace Livrable2
 
         private void EcouterReseauEnContinue()
         {
-            Thread threadEcouteReseau = new Thread(() => this.Set_receivedMessage(server.EcouterReseau(this.socket)));
-            while (true)
+            Thread threadEcouteReseau = new Thread(() => this.Set_receivedMessage(server.EcouterReseau(this.socket, this.serverSocket)));
+            while (socket.Connected)
             {
                 if (!threadEcouteReseau.IsAlive)
                 {
-                    threadEcouteReseau = new Thread(() => this.Set_receivedMessage(server.EcouterReseau(this.socket)));
+                    threadEcouteReseau = new Thread(() => this.Set_receivedMessage(server.EcouterReseau(this.socket, this.serverSocket)));
                     threadEcouteReseau.Start();
                 }
             }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ConcoleDeportee"
         xmlns:p = "clr-namespace:ConcoleDeportee.Properties"
-        Title="Client EasySave" Height="500" Width="800">
+        Title="Client EasySave" Height="500" Width="800" Closed="Window_Closed">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="9*"/>

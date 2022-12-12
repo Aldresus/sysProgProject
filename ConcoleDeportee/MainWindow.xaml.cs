@@ -52,23 +52,29 @@ namespace ConcoleDeportee
 
         private void OnPropertyChanged()
         {
-            model = new M_Model(this._receiveMessage);
-            viewModel = new VM_ViewModel(model);
-            MessageBox.Show("Message reçu : " + this._receiveMessage);
-            model.Set_workFile(this._receiveMessage);
-            viewModel.setupObsCollection();
-            try
+            if (this._receiveMessage != null)
             {
-                this.Dispatcher.Invoke(() =>
+                model = new M_Model(this._receiveMessage);
+                viewModel = new VM_ViewModel(model);
+                MessageBox.Show("Message reçu : " + this._receiveMessage);
+                model.Set_workFile(this._receiveMessage);
+                viewModel.setupObsCollection();
+                try
                 {
-                    DG_Deportee.DataContext = viewModel.data;
-                });
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        DG_Deportee.DataContext = viewModel.data;
+                    });
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                }
             }
-            catch (Exception e)
+            else
             {
-                MessageBox.Show(e.Message);
+                
             }
-            //DG_Deportee.DataContext = viewModel.data;
         }
         public MainWindow()
         {
@@ -93,7 +99,7 @@ namespace ConcoleDeportee
         private void EcouterReseauEnContinue()
         {
             Thread threadEcouteReseau = new Thread(() => this.Set_receiveMessage(client.EcouterReseau(this.socket)));
-            while (true)
+            while (socket.Connected)
             {
                 if (!threadEcouteReseau.IsAlive)
                 {
@@ -101,6 +107,7 @@ namespace ConcoleDeportee
                     threadEcouteReseau.Start();
                 }
             }
+            socket.Close();
         }
 
         private void DG_Deportee_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
@@ -235,6 +242,12 @@ namespace ConcoleDeportee
             {
                 System.Windows.Forms.MessageBox.Show(Properties.Resources.pleaseFillAll);
             }
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            Client.EnvoyerMessage(socket, "Quit");
+            Client.Deconnecter(socket);
         }
     }
 }
