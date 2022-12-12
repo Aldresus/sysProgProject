@@ -151,14 +151,16 @@ namespace Livrable2
             model.RemoveSaveJob(dataGrid.SelectedIndex);
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
-            SendToClient();
+            if (socket != null)
+            {
+                SendToClient();
+            }
         }
 
         private void Execute_Click(object sender, RoutedEventArgs e)
         {
             DataGrid dataGrid = DG1;
             model.Get_listSaveJob()[dataGrid.SelectedIndex].Execute(model.Get_listSaveJob()[dataGrid.SelectedIndex], model.Get_logFile(), model.Get_workFile(), model);
-
         }
         private void Ajouter_Click(object sender, RoutedEventArgs e)
         {
@@ -186,7 +188,10 @@ namespace Livrable2
                 model.GetSelectedSaveJob(indexJob).WriteJSON(model.Get_workFile());
                 viewModel.setupObsCollection();
                 DG1.DataContext = viewModel.data;
-                SendToClient();
+                if (socket != null)
+                {
+                    SendToClient();
+                }
                 System.Windows.Forms.MessageBox.Show($"{name} {Properties.Resources.created}");
                 
                 txtBoxName.Text = "";
@@ -287,7 +292,10 @@ namespace Livrable2
             model.GetSelectedSaveJob(dataGrid.SelectedIndex).WriteJSON(model.Get_workFile());
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
-            SendToClient();
+            if (socket != null)
+            {
+                SendToClient();
+            }
         }
 
         private void StartServer()
