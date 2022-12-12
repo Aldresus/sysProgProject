@@ -12,7 +12,7 @@ namespace NSServer
         public static Socket SeConnecter()
         {
             Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            serverSocket.Bind(new IPEndPoint(IPAddress.Parse("192.168.1.13"), 50000));
+            serverSocket.Bind(new IPEndPoint(IPAddress.Parse("10.167.128.114"), 50000));
             serverSocket.Listen(1);
             return serverSocket;
         }

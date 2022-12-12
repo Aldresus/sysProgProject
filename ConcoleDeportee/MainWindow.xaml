@@ -7,6 +7,10 @@
         xmlns:p = "clr-namespace:ConcoleDeportee.Properties"
         Title="EasySave" Height="500" Width="800">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="9*"/>
+            <ColumnDefinition Width="71*"/>
+        </Grid.ColumnDefinitions>
         <DataGrid Name="DG_Deportee" ItemsSource="{Binding}" AutoGenerateColumns="False" CanUserAddRows="false" Margin="0,23,0,140" Grid.ColumnSpan="2">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="{x:Static p:Resources.name}"  Binding="{Binding _saveJobName}"/>

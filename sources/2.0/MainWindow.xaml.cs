@@ -88,6 +88,7 @@ namespace Livrable2
             model.RemoveSaveJob(dataGrid.SelectedIndex);
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
+            SendToClient();
         }
 
         private void Execute_Click(object sender, RoutedEventArgs e)
@@ -122,6 +123,7 @@ namespace Livrable2
                 model.GetSelectedSaveJob(indexJob).WriteJSON(model.Get_workFile());
                 viewModel.setupObsCollection();
                 DG1.DataContext = viewModel.data;
+                SendToClient();
                 System.Windows.Forms.MessageBox.Show($"{name} {Properties.Resources.created}");
                 
                 txtBoxName.Text = "";
@@ -222,6 +224,15 @@ namespace Livrable2
             model.GetSelectedSaveJob(dataGrid.SelectedIndex).WriteJSON(model.Get_workFile());
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
+            SendToClient();
+        }
+        
+        private void SendToClient()
+        {
+            JObject objJSON = JObject.Parse(File.ReadAllText(model.Get_workFile()));
+            string jsonState = objJSON.ToString();
+            Thread threadEnvoyerMessage = new Thread(() => Server.EnvoyerMessage(this.socket, jsonState));
+            threadEnvoyerMessage.Start();
         }
     }
 }

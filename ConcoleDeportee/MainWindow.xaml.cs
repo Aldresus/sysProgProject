@@ -34,6 +34,7 @@ namespace ConcoleDeportee
         private M_Model model;
         private VM_ViewModel viewModel;
 
+
         public string Get_receiveMessage()
         {
             return _receiveMessage;
@@ -68,14 +69,27 @@ namespace ConcoleDeportee
         {
             InitializeComponent();
             this.socket = Client.SeConnecter();
-            Thread threadEcouteReseau = new Thread(() => this.Set_receiveMessage(client.EcouterReseau(this.socket)));
-            threadEcouteReseau.Start();  
+            Thread threadStartListening = new Thread(() => EcouterReseauEnContinue());
+            threadStartListening.Start();
         }
 
         private void Button_OnClick(object sender, RoutedEventArgs e)
         {
             string messageToSend = "Exec" + DG_Deportee.SelectedIndex.ToString();
             Client.EnvoyerMessage(this.socket, messageToSend);
+        }
+        
+        private void EcouterReseauEnContinue()
+        {
+            Thread threadEcouteReseau = new Thread(() => this.Set_receiveMessage(client.EcouterReseau(this.socket)));
+            while (true)
+            {
+                if (!threadEcouteReseau.IsAlive)
+                {
+                    threadEcouteReseau = new Thread(() => this.Set_receiveMessage(client.EcouterReseau(this.socket)));
+                    threadEcouteReseau.Start();
+                }
+            }
         }
     }
 }
