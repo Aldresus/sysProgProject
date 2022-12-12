@@ -42,11 +42,27 @@ namespace Livrable2
             string type = this._receivedMessage.Substring(0, 4);
             int saveJobNumber = Convert.ToInt32(this._receivedMessage.Substring(4));
             System.Windows.MessageBox.Show("type : " + type + "    saveJobNumber : " + saveJobNumber.ToString());
+            DataGrid dataGrid = DG1;
             switch (type)
             {
-                case "Exec":
-                    DataGrid dataGrid = DG1;
+                case "Exec": 
                     model.Get_listSaveJob()[saveJobNumber].Execute(model.Get_listSaveJob()[saveJobNumber], model.Get_logFile(), model.Get_workFile(), model);
+                    break;
+                case "Dele":
+                    model.RemoveSaveJob(saveJobNumber);
+                    viewModel.setupObsCollection();
+                    try
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            DG1.DataContext = viewModel.data;
+                        });
+                    }
+                    catch (Exception e)
+                    {
+                        System.Windows.MessageBox.Show(e.Message);
+                    }
+                    SendToClient();
                     break;
                 default:
                     // Should never append

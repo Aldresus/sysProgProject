@@ -1,6 +1,8 @@
 ﻿// Class ViewModel
 // Interacts with the View and the Model
+using Livrable2;
 using NSModel;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 
@@ -87,11 +89,14 @@ namespace NSViewModel
 
         public void setupObsCollection()
         {
-            this.data.Clear();
-            foreach (M_SaveJob saveJob in _oModel.Get_listSaveJob())
+            App.Current.Dispatcher.Invoke((Action)delegate
             {
-                this.data.Add(saveJob);
-            }
+                this.data.Clear();
+                foreach (M_SaveJob saveJob in _oModel.Get_listSaveJob())
+                {
+                    this.data.Add(saveJob);
+                }
+            });
         }
 
         public void setupExtensionObsCollection()

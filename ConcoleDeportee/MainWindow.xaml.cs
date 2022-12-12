@@ -73,12 +73,18 @@ namespace ConcoleDeportee
             threadStartListening.Start();
         }
 
-        private void Button_OnClick(object sender, RoutedEventArgs e)
+        private void Execute_OnClick(object sender, RoutedEventArgs e)
         {
             string messageToSend = "Exec" + DG_Deportee.SelectedIndex.ToString();
             Client.EnvoyerMessage(this.socket, messageToSend);
         }
-        
+
+        private void Delete_OnClick(object sender, RoutedEventArgs e)
+        {
+            string messageToSend = "Dele" + DG_Deportee.SelectedIndex.ToString();
+            Client.EnvoyerMessage(this.socket, messageToSend);
+        }
+
         private void EcouterReseauEnContinue()
         {
             Thread threadEcouteReseau = new Thread(() => this.Set_receiveMessage(client.EcouterReseau(this.socket)));
