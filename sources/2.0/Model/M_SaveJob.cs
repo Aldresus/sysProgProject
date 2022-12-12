@@ -389,6 +389,7 @@ namespace NSModel
             if (this.RunningThread != null)
             {
                 this._state = "Stopped";
+                RunningThread.Interrupt();
             }
         }
     }

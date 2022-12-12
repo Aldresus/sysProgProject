@@ -142,7 +142,7 @@ namespace NSUtils
             NbFilesLeftToDo = total;
             bool keepLooping = true;
 
-
+            try { 
             while (NbFilesLeftToDo > 0 && keepLooping)
             {
 
@@ -152,11 +152,6 @@ namespace NSUtils
                     bool test = !pasprioencour.ToArray().All((e) => e);
                     foreach (var s in prio.ToArray())
                     {
-                        if (_oSaveJobs._state == "Stopped")
-                        {
-                            keepLooping = false;
-                            break;
-                        }
                         copy(s);
                         prio.Remove(s);
 
@@ -170,12 +165,6 @@ namespace NSUtils
                 {
                     foreach (var s in pasprio.ToArray())
                     {
-                        Debug.WriteLine(_oSaveJobs._state);
-                        if (_oSaveJobs._state == "Stopped")
-                        {
-                            keepLooping = false;
-                            break;
-                        }
                         copy(s);
                         pasprio.Remove(s);
                     }
@@ -186,10 +175,15 @@ namespace NSUtils
                 }
 
             }
+            
             _oSaveJobs.WriteJSON(_oModel.Get_workFile(), "inactive", NbFilesLeftToDo, _oSaveJobs.Get_progress());
+            }
+            catch(ThreadInterruptedException e)
+            {
+                _oSaveJobs.WriteJSON(_oModel.Get_workFile(), "aborted", NbFilesLeftToDo, _oSaveJobs.Get_progress());
+            }
             progessCalc(total, prioEntrant.Count, pasprioEntrant.Count);
             _oSaveJobs.RunningThread = null;
-
         }
 
         public void Execute(M_SaveJob SaveJob, string FileLogPath, string FileStatePath)
