@@ -185,6 +185,45 @@ namespace NSModel
             this.Set_saveJobType(_saveJobType);
         }
 
+        public JObject AddSaveJobToMessage(string message)
+        {
+            //Get JSon file's content
+            JObject objJSON = JObject.Parse(message);
+
+            StringBuilder sb = new StringBuilder();
+            StringWriter sw = new StringWriter(sb);
+            JsonWriter writer = new JsonTextWriter(sw);
+            writer.Formatting = Formatting.Indented;
+            writer.WriteStartObject();
+            writer.WritePropertyName("Name");
+            writer.WriteValue(this.Get_saveJobName());
+            writer.WritePropertyName("SourceFilePath");
+            writer.WriteValue(this.Get_saveJobSourceDirectory());
+            writer.WritePropertyName("TargetFilePath");
+            writer.WriteValue(this.Get_saveJobDestinationDirectory());
+            writer.WritePropertyName("State");
+            writer.WriteValue(this.Get_state());
+            writer.WritePropertyName("Type");
+            writer.WriteValue(this.Get_saveJobType());
+            writer.WritePropertyName("TotalFilesToCopy");
+            writer.WriteValue(this.Get_totalNbFile());
+            writer.WritePropertyName("TotalFilesSize");
+            writer.WriteValue(this.Get_totalSizeFile());
+            writer.WritePropertyName("NbFilesLeftToDo");
+            writer.WriteValue(this.Get_NbFilesLeftToDo());
+            writer.WritePropertyName("Progression");
+            writer.WriteValue(this.Get_progress());
+            writer.WriteEndObject();
+
+            //Convert object JsonWriter to string
+            string json = sb.ToString();
+
+            //Convert string to JObject
+            JObject newState = JObject.Parse(json);
+
+            return newState;
+        }
+
         public long CalculateFolderSize(string folder)
         {
             long folderSize = 0;

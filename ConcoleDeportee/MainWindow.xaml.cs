@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -20,6 +21,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MessageBox = System.Windows.MessageBox;
+using TextBox = System.Windows.Controls.TextBox;
+using NSUtils;
 
 namespace ConcoleDeportee
 {
@@ -33,6 +37,7 @@ namespace ConcoleDeportee
         private string _receiveMessage = "";
         private M_Model model;
         private VM_ViewModel viewModel;
+        private U_Checker checker = new U_Checker();
 
 
         public string Get_receiveMessage()
@@ -157,6 +162,78 @@ namespace ConcoleDeportee
             array[dataGrid.SelectedIndex]["Type"] = type;
             this.Set_receiveMessage(json.ToString());
             Client.EnvoyerMessage(this.socket, "Edit" + this._receiveMessage);
+        }
+
+        private void SourceClic(object sender, RoutedEventArgs e)
+        {
+
+            txtBoxSourceDir.Text = AskForFolder();
+
+        }
+        private void DestClic(object sender, RoutedEventArgs e)
+        {
+            txtBoxDestDir.Text = AskForFolder();
+        }
+        private string AskForFolder()
+        {
+            bool validInput = false;
+            using (var fbd = new FolderBrowserDialog())
+            {
+                while (!validInput)
+                {
+                    DialogResult result = fbd.ShowDialog();
+
+                    if (!string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                    {
+                        fbd.SelectedPath += @"\";
+                        return fbd.SelectedPath;
+                    }
+                }
+                return "";
+            }
+        }
+        
+        private void Ajouter_Click(object sender, RoutedEventArgs e)
+        {
+            string name = txtBoxName.Text;
+            string sourceDirectory = txtBoxSourceDir.Text;
+            string destinationDirectory = txtBoxDestDir.Text;
+            string type = comboBoxType.Text;
+            int SaveJobeType = 1;
+            switch (type)
+            {
+                case "Complete":
+                    SaveJobeType = 1;
+                    break;
+                case "Differential":
+                    SaveJobeType = 2;
+                    break;
+                default:
+                    break;
+            }
+            if (checker.CheckStringInput(name, false) && checker.CheckStringInput(sourceDirectory, false) && checker.CheckStringInput(destinationDirectory, false) && checker.CheckStringInput(type, false))
+            {
+                int indexJob = checker.GetEmptyJobIndex(model.Get_listSaveJob());
+                model.InstanceNewSaveJob(name, sourceDirectory, destinationDirectory, SaveJobeType, "idle", indexJob);
+                JObject json = JObject.Parse(this._receiveMessage);
+                JArray array = (JArray)json["State"];
+                JObject saveJob =  model.GetSelectedSaveJob(indexJob).AddSaveJobToMessage(this._receiveMessage);
+                array.Add(saveJob);
+                this._receiveMessage = json.ToString();
+                Client.EnvoyerMessage(this.socket, "Crea" + this._receiveMessage);
+                viewModel.setupObsCollection();
+                DG_Deportee.DataContext = viewModel.data;
+                System.Windows.Forms.MessageBox.Show($"{name} {Properties.Resources.created}");
+
+                txtBoxName.Text = "";
+                txtBoxSourceDir.Text = "";
+                txtBoxDestDir.Text = "";
+                comboBoxType.Text = "Complete";
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show(Properties.Resources.pleaseFillAll);
+            }
         }
     }
 }

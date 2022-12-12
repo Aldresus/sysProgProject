@@ -95,6 +95,32 @@ namespace Livrable2
                         }
                     }
                     break;
+                case "Crea":
+                    {
+                        string json = this._receivedMessage.Substring(4);
+                        File.WriteAllText(model.Get_workFile(), json);
+                        model.Get_listSaveJob().Clear();
+                        JObject objJSON = JObject.Parse(json);
+                        int identationIndex = 0;
+                        foreach (JObject i in objJSON["State"])
+                        {
+                            model.Get_listSaveJob().Add(new M_SaveJob(i["Name"].ToString(), i["SourceFilePath"].ToString(), i["TargetFilePath"].ToString(), i["Type"].Value<int>(), i["State"].ToString(), i["TotalFilesToCopy"].Value<int>(), i["TotalFilesSize"].Value<int>(), identationIndex));
+                            identationIndex += 1;
+                        }
+                        viewModel.setupObsCollection();
+                        try
+                        {
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                DG1.DataContext = viewModel.data;
+                            });
+                        }
+                        catch (Exception e)
+                        {
+                            System.Windows.MessageBox.Show(e.Message);
+                        }
+                    }
+                    break;
                 default:
                     // Should never append
                     break;
