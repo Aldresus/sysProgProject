@@ -31,7 +31,7 @@ namespace Livrable2
         private Socket socket;
         private string _receivedMessage;
 
-        public void Set_ReceivedMessage(string receivedMessage)
+        public void Set_receivedMessage(string receivedMessage)
         {
             _receivedMessage = receivedMessage;
             OnMessageReceived();
@@ -40,29 +40,60 @@ namespace Livrable2
         public void OnMessageReceived()
         {
             string type = this._receivedMessage.Substring(0, 4);
-            int saveJobNumber = Convert.ToInt32(this._receivedMessage.Substring(4));
-            System.Windows.MessageBox.Show("type : " + type + "    saveJobNumber : " + saveJobNumber.ToString());
+            System.Windows.MessageBox.Show("type : " + type);
             DataGrid dataGrid = DG1;
             switch (type)
             {
-                case "Exec": 
-                    model.Get_listSaveJob()[saveJobNumber].Execute(model.Get_listSaveJob()[saveJobNumber], model.Get_logFile(), model.Get_workFile(), model);
+                case "Exec":
+                    {
+                        int saveJobNb = Convert.ToInt32(this._receivedMessage.Substring(4));
+                        model.Get_listSaveJob()[saveJobNb].Execute(model.Get_listSaveJob()[saveJobNb], model.Get_logFile(), model.Get_workFile(), model);
+                    }
                     break;
                 case "Dele":
-                    model.RemoveSaveJob(saveJobNumber);
-                    viewModel.setupObsCollection();
-                    try
                     {
-                        this.Dispatcher.Invoke(() =>
+                        int saveJobNb = Convert.ToInt32(this._receivedMessage.Substring(4));
+                        model.RemoveSaveJob(saveJobNb);
+                        viewModel.setupObsCollection();
+                        try
                         {
-                            DG1.DataContext = viewModel.data;
-                        });
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                DG1.DataContext = viewModel.data;
+                            });
+                        }
+                        catch (Exception e)
+                        {
+                            System.Windows.MessageBox.Show(e.Message);
+                        }
+                        SendToClient();
                     }
-                    catch (Exception e)
+                    break;
+                case "Edit":
                     {
-                        System.Windows.MessageBox.Show(e.Message);
+                        string json = this._receivedMessage.Substring(4);
+                        File.WriteAllText(model.Get_workFile(), json);
+                        model.Get_listSaveJob().Clear();
+                        JObject objJSON = JObject.Parse(json);
+                        int identationIndex = 0;
+                        foreach (JObject i in objJSON["State"])
+                        {
+                            model.Get_listSaveJob().Add(new M_SaveJob(i["Name"].ToString(), i["SourceFilePath"].ToString(), i["TargetFilePath"].ToString(), i["Type"].Value<int>(), i["State"].ToString(), i["TotalFilesToCopy"].Value<int>(), i["TotalFilesSize"].Value<int>(), identationIndex));
+                            identationIndex += 1;
+                        }
+                        viewModel.setupObsCollection();
+                        try
+                        {
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                DG1.DataContext = viewModel.data;
+                            });
+                        }
+                        catch (Exception e)
+                        {
+                            System.Windows.MessageBox.Show(e.Message);
+                        }
                     }
-                    SendToClient();
                     break;
                 default:
                     // Should never append
@@ -88,8 +119,8 @@ namespace Livrable2
             threadAccepterConnexion.Join();
             Thread threadEnvoyerMessage = new Thread(() => Server.EnvoyerMessage(this.socket, jsonState));
             threadEnvoyerMessage.Start();
-            Thread threadEcouteReseau = new Thread(() => this.Set_ReceivedMessage(server.EcouterReseau(this.socket)));
-            threadEcouteReseau.Start();
+            Thread threadStartListening = new Thread(() => EcouterReseauEnContinue());
+            threadStartListening.Start();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -249,6 +280,19 @@ namespace Livrable2
             string jsonState = objJSON.ToString();
             Thread threadEnvoyerMessage = new Thread(() => Server.EnvoyerMessage(this.socket, jsonState));
             threadEnvoyerMessage.Start();
+        }
+
+        private void EcouterReseauEnContinue()
+        {
+            Thread threadEcouteReseau = new Thread(() => this.Set_receivedMessage(server.EcouterReseau(this.socket)));
+            while (true)
+            {
+                if (!threadEcouteReseau.IsAlive)
+                {
+                    threadEcouteReseau = new Thread(() => this.Set_receivedMessage(server.EcouterReseau(this.socket)));
+                    threadEcouteReseau.Start();
+                }
+            }
         }
     }
 }

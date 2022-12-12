@@ -41,7 +41,7 @@ namespace NSClient
                 while (client.Available == 0)
                 {
                 }
-                MessageBox.Show("Message reçu");
+                MessageBox.Show("Message reçu client");
                 byte[] buffer = new byte[1024];
                 while (client.Available != 0)
                 {

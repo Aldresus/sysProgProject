@@ -97,5 +97,66 @@ namespace ConcoleDeportee
                 }
             }
         }
+
+        private void DG_Deportee_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            DataGrid dataGrid = DG_Deportee;
+            DataGridRow Row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromIndex(dataGrid.SelectedIndex);
+
+            DataGridCell RowAndColumnName = (DataGridCell)dataGrid.Columns[0].GetCellContent(Row).Parent;
+            string name;
+            if (RowAndColumnName.Content is TextBox)
+            {
+                name = ((TextBox)RowAndColumnName.Content).Text;
+            }
+            else
+            {
+                name = ((TextBlock)RowAndColumnName.Content).Text;
+            }
+
+            DataGridCell RowAndColumnSourceDirectory = (DataGridCell)dataGrid.Columns[1].GetCellContent(Row).Parent;
+            string sourceDirectory;
+            if (RowAndColumnSourceDirectory.Content is TextBox)
+            {
+                sourceDirectory = ((TextBox)RowAndColumnSourceDirectory.Content).Text;
+            }
+            else
+            {
+                sourceDirectory = ((TextBlock)RowAndColumnSourceDirectory.Content).Text;
+            }
+
+
+            DataGridCell RowAndColumnDestDirectory = (DataGridCell)dataGrid.Columns[2].GetCellContent(Row).Parent;
+            string destDirectory;
+            if (RowAndColumnDestDirectory.Content is TextBox)
+            {
+                destDirectory = ((TextBox)RowAndColumnDestDirectory.Content).Text;
+            }
+            else
+            {
+                destDirectory = ((TextBlock)RowAndColumnDestDirectory.Content).Text;
+            }
+
+
+            DataGridCell RowAndColumnType = (DataGridCell)dataGrid.Columns[3].GetCellContent(Row).Parent;
+            int type;
+            if (RowAndColumnType.Content is TextBox)
+            {
+                type = Convert.ToInt32(((TextBox)RowAndColumnType.Content).Text);
+            }
+            else
+            {
+                type = Convert.ToInt32(((TextBlock)RowAndColumnType.Content).Text);
+            }
+
+            JObject json = JObject.Parse(this._receiveMessage);
+            JArray array = (JArray)json["State"];
+            array[dataGrid.SelectedIndex]["Name"] = name;
+            array[dataGrid.SelectedIndex]["SourceDirectory"] = sourceDirectory;
+            array[dataGrid.SelectedIndex]["DestDirectory"] = destDirectory;
+            array[dataGrid.SelectedIndex]["Type"] = type;
+            this.Set_receiveMessage(json.ToString());
+            Client.EnvoyerMessage(this.socket, "Edit" + this._receiveMessage);
+        }
     }
 }

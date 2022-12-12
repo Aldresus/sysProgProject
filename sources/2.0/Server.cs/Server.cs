@@ -33,7 +33,7 @@ namespace NSServer
                 while (server.Available == 0)
                 {
                 }
-                    
+                MessageBox.Show("Message reçu server");
                 byte[] buffer = new byte[1024];
                 while (server.Available != 0)
                 {

@@ -11,7 +11,7 @@
             <ColumnDefinition Width="9*"/>
             <ColumnDefinition Width="71*"/>
         </Grid.ColumnDefinitions>
-        <DataGrid Name="DG_Deportee" ItemsSource="{Binding}" AutoGenerateColumns="False" CanUserAddRows="false" Margin="0,23,0,140" Grid.ColumnSpan="2">
+        <DataGrid Name="DG_Deportee" ItemsSource="{Binding}" AutoGenerateColumns="False" CanUserAddRows="false" Margin="0,23,0,140" Grid.ColumnSpan="2" CellEditEnding="DG_Deportee_CellEditEnding">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="{x:Static p:Resources.name}"  Binding="{Binding _saveJobName}"/>
                 <DataGridTextColumn Header="{x:Static p:Resources.sourceFolder}" Binding="{Binding _saveJobSourceDirectory}" />
