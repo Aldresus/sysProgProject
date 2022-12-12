@@ -154,6 +154,7 @@ namespace ConcoleDeportee
                 type = Convert.ToInt32(((TextBlock)RowAndColumnType.Content).Text);
             }
 
+            model.GetSelectedSaveJob(dataGrid.SelectedIndex).Update(name, sourceDirectory, destDirectory, type);
             JObject json = JObject.Parse(this._receiveMessage);
             JArray array = (JArray)json["State"];
             array[dataGrid.SelectedIndex]["Name"] = name;
