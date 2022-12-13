@@ -4,6 +4,7 @@ using NSServer;
 using NSUtils;
 using NSViewModel;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
@@ -26,6 +27,17 @@ namespace Livrable2
         private Socket serverSocket;
         private Socket socket;
         private string _receivedMessage;
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            model = new M_Model();
+            viewModel = new VM_ViewModel(model);
+            viewModel.setupObsCollection();
+            DG1.DataContext = viewModel.data;
+            Thread threadStartListening = new Thread(() => StartServer());
+            threadStartListening.Start();
+        }
 
         public void Set_receivedMessage(string receivedMessage)
         {
@@ -128,16 +140,6 @@ namespace Livrable2
             }
         }
 
-        public MainWindow()
-        {
-            InitializeComponent();
-            model = new M_Model();
-            viewModel = new VM_ViewModel(model);
-            viewModel.setupObsCollection();
-            DG1.DataContext = viewModel.data;
-            Thread threadStartListening = new Thread(() => StartServer());
-            threadStartListening.Start();
-        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -312,6 +314,7 @@ namespace Livrable2
         {
             while (true)
             {
+                Debug.WriteLine("StartServer");
                 Thread threadConnexion = new Thread(() => this.serverSocket = Server.SeConnecter());
                 Thread threadAccepterConnexion =
                     new Thread(() => this.socket = Server.AccepterConnexion(this.serverSocket));
@@ -361,7 +364,6 @@ namespace Livrable2
 
         private void Stop_Click(object sender, RoutedEventArgs e)
         {
-            //TODO make it happen
             DataGrid dataGrid = DG1;
             model.Get_listSaveJob()[dataGrid.SelectedIndex].stopThread();
         }

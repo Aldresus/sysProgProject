@@ -33,6 +33,7 @@ namespace NSServer
                 while (server.Available == 0)
                 {
                 }
+
                 //MessageBox.Show("Message reçu server");
                 byte[] buffer = new byte[1024];
                 while (server.Available != 0)
@@ -40,6 +41,7 @@ namespace NSServer
                     int nbOctetsRecus = server.Receive(buffer);
                     message += System.Text.Encoding.ASCII.GetString(buffer, 0, nbOctetsRecus);
                 }
+
                 return message;
             }
         }
@@ -50,11 +52,8 @@ namespace NSServer
             //MessageBox.Show("Message envoye");
         }
 
-        public static void Deconnecter(Socket socket, Socket serverSocket)
+        public void Deconnecter(Socket socket, Socket serverSocket)
         {
-            while (socket.Connected == true)
-            {  
-            }
             socket.Shutdown(SocketShutdown.Both);
             serverSocket.Shutdown(SocketShutdown.Both);
             socket.Close();

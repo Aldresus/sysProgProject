@@ -152,13 +152,12 @@ public class U_Execute
         threadIndex = index;
         total = prioEntrant.Count + pasprioEntrant.Count;
         NbFilesLeftToDo = total;
-        var keepLooping = true;
 
         try
         {
-            while (NbFilesLeftToDo > 0 && keepLooping)
+            while (NbFilesLeftToDo > 0)
             {
-                while (!pasprioencour.ToArray().All(e => e) && keepLooping)
+                while (!pasprioencour.ToArray().All(e => e))
                 {
                     var test = !pasprioencour.ToArray().All(e => e);
                     foreach (var s in prio.ToArray())
@@ -170,7 +169,7 @@ public class U_Execute
                     if (prio.Count == 0) pasprioencour[threadIndex] = true;
                 }
 
-                while (pasprio.Count > 0 && keepLooping)
+                while (pasprio.Count > 0)
                 {
                     foreach (var s in pasprio.ToArray())
                     {
@@ -183,17 +182,16 @@ public class U_Execute
             }
 
             progessCalc(total, prioEntrant.Count, pasprioEntrant.Count);
-            _oSaveJobs.WriteJSON(_oModel.Get_workFile(), "inactive", NbFilesLeftToDo, _oSaveJobs.Get_progress());
+            _oSaveJobs.WriteJSON(_oModel.Get_workFile(), "done", NbFilesLeftToDo, _oSaveJobs.Get_progress());
         }
         catch (ThreadInterruptedException e)
         {
-            _oSaveJobs.WriteJSON(_oModel.Get_workFile(), "aborted", NbFilesLeftToDo, _oSaveJobs._progress);
-            Application.Current.Dispatcher.BeginInvoke(() => { _oViewModel.setupObsCollection(); });
+            _oSaveJobs.WriteJSON(_oModel.Get_workFile(), "aborted", NbFilesLeftToDo, 0);
             prio.Clear();
             pasprio.Clear();
         }
 
-
+        Application.Current.Dispatcher.BeginInvoke(() => { _oViewModel.setupObsCollection(); });
         _oSaveJobs.RunningThread = null;
     }
 
