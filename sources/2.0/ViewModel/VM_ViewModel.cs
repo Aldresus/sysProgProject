@@ -15,6 +15,7 @@ namespace NSViewModel
         private M_Model _oModel;
         public ObservableCollection<M_SaveJob> data { get; set; } = new ObservableCollection<M_SaveJob>();
         public ObservableCollection<string> extension { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<string> extensionPrio { get; set; } = new ObservableCollection<string>();
         public ObservableCollection<ComboBoxItem> cbLanguageItems { get; set; } = new ObservableCollection<ComboBoxItem>();
 
 
@@ -100,6 +101,14 @@ namespace NSViewModel
             foreach (string extension in _oModel.Get_extensionToCrypt())
             {
                 this.extension.Add(extension);
+            }
+        }        
+        public void setupExtensionObsCollectionPrio()
+        {
+            this.extensionPrio.Clear();
+            foreach (string extension in _oModel.Get_extensionPriority())
+            {
+                this.extensionPrio.Add(extension);
             }
         }
     }

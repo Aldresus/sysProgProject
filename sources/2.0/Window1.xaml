@@ -8,7 +8,7 @@
         Title = "EasySave" Height="450" Width="800" Closed="Window_Closed">
     <Grid>
         <Label Content="{x:Static p:Resources.extensionToCrypt}" HorizontalAlignment="Left" Margin="283,35,0,0" VerticalAlignment="Top" Width="117"/>
-        <DataGrid Name="DG_EXT" ItemsSource="{Binding Path=.}" AutoGenerateColumns="False" Margin="283,106,358,159" CellEditEnding="DG_EXT_CellEditEnding">
+        <DataGrid Name="DG_EXT" ItemsSource="{Binding Path=.}" AutoGenerateColumns="False" Margin="283,106,358,159" CellEditEnding="DG_EXT_Prio_CellEditEnding">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="{x:Static p:Resources.extensions}"  Binding="{Binding Path=., Mode=TwoWay}"/>
                 <DataGridTemplateColumn>
@@ -22,6 +22,22 @@
         </DataGrid>
         <TextBox Name ="textBoxExtToAdd" HorizontalAlignment="Left" Margin="283,66,0,0" TextWrapping="Wrap" Text="."  VerticalAlignment="Top" Width="159" Height="22"/>
         <Button Content="{x:Static p:Resources.add}" HorizontalAlignment="Left" Margin="447,66,0,0" VerticalAlignment="Top" Width="47" Click="Button_Click"/>
+
+        <Label Content="{x:Static p:Resources.extensionPrio}" HorizontalAlignment="Left" Margin="542,37,0,0" VerticalAlignment="Top"/>
+        <TextBox Name ="textBoxExtToAddPrio" HorizontalAlignment="Left" Margin="542,66,0,0" TextWrapping="Wrap" Text="." VerticalAlignment="Top" Width="159" Height="22"/>
+        <Button Content="{x:Static p:Resources.add}" HorizontalAlignment="Left" Margin="708,66,0,0" VerticalAlignment="Top" Width="47" Click="Button_Prio_Click"/>
+        <DataGrid x:Name="DG_EXT_Prio" ItemsSource="{Binding Path=.}" AutoGenerateColumns="False" Margin="541,105,100,160">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="{x:Static p:Resources.extensions}"  Binding="{Binding ., Mode=TwoWay}"/>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="{x:Static p:Resources.delete}" x:Name="Delete" Click="Delete_Click_Prio" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
 
     </Grid>
 </Window>

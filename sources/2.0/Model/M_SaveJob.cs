@@ -1,12 +1,16 @@
 //Class SaveJob
 //Description : This class is used to store information and save the files
 
+using Livrable2;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NSUtils;
+using NSViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace NSModel
 {
@@ -16,21 +20,22 @@ namespace NSModel
         public string _saveJobSourceDirectory { get; set; }
         public string _saveJobDestinationDirectory { get; set; }
         public int _saveJobType { get; set; }
-        private string _state;
+        public string _state { get; set; }
         private int _totalNbFile;
         private int _totalSizeFile;
-        private IStrategy? _strategy;
         private int _index;
         private int _NbFilesLeftToDo;
-        private int _progress;
+        public int _progress { get; set; }
+        public Thread? RunningThread { get; set; }
+        public ManualResetEvent ThreadPaused { get; set; } = new ManualResetEvent(true);
 
-        // default Constructor
-        public M_SaveJob()
+    // default Constructor
+    public M_SaveJob()
         {
         }
 
         //Constructor (Set all attributes when object instantiation except _totalNbFile, _totalSizeFile)
-        public M_SaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int index)
+        public M_SaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int _progress, int index)
         {
             this.Set_saveJobName(_saveJobName);
             this.Set_saveJobSourceDirectory(_saveJobSourceDirectory);
@@ -39,31 +44,14 @@ namespace NSModel
             this.Set_state(_state);
             this.Set_totalNbFile(CalculateFolderNB(_saveJobSourceDirectory));
             this.Set_totalSizeFile((int)CalculateFolderSize(_saveJobSourceDirectory));
+            this.Set_progress(_progress);
             this.Set_index(index);
         }
-        
-        //Constructor (Set all attributes when object instantiation)
-        public M_SaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int _totalNbFile, int _totalSizeFile, int index)
-        {
-            this.Set_saveJobName(_saveJobName);
-            this.Set_saveJobSourceDirectory(_saveJobSourceDirectory);
-            this.Set_saveJobDestinationDirectory(_saveJobDestinationDirectory);
-            this.Set_saveJobType(_saveJobType);
-            this.Set_state(_state);
-            this.Set_totalNbFile(CalculateFolderNB(_saveJobSourceDirectory));
-            this.Set_totalSizeFile((int)CalculateFolderSize(_saveJobSourceDirectory));
-            this.Set_index(index);
-        }
+       
 
-        private void _SetStrategy(IStrategy strategy)
+        public void Execute(VM_ViewModel _oViewModel, M_SaveJob SaveJob, string logFilePath, string stateFilePath, M_Model M)
         {
-            this._strategy = strategy;
-        }
-
-        public void Execute(M_SaveJob SaveJob, string logFilePath, string stateFilePath, M_Model M)
-        {
-            this._strategy.Execute(SaveJob, logFilePath, stateFilePath, M);
-
+            M.utilExecute.StartThread(SaveJob, M, _oViewModel);
         }
 
         //Getter and Setter
@@ -113,18 +101,7 @@ namespace NSModel
         //Setter _saveJobType
         public void Set_saveJobType(int value)
         {
-            _saveJobType = value;
-            switch (value)
-            {
-                case 1:
-                    this._SetStrategy(new FullSave());
-                    break;
-                case 2:
-                    this._SetStrategy(new DiffentialSave());
-                    break;
-                default:
-                    break;
-            }
+            this._saveJobType = value;
         }
 
         //Getter _state
@@ -390,6 +367,30 @@ namespace NSModel
         ~M_SaveJob()
         {
             //Destructor
+        }
+        
+        public void pauseThread()
+        {
+            if (this.RunningThread != null)
+            {
+                this._state = "Paused";
+                ThreadPaused.Reset();
+            }
+        }
+        public void resumeThread()
+        {
+            if (this.RunningThread != null)
+            {
+                ThreadPaused.Set();
+            }
+        }
+        public void stopThread()
+        {
+            if (this.RunningThread != null)
+            {
+                this._state = "Stopped";
+                RunningThread.Interrupt();
+            }
         }
     }
 }
