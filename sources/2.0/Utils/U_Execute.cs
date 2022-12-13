@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NSModel;
 using NSViewModel;
+using static System.Windows.Forms.AxHost;
 using Formatting = Newtonsoft.Json.Formatting;
 using MessageBox = System.Windows.Forms.MessageBox;
 
@@ -35,6 +36,7 @@ public class U_Execute
     public void StartThread(M_SaveJob _oSaveJobs, M_Model _oModel, VM_ViewModel _oViewModel)
     {
         var proceed = true;
+
         var noExecutionIfRunning = "CalculatorApp";
         var processes = Process.GetProcesses();
         foreach (var process in processes)
@@ -66,7 +68,9 @@ public class U_Execute
             });
             t.Start();
             _oSaveJobs.RunningThread = t;
+            _oSaveJobs._state = "active";
             indexes.Add(_oSaveJobs.Get_index());
+            Application.Current.Dispatcher.BeginInvoke(() => { _oViewModel.setupObsCollection(); });
 
             // send notification to enable the pause button
             Application.Current.Dispatcher.BeginInvoke(() => { _oViewModel.setupObsCollection(); });
@@ -87,7 +91,7 @@ public class U_Execute
 
             if (_oSaveJobs._progress < p * 10)
             {
-                _oSaveJobs.Set_progress(p*10);
+                _oSaveJobs.Set_progress(p * 10);
                 Application.Current.Dispatcher.BeginInvoke(() => { _oViewModel.setupObsCollection(); });
             }
 
@@ -96,9 +100,16 @@ public class U_Execute
 
         void copy(string newPath)
         {
-            _oSaveJobs.ThreadPaused.WaitOne();
-
             var state = "active";
+            Debug.WriteLine(_oSaveJobs.ThreadPaused);
+            if (!_oSaveJobs.ThreadPaused.WaitOne(0))
+            {
+                _oSaveJobs.WriteJSON(_oModel.Get_workFile(), "paused", NbFilesLeftToDo, _oSaveJobs._progress);
+                Application.Current.Dispatcher.BeginInvoke(() => { _oViewModel.setupObsCollection(); });
+                _oSaveJobs.ThreadPaused.WaitOne();
+            }
+
+
             var startCopyTime = DateTime.Now;
 
             fileName = Path.GetFileName(newPath);
@@ -123,7 +134,8 @@ public class U_Execute
 
                 NbFilesLeftToDo -= 1;
                 progessCalc(total, prioEntrant.Count, pasprioEntrant.Count);
-                _oSaveJobs.WriteJSON(_oModel.Get_workFile(), state, NbFilesLeftToDo, _oSaveJobs.Get_progress());
+                _oSaveJobs.WriteJSON(_oModel.Get_workFile(), state, NbFilesLeftToDo,
+                    _oSaveJobs.Get_progress());
                 var endCopyTime = DateTime.Now;
                 var copyTime = endCopyTime - startCopyTime;
                 WriteLog(_oModel, _oSaveJobs.Get_saveJobName(), _oModel.Get_logFile(), fileName, newPath,
@@ -170,16 +182,18 @@ public class U_Execute
                 }
             }
 
+            progessCalc(total, prioEntrant.Count, pasprioEntrant.Count);
             _oSaveJobs.WriteJSON(_oModel.Get_workFile(), "inactive", NbFilesLeftToDo, _oSaveJobs.Get_progress());
         }
         catch (ThreadInterruptedException e)
         {
-            _oSaveJobs.WriteJSON(_oModel.Get_workFile(), "aborted", NbFilesLeftToDo, 0);
+            _oSaveJobs.WriteJSON(_oModel.Get_workFile(), "aborted", NbFilesLeftToDo, _oSaveJobs._progress);
+            Application.Current.Dispatcher.BeginInvoke(() => { _oViewModel.setupObsCollection(); });
             prio.Clear();
             pasprio.Clear();
         }
 
-        progessCalc(total, prioEntrant.Count, pasprioEntrant.Count);
+
         _oSaveJobs.RunningThread = null;
     }
 
