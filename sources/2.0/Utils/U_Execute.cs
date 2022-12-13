@@ -12,6 +12,7 @@ using Livrable2.Properties;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NSModel;
+using NSServer;
 using NSViewModel;
 using static System.Windows.Forms.AxHost;
 using Formatting = Newtonsoft.Json.Formatting;
@@ -33,10 +34,10 @@ public class U_Execute
 
     public List<int> indexes { get; } = new();
 
-    public void StartThread(M_SaveJob _oSaveJobs, M_Model _oModel, VM_ViewModel _oViewModel)
+    public void StartThread(M_SaveJob _oSaveJobs, M_Model _oModel, VM_ViewModel _oViewModel, Server server)
     {
         var proceed = true;
-
+        
         var noExecutionIfRunning = "CalculatorApp";
         var processes = Process.GetProcesses();
         foreach (var process in processes)
@@ -64,7 +65,7 @@ public class U_Execute
 
             var t = new Thread(() =>
             {
-                ThreadContent(_oViewModel, _oSaveJobs, _oModel, tempPrio, tempNotPrio, threadIndex);
+                ThreadContent(_oViewModel, _oSaveJobs, _oModel, tempPrio, tempNotPrio, threadIndex, server);
             });
             t.Start();
             _oSaveJobs.RunningThread = t;
@@ -81,8 +82,7 @@ public class U_Execute
         }
     }
 
-    public void ThreadContent(VM_ViewModel _oViewModel, M_SaveJob _oSaveJobs, M_Model _oModel, List<string> prioEntrant,
-        List<string> pasprioEntrant, int index)
+    public void ThreadContent(VM_ViewModel _oViewModel, M_SaveJob _oSaveJobs, M_Model _oModel, List<string> prioEntrant, List<string> pasprioEntrant, int index, Server server)
     {
         void progessCalc(int total, int prioEntrant, int pasprioEntrant)
         {
@@ -92,7 +92,11 @@ public class U_Execute
             if (_oSaveJobs._progress < p * 10)
             {
                 _oSaveJobs.Set_progress(p * 10);
-                Application.Current.Dispatcher.BeginInvoke(() => { _oViewModel.setupObsCollection(); });
+                Application.Current.Dispatcher.BeginInvoke(() => 
+                { 
+                    _oViewModel.setupObsCollection();
+                    server.SendProgressToClient(_oSaveJobs.Get_index(), _oSaveJobs.Get_progress(), _oSaveJobs.Get_state());
+                });
             }
 
             Debug.WriteLine(Application.Current.Dispatcher);

@@ -29,7 +29,7 @@ namespace NSClient
             //clientSocket.Bind(new IPEndPoint(IPAddress.Parse("192.168.1.13"), 50002));
             clientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             clientSocket.Connect(serverEndPoint);
-            MessageBox.Show("Connecte au serveur");
+            //MessageBox.Show("Connecte au serveur");
             return clientSocket;
         }
 
@@ -50,6 +50,17 @@ namespace NSClient
                     {
                         int nbOctetsRecus = client.Receive(buffer);
                         message += System.Text.Encoding.ASCII.GetString(buffer, 0, nbOctetsRecus);
+
+                        if (message.StartsWith("Progress"))
+                        {
+                            string progress = message.Substring(0, message.IndexOf("____"));
+                            message.Remove(0, message.IndexOf("____") + 4);
+                            return progress;
+                        }
+                        else
+                        {
+
+                        }
                     }
 
                     return message;

@@ -1,29 +1,16 @@
 ﻿using Newtonsoft.Json.Linq;
 using NSClient;
 using NSModel;
+using NSUtils;
 using NSViewModel;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Markup;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using MessageBox = System.Windows.MessageBox;
 using TextBox = System.Windows.Controls.TextBox;
-using NSUtils;
 
 namespace ConcoleDeportee
 {
@@ -54,26 +41,50 @@ namespace ConcoleDeportee
         {
             if (this._receiveMessage != null)
             {
-                model = new M_Model(this._receiveMessage);
-                viewModel = new VM_ViewModel(model);
-               // MessageBox.Show("Message reçu : " + this._receiveMessage);
-                model.Set_workFile(this._receiveMessage);
-                viewModel.setupObsCollection();
-                try
+                if (this._receiveMessage.Substring(0, 8) == "Progress")
                 {
-                    this.Dispatcher.Invoke(() =>
+                    string type = this._receiveMessage.Substring(0, 8);
+                    int selectedSaveJob = Convert.ToInt32(this._receiveMessage.Substring(8, this._receiveMessage.IndexOf(",") - 8));
+                    int progress = Convert.ToInt32(this._receiveMessage.Substring(this._receiveMessage.IndexOf(",") + 1, this._receiveMessage.IndexOf(",", this._receiveMessage.IndexOf(",") + 1) - (this._receiveMessage.IndexOf(",") + 1)));
+                    this.model.GetSelectedSaveJob(selectedSaveJob).Set_progress(progress);
+                    string state = this._receiveMessage.Substring(this._receiveMessage.IndexOf(",", this._receiveMessage.IndexOf(",") + 1) + 1);
+                    this.model.GetSelectedSaveJob(selectedSaveJob).Set_state(state);
+                    try
                     {
-                        DG_Deportee.DataContext = viewModel.data;
-                    });
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            viewModel.setupObsCollection();
+                            DG_Deportee.DataContext = viewModel.data;
+                        });
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.Message);
+                    }
                 }
-                catch (Exception e)
+                else
                 {
-                    MessageBox.Show(e.Message);
+                    model = new M_Model(this._receiveMessage);
+                    viewModel = new VM_ViewModel(model);
+                    // MessageBox.Show("Message reçu : " + this._receiveMessage);
+                    model.Set_workFile(this._receiveMessage);
+                    viewModel.setupObsCollection();
+                    try
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            DG_Deportee.DataContext = viewModel.data;
+                        });
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.Message);
+                    }
                 }
             }
             else
             {
-                
+
             }
         }
         public MainWindow()
@@ -96,6 +107,18 @@ namespace ConcoleDeportee
             Client.EnvoyerMessage(this.socket, messageToSend);
         }
 
+        private void Pause_Click(object sender, RoutedEventArgs e)
+        {
+            string messageToSend = "Paus" + DG_Deportee.SelectedIndex.ToString();
+            Client.EnvoyerMessage(this.socket, messageToSend);
+        }
+
+        private void Stop_Click(object sender, RoutedEventArgs e)
+        {
+            string messageToSend = "Stop" + DG_Deportee.SelectedIndex.ToString();
+            Client.EnvoyerMessage(this.socket, messageToSend);
+        }
+        
         private void EcouterReseauEnContinue()
         {
             Thread threadEcouteReseau = new Thread(() => this.Set_receiveMessage(client.EcouterReseau(this.socket)));
@@ -200,7 +223,7 @@ namespace ConcoleDeportee
                 return "";
             }
         }
-        
+
         private void Ajouter_Click(object sender, RoutedEventArgs e)
         {
             string name = txtBoxName.Text;
@@ -225,7 +248,7 @@ namespace ConcoleDeportee
                 model.InstanceNewSaveJob(name, sourceDirectory, destinationDirectory, SaveJobeType, "idle", indexJob);
                 JObject json = JObject.Parse(this._receiveMessage);
                 JArray array = (JArray)json["State"];
-                JObject saveJob =  model.GetSelectedSaveJob(indexJob).AddSaveJobToMessage(this._receiveMessage);
+                JObject saveJob = model.GetSelectedSaveJob(indexJob).AddSaveJobToMessage(this._receiveMessage);
                 array.Add(saveJob);
                 this._receiveMessage = json.ToString();
                 Client.EnvoyerMessage(this.socket, "Crea" + this._receiveMessage);
