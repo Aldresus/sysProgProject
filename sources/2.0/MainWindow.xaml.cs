@@ -1,12 +1,16 @@
-﻿using NSModel;
+﻿using Newtonsoft.Json.Linq;
+using NSModel;
+using NSServer;
 using NSUtils;
 using NSViewModel;
 using System;
-using System.Diagnostics;
+using System.IO;
+using System.Net.Sockets;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
-using System.Windows.Threading;
+
 using TextBox = System.Windows.Controls.TextBox;
 
 namespace Livrable2
@@ -16,16 +20,115 @@ namespace Livrable2
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Server server = new Server();
         private M_Model model;
         private VM_ViewModel viewModel;
         private U_Checker checker = new U_Checker();
-        public object RunOnUiThread(Delegate method)
+        private Socket serverSocket;
+        private Socket socket;
+        private string _receivedMessage;
+
+        public void Set_receivedMessage(string receivedMessage)
         {
-            return Dispatcher.Invoke(DispatcherPriority.Normal, method);
+            _receivedMessage = receivedMessage;
+            OnMessageReceived();
         }
 
+        public void OnMessageReceived()
+        {
+            string type = this._receivedMessage.Substring(0, 4);
+            System.Windows.MessageBox.Show("type : " + type);
+            DataGrid dataGrid = DG1;
+            switch (type)
+            {
+                case "Exec":
+                    {
+                        int saveJobNb = Convert.ToInt32(this._receivedMessage.Substring(4));
+                        model.Get_listSaveJob()[saveJobNb].Execute(model.Get_listSaveJob()[saveJobNb], model.Get_logFile(), model.Get_workFile(), model);
+                    }
+                    break;
+                case "Dele":
+                    {
+                        int saveJobNb = Convert.ToInt32(this._receivedMessage.Substring(4));
+                        model.RemoveSaveJob(saveJobNb);
+                        viewModel.setupObsCollection();
+                        try
+                        {
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                DG1.DataContext = viewModel.data;
+                            });
+                        }
+                        catch (Exception e)
+                        {
+                            System.Windows.MessageBox.Show(e.Message);
+                        }
+                        SendToClient();
+                    }
+                    break;
+                case "Edit":
+                    {
+                        string json = this._receivedMessage.Substring(4);
+                        File.WriteAllText(model.Get_workFile(), json);
+                        model.Get_listSaveJob().Clear();
+                        JObject objJSON = JObject.Parse(json);
+                        int identationIndex = 0;
+                        foreach (JObject i in objJSON["State"])
+                        {
+                            model.Get_listSaveJob().Add(new M_SaveJob(i["Name"].ToString(), i["SourceFilePath"].ToString(), i["TargetFilePath"].ToString(), i["Type"].Value<int>(), i["State"].ToString(), i["TotalFilesToCopy"].Value<int>(), i["TotalFilesSize"].Value<int>(), identationIndex));
+                            identationIndex += 1;
+                        }
+                        viewModel.setupObsCollection();
+                        try
+                        {
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                DG1.DataContext = viewModel.data;
+                            });
+                        }
+                        catch (Exception e)
+                        {
+                            System.Windows.MessageBox.Show(e.Message);
+                        }
+                    }
+                    break;
+                case "Crea":
+                    {
+                        string json = this._receivedMessage.Substring(4);
+                        File.WriteAllText(model.Get_workFile(), json);
+                        model.Get_listSaveJob().Clear();
+                        JObject objJSON = JObject.Parse(json);
+                        int identationIndex = 0;
+                        foreach (JObject i in objJSON["State"])
+                        {
+                            model.Get_listSaveJob().Add(new M_SaveJob(i["Name"].ToString(), i["SourceFilePath"].ToString(), i["TargetFilePath"].ToString(), i["Type"].Value<int>(), i["State"].ToString(), i["TotalFilesToCopy"].Value<int>(), i["TotalFilesSize"].Value<int>(), identationIndex));
+                            identationIndex += 1;
+                        }
+                        viewModel.setupObsCollection();
+                        try
+                        {
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                DG1.DataContext = viewModel.data;
+                            });
+                        }
+                        catch (Exception e)
+                        {
+                            System.Windows.MessageBox.Show(e.Message);
+                        }
+                    }
+                    break;
+                case "Quit":
+                    {
+                        socket.Close();
+                        serverSocket.Close();
+                    }
+                    break;
+                default:
+                    break;
+            }
 
-
+        }
 
         public MainWindow()
         {
@@ -34,7 +137,8 @@ namespace Livrable2
             viewModel = new VM_ViewModel(model);
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
-            //testCoucou.DataContext = model.Get_listSaveJob()[0].Get_progress();
+            Thread threadStartListening = new Thread(() => StartServer());
+            threadStartListening.Start();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -49,6 +153,10 @@ namespace Livrable2
             model.RemoveSaveJob(dataGrid.SelectedIndex);
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
+            if (socket != null)
+            {
+                SendToClient();
+            }
         }
 
         private void Execute_Click(object sender, RoutedEventArgs e)
@@ -89,6 +197,10 @@ namespace Livrable2
                 model.GetSelectedSaveJob(indexJob).WriteJSON(model.Get_workFile());
                 viewModel.setupObsCollection();
                 DG1.DataContext = viewModel.data;
+                if (socket != null)
+                {
+                    SendToClient();
+                }
                 System.Windows.Forms.MessageBox.Show($"{name} {Properties.Resources.created}");
 
                 txtBoxName.Text = "";
@@ -189,6 +301,53 @@ namespace Livrable2
             model.GetSelectedSaveJob(dataGrid.SelectedIndex).WriteJSON(model.Get_workFile());
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
+            if (socket != null)
+            {
+                SendToClient();
+            }
+        }
+
+        private void StartServer()
+        {
+            while (true)
+            {
+
+                Thread threadConnexion = new Thread(() => this.serverSocket = Server.SeConnecter());
+                Thread threadAccepterConnexion = new Thread(() => this.socket = Server.AccepterConnexion(this.serverSocket));
+                threadConnexion.Start();
+                threadConnexion.Join();
+                threadAccepterConnexion.Start();
+                threadAccepterConnexion.Join();
+                JObject objJSON = JObject.Parse(File.ReadAllText(model.Get_workFile()));
+                string jsonState = objJSON.ToString();
+                Thread threadEnvoyerMessage = new Thread(() => Server.EnvoyerMessage(this.socket, jsonState));
+                threadEnvoyerMessage.Start();
+                //Thread verifyConnection = new Thread(() => Server.Deconnecter(socket, serverSocket));
+                Thread threadStartListening = new Thread(() => EcouterReseauEnContinue());
+                threadStartListening.Start();
+                threadStartListening.Join();
+            }
+        }
+
+        private void SendToClient()
+        {
+            JObject objJSON = JObject.Parse(File.ReadAllText(model.Get_workFile()));
+            string jsonState = objJSON.ToString();
+            Thread threadEnvoyerMessage = new Thread(() => Server.EnvoyerMessage(this.socket, jsonState));
+            threadEnvoyerMessage.Start();
+        }
+
+        private void EcouterReseauEnContinue()
+        {
+            Thread threadEcouteReseau = new Thread(() => this.Set_receivedMessage(server.EcouterReseau(this.socket, this.serverSocket)));
+            while (socket.Connected)
+            {
+                if (!threadEcouteReseau.IsAlive)
+                {
+                    threadEcouteReseau = new Thread(() => this.Set_receivedMessage(server.EcouterReseau(this.socket, this.serverSocket)));
+                    threadEcouteReseau.Start();
+                }
+            }
         }
 
         private void Pause_Click(object sender, RoutedEventArgs e)

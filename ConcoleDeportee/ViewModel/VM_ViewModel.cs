@@ -1,8 +1,6 @@
 ﻿// Class ViewModel
 // Interacts with the View and the Model
-using Livrable2;
 using NSModel;
-using System;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 
@@ -16,9 +14,6 @@ namespace NSViewModel
         private string? _type;
         private M_Model _oModel;
         public ObservableCollection<M_SaveJob> data { get; set; } = new ObservableCollection<M_SaveJob>();
-        public ObservableCollection<string> extension { get; set; } = new ObservableCollection<string>();
-        public ObservableCollection<string> extensionPrio { get; set; } = new ObservableCollection<string>();
-        public ObservableCollection<ComboBoxItem> cbLanguageItems { get; set; } = new ObservableCollection<ComboBoxItem>();
 
 
         public string Get_Name()
@@ -90,30 +85,10 @@ namespace NSViewModel
 
         public void setupObsCollection()
         {
-            App.Current.Dispatcher.Invoke((Action)delegate
+            this.data.Clear();
+            foreach (M_SaveJob saveJob in _oModel.Get_listSaveJob())
             {
-                this.data.Clear();
-                foreach (M_SaveJob saveJob in _oModel.Get_listSaveJob())
-                {
-                    this.data.Add(saveJob);
-                }
-            });
-        }
-
-        public void setupExtensionObsCollection()
-        {
-            this.extension.Clear();
-            foreach (string extension in _oModel.Get_extensionToCrypt())
-            {
-                this.extension.Add(extension);
-            }
-        }        
-        public void setupExtensionObsCollectionPrio()
-        {
-            this.extensionPrio.Clear();
-            foreach (string extension in _oModel.Get_extensionPriority())
-            {
-                this.extensionPrio.Add(extension);
+                this.data.Add(saveJob);
             }
         }
     }
