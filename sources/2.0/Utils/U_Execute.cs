@@ -181,6 +181,8 @@ namespace NSUtils
             catch(ThreadInterruptedException e)
             {
                 _oSaveJobs.WriteJSON(_oModel.Get_workFile(), "aborted", NbFilesLeftToDo, _oSaveJobs.Get_progress());
+                prio.Clear();
+                pasprio.Clear();
             }
             progessCalc(total, prioEntrant.Count, pasprioEntrant.Count);
             _oSaveJobs.RunningThread = null;
@@ -287,7 +289,7 @@ namespace NSUtils
             var rootElement = xmlDoc.Element("logs");
             rootElement?.Add(parentElement);
 
-            xmlDoc.Save(JsonLogPath.Replace(".json", ".xml"));
+            xmlDoc.Save(pathLog.Replace(".json", ".xml"));
         }
     }
 }

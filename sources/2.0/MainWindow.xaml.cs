@@ -37,14 +37,15 @@ namespace Livrable2
         public void OnMessageReceived()
         {
             string type = this._receivedMessage.Substring(0, 4);
-            System.Windows.MessageBox.Show("type : " + type);
+            //System.Windows.MessageBox.Show("type : " + type);
             DataGrid dataGrid = DG1;
             switch (type)
             {
                 case "Exec":
                     {
+                        //TODO : simplify
                         int saveJobNb = Convert.ToInt32(this._receivedMessage.Substring(4));
-                        model.Get_listSaveJob()[saveJobNb].Execute(model.Get_listSaveJob()[saveJobNb], model.Get_logFile(), model.Get_workFile(), model);
+                        model.Get_listSaveJob()[saveJobNb].Execute(viewModel, model.Get_listSaveJob()[saveJobNb], model.Get_logFile(), model.Get_workFile(), model);
                     }
                     break;
                 case "Dele":
@@ -75,7 +76,7 @@ namespace Livrable2
                         int identationIndex = 0;
                         foreach (JObject i in objJSON["State"])
                         {
-                            model.Get_listSaveJob().Add(new M_SaveJob(i["Name"].ToString(), i["SourceFilePath"].ToString(), i["TargetFilePath"].ToString(), i["Type"].Value<int>(), i["State"].ToString(), i["TotalFilesToCopy"].Value<int>(), i["TotalFilesSize"].Value<int>(), identationIndex));
+                            model.Get_listSaveJob().Add(new M_SaveJob(i["Name"].ToString(), i["SourceFilePath"].ToString(), i["TargetFilePath"].ToString(), i["Type"].Value<int>(), i["State"].ToString(), 0, identationIndex));
                             identationIndex += 1;
                         }
                         viewModel.setupObsCollection();
@@ -101,7 +102,7 @@ namespace Livrable2
                         int identationIndex = 0;
                         foreach (JObject i in objJSON["State"])
                         {
-                            model.Get_listSaveJob().Add(new M_SaveJob(i["Name"].ToString(), i["SourceFilePath"].ToString(), i["TargetFilePath"].ToString(), i["Type"].Value<int>(), i["State"].ToString(), i["TotalFilesToCopy"].Value<int>(), i["TotalFilesSize"].Value<int>(), identationIndex));
+                            model.Get_listSaveJob().Add(new M_SaveJob(i["Name"].ToString(), i["SourceFilePath"].ToString(), i["TargetFilePath"].ToString(), i["Type"].Value<int>(), i["State"].ToString(), 0, identationIndex));
                             identationIndex += 1;
                         }
                         viewModel.setupObsCollection();
@@ -201,7 +202,7 @@ namespace Livrable2
                 {
                     SendToClient();
                 }
-                System.Windows.Forms.MessageBox.Show($"{name} {Properties.Resources.created}");
+                //System.Windows.Forms.MessageBox.Show($"{name} {Properties.Resources.created}");
 
                 txtBoxName.Text = "";
                 txtBoxSourceDir.Text = "";
@@ -210,7 +211,7 @@ namespace Livrable2
             }
             else
             {
-                System.Windows.Forms.MessageBox.Show(Properties.Resources.pleaseFillAll);
+               // System.Windows.Forms.MessageBox.Show(Properties.Resources.pleaseFillAll);
             }
 
 
