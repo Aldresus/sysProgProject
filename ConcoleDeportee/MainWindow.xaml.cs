@@ -43,11 +43,12 @@ namespace ConcoleDeportee
             {
                 if (this._receiveMessage.Substring(0, 8) == "Progress")
                 {
-                    int test = this._receiveMessage.IndexOf(",");
-                    string test1 = this._receiveMessage.Substring(8, this._receiveMessage.IndexOf(",")-8);
-                    int oui = this._receiveMessage.IndexOf(",");
-                    string test2 = this._receiveMessage.Substring(this._receiveMessage.IndexOf(",")+1);
-                    this.model.GetSelectedSaveJob(Convert.ToInt32(this._receiveMessage.Substring(8, this._receiveMessage.IndexOf(",")-8))).Set_progress(Convert.ToInt32(this._receiveMessage.Substring(this._receiveMessage.IndexOf(",")+1)));
+                    string type = this._receiveMessage.Substring(0, 8);
+                    int selectedSaveJob = Convert.ToInt32(this._receiveMessage.Substring(8, this._receiveMessage.IndexOf(",") - 8));
+                    int progress = Convert.ToInt32(this._receiveMessage.Substring(this._receiveMessage.IndexOf(",") + 1, this._receiveMessage.IndexOf(",", this._receiveMessage.IndexOf(",")+1) - (this._receiveMessage.IndexOf(",") + 1)));
+                    this.model.GetSelectedSaveJob(selectedSaveJob).Set_progress(progress);
+                    string state = this._receiveMessage.Substring(this._receiveMessage.IndexOf(",", this._receiveMessage.IndexOf(",") + 1) + 1);
+                    this.model.GetSelectedSaveJob(selectedSaveJob).Set_state(state);
                     try
                     {
                         this.Dispatcher.Invoke(() =>
@@ -104,6 +105,18 @@ namespace ConcoleDeportee
         private void Delete_OnClick(object sender, RoutedEventArgs e)
         {
             string messageToSend = "Dele" + DG_Deportee.SelectedIndex.ToString();
+            Client.EnvoyerMessage(this.socket, messageToSend);
+        }
+
+        private void Pause_Click(object sender, RoutedEventArgs e)
+        {
+            string messageToSend = "Paus" + DG_Deportee.SelectedIndex.ToString();
+            Client.EnvoyerMessage(this.socket, messageToSend);
+        }
+
+        private void Stop_Click(object sender, RoutedEventArgs e)
+        {
+            string messageToSend = "Stop" + DG_Deportee.SelectedIndex.ToString();
             Client.EnvoyerMessage(this.socket, messageToSend);
         }
 

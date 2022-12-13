@@ -16,7 +16,7 @@ namespace NSModel
         public string _saveJobSourceDirectory { get; set; }
         public string _saveJobDestinationDirectory { get; set; }
         public int _saveJobType { get; set; }
-        private string _state;
+        public string _state { get; set; }
         private int _totalNbFile;
         private int _totalSizeFile;
         private int _index;

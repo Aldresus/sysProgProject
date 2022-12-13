@@ -102,7 +102,7 @@ namespace NSUtils
                 App.Current.Dispatcher.BeginInvoke(() =>
                 {
                     _oViewModel.setupObsCollection();
-                    server.SendProgressToClient(_oSaveJobs.Get_index(), _oSaveJobs.Get_progress());
+                    server.SendProgressToClient(_oSaveJobs.Get_index(), _oSaveJobs.Get_progress(), _oSaveJobs.Get_state());
                 });
                 Debug.WriteLine(App.Current.Dispatcher);
             }

@@ -33,7 +33,7 @@ namespace NSServer
             public static Socket SeConnecter()
         {
             Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            serverSocket.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50000));
+            serverSocket.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 45000));
             serverSocket.Listen(2);
             return serverSocket;
         }
@@ -145,6 +145,18 @@ namespace NSServer
                         this._serverSocket.Close();
                     }
                     break;
+                case "Pause":
+                    {
+                        int saveJobNb = Convert.ToInt32(this._receivedMessage.Substring(4));
+                        this._model.Get_listSaveJob()[saveJobNb].pauseThread();
+                    }
+                    break;
+                case "Stop":
+                    {
+                        int saveJobNb = Convert.ToInt32(this._receivedMessage.Substring(4));
+                        this._model.Get_listSaveJob()[saveJobNb].stopThread();
+                    }
+                    break;
                 default:
                     break;
             }
@@ -180,9 +192,9 @@ namespace NSServer
             threadEnvoyerMessage.Start();
         }
 
-        public void SendProgressToClient(int index, int progress)
+        public void SendProgressToClient(int index, int progress, string state)
         {
-            string message = "Progress" + index.ToString() + "," + progress.ToString() + "____";
+            string message = "Progress" + index.ToString() + "," + progress.ToString() + "," + state + "____";
             Thread threadEnvoyerMessage = new Thread(() => Server.EnvoyerMessage(this._socket, message));
             threadEnvoyerMessage.Start();
         }

@@ -24,7 +24,7 @@ namespace NSClient
 
         public static Socket SeConnecter()
         {
-            EndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50000);
+            EndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 45000);
             Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             //clientSocket.Bind(new IPEndPoint(IPAddress.Parse("192.168.1.13"), 50002));
             clientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
