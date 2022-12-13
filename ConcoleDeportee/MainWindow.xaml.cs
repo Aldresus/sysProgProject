@@ -56,7 +56,7 @@ namespace ConcoleDeportee
             {
                 model = new M_Model(this._receiveMessage);
                 viewModel = new VM_ViewModel(model);
-                MessageBox.Show("Message reçu : " + this._receiveMessage);
+               // MessageBox.Show("Message reçu : " + this._receiveMessage);
                 model.Set_workFile(this._receiveMessage);
                 viewModel.setupObsCollection();
                 try

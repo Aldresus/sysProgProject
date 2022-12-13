@@ -24,12 +24,12 @@ namespace NSClient
 
         public static Socket SeConnecter()
         {
-            EndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("192.168.1.13"), 40000);
+            EndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("10.167.128.211"), 40000);
             Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             //clientSocket.Bind(new IPEndPoint(IPAddress.Parse("192.168.1.13"), 50002));
             clientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             clientSocket.Connect(serverEndPoint);
-            MessageBox.Show("Connecte au serveur");
+            //MessageBox.Show("Connecte au serveur");
             return clientSocket;
         }
 
@@ -43,7 +43,7 @@ namespace NSClient
                     while (client.Available == 0)
                     {
                     }
-                    MessageBox.Show("Message reçu client");
+                    //MessageBox.Show("Message reçu client");
                     byte[] buffer = new byte[1024];
                     while (client.Available != 0)
                     {
