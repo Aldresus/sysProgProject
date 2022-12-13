@@ -16,12 +16,12 @@ namespace NSModel
         public string _saveJobSourceDirectory { get; set; }
         public string _saveJobDestinationDirectory { get; set; }
         public int _saveJobType { get; set; }
-        public string _state { get; set; }
+        private string _state;
         private int _totalNbFile;
         private int _totalSizeFile;
         private int _index;
         private int _NbFilesLeftToDo;
-        public int _progress { get; set; }
+        private int _progress;
 
         // default Constructor
         public M_SaveJob()
