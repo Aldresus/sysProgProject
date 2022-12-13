@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:p = "clr-namespace:Livrable2.Properties"
         mc:Ignorable="d"
-        Title = "EasySave" Height="450" Width="800" Closed="Window_Closed">
+        Title = "EasySave" Height="300" Width="600" Closed="Window_Closed">
     <Grid>
-        <Label Content="{x:Static p:Resources.extensionToCrypt}" HorizontalAlignment="Left" Margin="283,35,0,0" VerticalAlignment="Top" Width="117"/>
-        <DataGrid Name="DG_EXT" ItemsSource="{Binding Path=.}" AutoGenerateColumns="False" Margin="283,106,358,159" CellEditEnding="DG_EXT_Prio_CellEditEnding">
+        <Label Content="{x:Static p:Resources.extensionToCrypt}" HorizontalAlignment="Left" Margin="54,40,0,0" VerticalAlignment="Top" Width="117"/>
+        <DataGrid Name="DG_EXT" ItemsSource="{Binding Path=.}" AutoGenerateColumns="False" Margin="54,111,387,54" CellEditEnding="DG_EXT_Prio_CellEditEnding">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="{x:Static p:Resources.extensions}"  Binding="{Binding Path=., Mode=TwoWay}"/>
                 <DataGridTemplateColumn>
@@ -20,13 +20,13 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <TextBox Name ="textBoxExtToAdd" HorizontalAlignment="Left" Margin="283,66,0,0" TextWrapping="Wrap" Text="."  VerticalAlignment="Top" Width="159" Height="22"/>
-        <Button Content="{x:Static p:Resources.add}" HorizontalAlignment="Left" Margin="447,66,0,0" VerticalAlignment="Top" Width="47" Click="Button_Click"/>
+        <TextBox Name ="textBoxExtToAdd" HorizontalAlignment="Left" Margin="54,71,0,0" TextWrapping="Wrap" Text="."  VerticalAlignment="Top" Width="159" Height="22"/>
+        <Button Content="{x:Static p:Resources.add}" HorizontalAlignment="Left" Margin="218,71,0,0" VerticalAlignment="Top" Width="47" Click="Button_Click"/>
 
-        <Label Content="{x:Static p:Resources.extensionPrio}" HorizontalAlignment="Left" Margin="542,37,0,0" VerticalAlignment="Top"/>
-        <TextBox Name ="textBoxExtToAddPrio" HorizontalAlignment="Left" Margin="542,66,0,0" TextWrapping="Wrap" Text="." VerticalAlignment="Top" Width="159" Height="22"/>
-        <Button Content="{x:Static p:Resources.add}" HorizontalAlignment="Left" Margin="708,66,0,0" VerticalAlignment="Top" Width="47" Click="Button_Prio_Click"/>
-        <DataGrid x:Name="DG_EXT_Prio" ItemsSource="{Binding Path=.}" AutoGenerateColumns="False" Margin="541,105,100,160">
+        <Label Content="{x:Static p:Resources.extensionPrio}" HorizontalAlignment="Left" Margin="302,46,0,0" VerticalAlignment="Top"/>
+        <TextBox Name ="textBoxExtToAddPrio" HorizontalAlignment="Left" Margin="302,75,0,0" TextWrapping="Wrap" Text="." VerticalAlignment="Top" Width="159" Height="22"/>
+        <Button Content="{x:Static p:Resources.add}" HorizontalAlignment="Left" Margin="468,75,0,0" VerticalAlignment="Top" Width="47" Click="Button_Prio_Click"/>
+        <DataGrid x:Name="DG_EXT_Prio" ItemsSource="{Binding Path=.}" AutoGenerateColumns="False" Margin="301,114,140,50">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="{x:Static p:Resources.extensions}"  Binding="{Binding ., Mode=TwoWay}"/>
                 <DataGridTemplateColumn>
