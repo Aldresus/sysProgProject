@@ -21,7 +21,7 @@ namespace NSModel
         private int _totalSizeFile;
         private int _index;
         private int _NbFilesLeftToDo;
-        private int _progress;
+        public int _progress { get; set; }
 
         // default Constructor
         public M_SaveJob()

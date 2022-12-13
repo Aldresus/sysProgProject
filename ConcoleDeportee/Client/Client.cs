@@ -24,7 +24,7 @@ namespace NSClient
 
         public static Socket SeConnecter()
         {
-            EndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("10.167.128.211"), 40000);
+            EndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50000);
             Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             //clientSocket.Bind(new IPEndPoint(IPAddress.Parse("192.168.1.13"), 50002));
             clientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
@@ -49,6 +49,15 @@ namespace NSClient
                     {
                         int nbOctetsRecus = client.Receive(buffer);
                         message += System.Text.Encoding.ASCII.GetString(buffer, 0, nbOctetsRecus);
+                        if (message.Substring(0, 8) == "Progress")
+                        {
+                            string progress = message.Substring(0, message.IndexOf("____"));
+                            message = message.Remove(0, message.IndexOf("____")+4);
+                            return progress;
+                        }
+                        else
+                        {
+                        }
                     }
                     return message;
                 }

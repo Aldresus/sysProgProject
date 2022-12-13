@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -26,6 +27,7 @@ namespace NSModel
         public M_Model(string workfile)
         {
             this._workFile = workfile;
+            MessageBox.Show(workfile);
             JObject objJSON = JObject.Parse(Get_workFile());
 
             int identationIndex = 0;

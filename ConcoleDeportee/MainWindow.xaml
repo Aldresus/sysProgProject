@@ -31,6 +31,13 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ProgressBar Name="progress" Grid.Column="1" HorizontalAlignment="Left" Width="100" Value="{Binding _progress}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
         <Label Content="{x:Static p:Resources.name}" HorizontalAlignment="Left" Margin="4,355,0,0" VerticalAlignment="Top"/>
