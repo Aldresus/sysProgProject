@@ -36,53 +36,39 @@ public class U_Execute
 
     public void StartThread(M_SaveJob _oSaveJobs, M_Model _oModel, VM_ViewModel _oViewModel, Server server)
     {
-        var proceed = true;
-        
-        var noExecutionIfRunning = "CalculatorApp";
-        var processes = Process.GetProcesses();
-        foreach (var process in processes)
-            if (noExecutionIfRunning == process.ProcessName)
-                proceed = false;
-        if (proceed)
+        List<string> tempPrio = new();
+        List<string>? tempNotPrio = new();
+
+        foreach (var dirPath in Directory.GetDirectories(_oSaveJobs.Get_saveJobSourceDirectory(), "*",
+                     SearchOption.AllDirectories))
+            Directory.CreateDirectory(dirPath.Replace(_oSaveJobs.Get_saveJobSourceDirectory(),
+                _oSaveJobs.Get_saveJobDestinationDirectory()));
+        foreach (var file in Directory.GetFiles(_oSaveJobs.Get_saveJobSourceDirectory(), "*.*",
+                     SearchOption.AllDirectories))
+            if (_oModel._extensionPriorityRegex.IsMatch(file))
+                tempPrio.Add(file);
+            else
+                tempNotPrio.Add(file);
+
+
+        pasprioencour.Add(tempPrio.Count == 0);
+        var threadIndex = pasprioencour.Count - 1;
+
+        var t = new Thread(() =>
         {
-            List<string> tempPrio = new();
-            List<string>? tempNotPrio = new();
-
-            foreach (var dirPath in Directory.GetDirectories(_oSaveJobs.Get_saveJobSourceDirectory(), "*",
-                         SearchOption.AllDirectories))
-                Directory.CreateDirectory(dirPath.Replace(_oSaveJobs.Get_saveJobSourceDirectory(),
-                    _oSaveJobs.Get_saveJobDestinationDirectory()));
-            foreach (var file in Directory.GetFiles(_oSaveJobs.Get_saveJobSourceDirectory(), "*.*",
-                         SearchOption.AllDirectories))
-                if (_oModel._extensionPriorityRegex.IsMatch(file))
-                    tempPrio.Add(file);
-                else
-                    tempNotPrio.Add(file);
-
-
-            pasprioencour.Add(tempPrio.Count == 0);
-            var threadIndex = pasprioencour.Count - 1;
-
-            var t = new Thread(() =>
-            {
-                ThreadContent(_oViewModel, _oSaveJobs, _oModel, tempPrio, tempNotPrio, threadIndex, server);
-            });
-            t.Start();
-            _oSaveJobs.RunningThread = t;
-            _oSaveJobs._state = "active";
-            indexes.Add(_oSaveJobs.Get_index());
-            Application.Current.Dispatcher.BeginInvoke(() => { _oViewModel.setupObsCollection(); });
-
-            // send notification to enable the pause button
-            Application.Current.Dispatcher.BeginInvoke(() => { _oViewModel.setupObsCollection(); });
-        }
-        else
-        {
-            MessageBox.Show($"{Resources.pleaseCloseCalculatator}");
-        }
+            ThreadContent(_oViewModel, _oSaveJobs, _oModel, tempPrio, tempNotPrio, threadIndex, server);
+        });
+        t.Start();
+        _oSaveJobs.RunningThread = t;
+        _oSaveJobs._state = "active";
+        _oSaveJobs._progress = 0;
+        indexes.Add(_oSaveJobs.Get_index());
+        // send notification to enable the pause button
+        Application.Current.Dispatcher.BeginInvoke(() => { _oViewModel.setupObsCollection(); });
     }
 
-    public void ThreadContent(VM_ViewModel _oViewModel, M_SaveJob _oSaveJobs, M_Model _oModel, List<string> prioEntrant, List<string> pasprioEntrant, int index, Server server)
+    public void ThreadContent(VM_ViewModel _oViewModel, M_SaveJob _oSaveJobs, M_Model _oModel, List<string> prioEntrant,
+        List<string> pasprioEntrant, int index, Server server)
     {
         void progessCalc(int total, int prioEntrant, int pasprioEntrant)
         {
@@ -92,10 +78,14 @@ public class U_Execute
             if (_oSaveJobs._progress < p * 10)
             {
                 _oSaveJobs.Set_progress(p * 10);
-                Application.Current.Dispatcher.BeginInvoke(() => 
-                { 
+                Application.Current.Dispatcher.BeginInvoke(() =>
+                {
                     _oViewModel.setupObsCollection();
-                    server.SendProgressToClient(_oSaveJobs.Get_index(), _oSaveJobs.Get_progress(), _oSaveJobs.Get_state());
+                    if (server.Get_socket() != null)
+                    {
+                        server.SendProgressToClient(_oSaveJobs.Get_index(), _oSaveJobs.Get_progress(),
+                            _oSaveJobs.Get_state());
+                    }
                 });
             }
 
@@ -104,50 +94,73 @@ public class U_Execute
 
         void copy(string newPath)
         {
-            var state = "active";
-            Debug.WriteLine(_oSaveJobs.ThreadPaused);
-            if (!_oSaveJobs.ThreadPaused.WaitOne(0))
+            var proceed = true;
+
+            var noExecutionIfRunning = "CalculatorApp";
+            var processes = Process.GetProcesses();
+            foreach (var process in processes)
+                if (noExecutionIfRunning == process.ProcessName)
+                    proceed = false;
+            if (proceed)
             {
-                _oSaveJobs.WriteJSON(_oModel.Get_workFile(), "paused", NbFilesLeftToDo, _oSaveJobs._progress);
-                Application.Current.Dispatcher.BeginInvoke(() => { _oViewModel.setupObsCollection(); });
-                _oSaveJobs.ThreadPaused.WaitOne();
-            }
-
-
-            var startCopyTime = DateTime.Now;
-
-            fileName = Path.GetFileName(newPath);
-            targetFilePath = newPath.Replace(_oSaveJobs.Get_saveJobSourceDirectory(),
-                _oSaveJobs.Get_saveJobDestinationDirectory());
-            directoryTarget = targetFilePath.Replace(fileName, null);
-
-
-            try
-            {
-                if (_oModel._extensionToCryptRegex.IsMatch(newPath))
+                var state = "active";
+                Debug.WriteLine(_oSaveJobs.ThreadPaused);
+                if (!_oSaveJobs.ThreadPaused.WaitOne(0))
                 {
-                    var myProcess = Process.Start("Resources\\Cryptosoft.exe",
-                        newPath + " " + targetFilePath + " " + "azertyui");
-                    myProcess.WaitForExit();
-                    myProcess.Close();
-                }
-                else
-                {
-                    File.Copy(newPath, targetFilePath, _oSaveJobs.Get_saveJobType() == 1);
+                    _oSaveJobs.WriteJSON(_oModel.Get_workFile(), "paused", NbFilesLeftToDo, _oSaveJobs._progress);
+                    Application.Current.Dispatcher.BeginInvoke(() => { _oViewModel.setupObsCollection(); });
+                    _oSaveJobs.ThreadPaused.WaitOne();
                 }
 
-                NbFilesLeftToDo -= 1;
-                progessCalc(total, prioEntrant.Count, pasprioEntrant.Count);
-                _oSaveJobs.WriteJSON(_oModel.Get_workFile(), state, NbFilesLeftToDo,
-                    _oSaveJobs.Get_progress());
-                var endCopyTime = DateTime.Now;
-                var copyTime = endCopyTime - startCopyTime;
-                WriteLog(_oModel, _oSaveJobs.Get_saveJobName(), _oModel.Get_logFile(), fileName, newPath,
-                    targetFilePath, directoryTarget, copyTime);
+
+                var startCopyTime = DateTime.Now;
+
+                fileName = Path.GetFileName(newPath);
+                targetFilePath = newPath.Replace(_oSaveJobs.Get_saveJobSourceDirectory(),
+                    _oSaveJobs.Get_saveJobDestinationDirectory());
+                directoryTarget = targetFilePath.Replace(fileName, null);
+
+
+                try
+                {
+                    if (_oModel._extensionToCryptRegex.IsMatch(newPath))
+                    {
+                        var myProcess = Process.Start("Resources\\Cryptosoft.exe",
+                            newPath + " " + targetFilePath + " " + "azertyui");
+                        myProcess.WaitForExit();
+                        myProcess.Close();
+                    }
+                    else
+                    {
+                        File.Copy(newPath, targetFilePath, _oSaveJobs.Get_saveJobType() == 1);
+                    }
+
+                    NbFilesLeftToDo -= 1;
+                    progessCalc(total, prioEntrant.Count, pasprioEntrant.Count);
+                    _oSaveJobs.WriteJSON(_oModel.Get_workFile(), state, NbFilesLeftToDo,
+                        _oSaveJobs.Get_progress());
+                    var endCopyTime = DateTime.Now;
+                    var copyTime = endCopyTime - startCopyTime;
+                    WriteLog(_oModel, _oSaveJobs.Get_saveJobName(), _oModel.Get_logFile(), fileName, newPath,
+                        targetFilePath, directoryTarget, copyTime);
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    Debug.WriteLine("permission issue " + e);
+                }
+                catch (Newtonsoft.Json.JsonReaderException e)
+                {
+                    Debug.WriteLine("log issue :" + e);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("unknown issue :" + e);
+                }
             }
-            catch (Exception e)
+            else
             {
-                Debug.WriteLine(e);
+                _oSaveJobs._state = $"{Resources.pleaseCloseCalculatator}";
+                //MessageBox.Show($"{Resources.pleaseCloseCalculatator}");
             }
         }
 

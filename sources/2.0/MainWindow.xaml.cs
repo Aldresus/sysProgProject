@@ -4,6 +4,7 @@ using NSServer;
 using NSUtils;
 using NSViewModel;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
@@ -53,86 +54,87 @@ namespace Livrable2
             switch (type)
             {
                 case "Exec":
-                    {
-                        //TODO : simplify
-                        int saveJobNb = Convert.ToInt32(this._receivedMessage.Substring(4));
-                        model.Get_listSaveJob()[saveJobNb].Execute(viewModel, model.Get_listSaveJob()[saveJobNb], model.Get_logFile(), model.Get_workFile(), model, server);
-                    }
+                {
+                    //TODO : simplify
+                    int saveJobNb = Convert.ToInt32(this._receivedMessage.Substring(4));
+                    model.Get_listSaveJob()[saveJobNb].Execute(viewModel, model.Get_listSaveJob()[saveJobNb],
+                        model.Get_logFile(), model.Get_workFile(), model, server);
+                }
                     break;
                 case "Dele":
+                {
+                    int saveJobNb = Convert.ToInt32(this._receivedMessage.Substring(4));
+                    model.RemoveSaveJob(saveJobNb);
+                    viewModel.setupObsCollection();
+                    try
                     {
-                        int saveJobNb = Convert.ToInt32(this._receivedMessage.Substring(4));
-                        model.RemoveSaveJob(saveJobNb);
-                        viewModel.setupObsCollection();
-                        try
-                        {
-                            this.Dispatcher.Invoke(() => { DG1.DataContext = viewModel.data; });
-                        }
-                        catch (Exception e)
-                        {
-                            System.Windows.MessageBox.Show(e.Message);
-                        }
-
-                        server.SendToClient();
+                        this.Dispatcher.Invoke(() => { DG1.DataContext = viewModel.data; });
                     }
+                    catch (Exception e)
+                    {
+                        System.Windows.MessageBox.Show(e.Message);
+                    }
+
+                    server.SendToClient();
+                }
                     break;
                 case "Edit":
+                {
+                    string json = this._receivedMessage.Substring(4);
+                    File.WriteAllText(model.Get_workFile(), json);
+                    model.Get_listSaveJob().Clear();
+                    JObject objJSON = JObject.Parse(json);
+                    int identationIndex = 0;
+                    foreach (JObject i in objJSON["State"])
                     {
-                        string json = this._receivedMessage.Substring(4);
-                        File.WriteAllText(model.Get_workFile(), json);
-                        model.Get_listSaveJob().Clear();
-                        JObject objJSON = JObject.Parse(json);
-                        int identationIndex = 0;
-                        foreach (JObject i in objJSON["State"])
-                        {
-                            model.Get_listSaveJob().Add(new M_SaveJob(i["Name"].ToString(), i["SourceFilePath"].ToString(),
-                                i["TargetFilePath"].ToString(), i["Type"].Value<int>(), i["State"].ToString(), 0,
-                                identationIndex));
-                            identationIndex += 1;
-                        }
-
-                        viewModel.setupObsCollection();
-                        try
-                        {
-                            this.Dispatcher.Invoke(() => { DG1.DataContext = viewModel.data; });
-                        }
-                        catch (Exception e)
-                        {
-                            System.Windows.MessageBox.Show(e.Message);
-                        }
+                        model.Get_listSaveJob().Add(new M_SaveJob(i["Name"].ToString(), i["SourceFilePath"].ToString(),
+                            i["TargetFilePath"].ToString(), i["Type"].Value<int>(), i["State"].ToString(), 0,
+                            identationIndex));
+                        identationIndex += 1;
                     }
+
+                    viewModel.setupObsCollection();
+                    try
+                    {
+                        this.Dispatcher.Invoke(() => { DG1.DataContext = viewModel.data; });
+                    }
+                    catch (Exception e)
+                    {
+                        System.Windows.MessageBox.Show(e.Message);
+                    }
+                }
                     break;
                 case "Crea":
+                {
+                    string json = this._receivedMessage.Substring(4);
+                    File.WriteAllText(model.Get_workFile(), json);
+                    model.Get_listSaveJob().Clear();
+                    JObject objJSON = JObject.Parse(json);
+                    int identationIndex = 0;
+                    foreach (JObject i in objJSON["State"])
                     {
-                        string json = this._receivedMessage.Substring(4);
-                        File.WriteAllText(model.Get_workFile(), json);
-                        model.Get_listSaveJob().Clear();
-                        JObject objJSON = JObject.Parse(json);
-                        int identationIndex = 0;
-                        foreach (JObject i in objJSON["State"])
-                        {
-                            model.Get_listSaveJob().Add(new M_SaveJob(i["Name"].ToString(), i["SourceFilePath"].ToString(),
-                                i["TargetFilePath"].ToString(), i["Type"].Value<int>(), i["State"].ToString(), 0,
-                                identationIndex));
-                            identationIndex += 1;
-                        }
-
-                        viewModel.setupObsCollection();
-                        try
-                        {
-                            this.Dispatcher.Invoke(() => { DG1.DataContext = viewModel.data; });
-                        }
-                        catch (Exception e)
-                        {
-                            System.Windows.MessageBox.Show(e.Message);
-                        }
+                        model.Get_listSaveJob().Add(new M_SaveJob(i["Name"].ToString(), i["SourceFilePath"].ToString(),
+                            i["TargetFilePath"].ToString(), i["Type"].Value<int>(), i["State"].ToString(), 0,
+                            identationIndex));
+                        identationIndex += 1;
                     }
+
+                    viewModel.setupObsCollection();
+                    try
+                    {
+                        this.Dispatcher.Invoke(() => { DG1.DataContext = viewModel.data; });
+                    }
+                    catch (Exception e)
+                    {
+                        System.Windows.MessageBox.Show(e.Message);
+                    }
+                }
                     break;
                 case "Quit":
-                    {
-                        socket.Close();
-                        serverSocket.Close();
-                    }
+                {
+                    socket.Close();
+                    serverSocket.Close();
+                }
                     break;
                 default:
                     break;
@@ -168,7 +170,8 @@ namespace Livrable2
             }
             else
             {
-                job.Execute(viewModel, model.Get_listSaveJob()[dataGrid.SelectedIndex], model.Get_logFile(), model.Get_workFile(), model, server);
+                job.Execute(viewModel, model.Get_listSaveJob()[dataGrid.SelectedIndex], model.Get_logFile(),
+                    model.Get_workFile(), model, server);
             }
         }
 
@@ -317,7 +320,14 @@ namespace Livrable2
         private void Stop_Click(object sender, RoutedEventArgs e)
         {
             DataGrid dataGrid = DG1;
-            model.Get_listSaveJob()[dataGrid.SelectedIndex].stopThread();
+            try
+            {
+                model.Get_listSaveJob()[dataGrid.SelectedIndex].stopThread();
+            }
+            catch (ArgumentOutOfRangeException error)
+            {
+                Debug.WriteLine("datagrid index issue " + error);
+            }
         }
     }
 }
