@@ -53,15 +53,16 @@ public class U_Execute
 
         pasprioencour.Add(tempPrio.Count == 0);
         var threadIndex = pasprioencour.Count - 1;
-
+        _oSaveJobs._state = "active";
+        _oSaveJobs._progress = 0;
+        _oSaveJobs.resumeThread();
         var t = new Thread(() =>
         {
             ThreadContent(_oViewModel, _oSaveJobs, _oModel, tempPrio, tempNotPrio, threadIndex, server);
         });
         t.Start();
         _oSaveJobs.RunningThread = t;
-        _oSaveJobs._state = "active";
-        _oSaveJobs._progress = 0;
+
         indexes.Add(_oSaveJobs.Get_index());
         // send notification to enable the pause button
         Application.Current.Dispatcher.BeginInvoke(() => { _oViewModel.setupObsCollection(); });
@@ -88,19 +89,22 @@ public class U_Execute
                     }
                 });
             }
-
-            Debug.WriteLine(Application.Current.Dispatcher);
         }
 
-        void copy(string newPath)
+        bool copy(string newPath)
         {
             var proceed = true;
 
             var noExecutionIfRunning = "CalculatorApp";
             var processes = Process.GetProcesses();
             foreach (var process in processes)
+            {
                 if (noExecutionIfRunning == process.ProcessName)
+                {
                     proceed = false;
+                }
+            }
+
             if (proceed)
             {
                 var state = "active";
@@ -143,23 +147,29 @@ public class U_Execute
                     var copyTime = endCopyTime - startCopyTime;
                     WriteLog(_oModel, _oSaveJobs.Get_saveJobName(), _oModel.Get_logFile(), fileName, newPath,
                         targetFilePath, directoryTarget, copyTime);
+                    return true;
                 }
                 catch (UnauthorizedAccessException e)
                 {
                     Debug.WriteLine("permission issue " + e);
+                    return true;
                 }
                 catch (Newtonsoft.Json.JsonReaderException e)
                 {
                     Debug.WriteLine("log issue :" + e);
+                    return true;
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine("unknown issue :" + e);
+                    return true;
                 }
             }
             else
             {
                 _oSaveJobs._state = $"{Resources.pleaseCloseCalculatator}";
+                Application.Current.Dispatcher.BeginInvoke(() => { _oViewModel.setupObsCollection(); });
+                return false;
                 //MessageBox.Show($"{Resources.pleaseCloseCalculatator}");
             }
         }
@@ -179,8 +189,10 @@ public class U_Execute
                     var test = !pasprioencour.ToArray().All(e => e);
                     foreach (var s in prio.ToArray())
                     {
-                        copy(s);
-                        prio.Remove(s);
+                        if (copy(s))
+                        {
+                            prio.Remove(s);
+                        }
                     }
 
                     if (prio.Count == 0) pasprioencour[threadIndex] = true;
@@ -190,8 +202,10 @@ public class U_Execute
                 {
                     foreach (var s in pasprio.ToArray())
                     {
-                        copy(s);
-                        pasprio.Remove(s);
+                        if (copy(s))
+                        {
+                            pasprio.Remove(s);
+                        }
                     }
 
                     if (!pasprioencour.ToArray().All(e => e)) break;
