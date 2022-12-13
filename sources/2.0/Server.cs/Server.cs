@@ -33,7 +33,7 @@ namespace NSServer
             public static Socket SeConnecter()
         {
             Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            serverSocket.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 45000));
+            serverSocket.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 40000));
             serverSocket.Listen(2);
             return serverSocket;
         }
@@ -54,6 +54,7 @@ namespace NSServer
                 while (server.Available == 0)
                 {
                 }
+
                 //MessageBox.Show("Message reçu server");
                 byte[] buffer = new byte[1024];
                 while (server.Available != 0)
@@ -61,6 +62,7 @@ namespace NSServer
                     int nbOctetsRecus = server.Receive(buffer);
                     message += System.Text.Encoding.ASCII.GetString(buffer, 0, nbOctetsRecus);
                 }
+
                 return message;
             }
         }
@@ -71,11 +73,8 @@ namespace NSServer
             //MessageBox.Show("Message envoye");
         }
 
-        public static void Deconnecter(Socket socket, Socket serverSocket)
+        public void Deconnecter(Socket socket, Socket serverSocket)
         {
-            while (socket.Connected == true)
-            {  
-            }
             socket.Shutdown(SocketShutdown.Both);
             serverSocket.Shutdown(SocketShutdown.Both);
             socket.Close();

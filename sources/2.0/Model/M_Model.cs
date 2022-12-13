@@ -1,5 +1,6 @@
 //Class Model
 //Description : This class is used to write log file and to move files about different save.
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NSUtils;
@@ -31,7 +32,8 @@ namespace NSModel
         //Constructor
         public M_Model()
         {
-            string pathDirectoryLog = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).ToString() + @"\EasySave\Log";
+            string pathDirectoryLog = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).ToString() +
+                                      @"\EasySave\Log";
             if (!Directory.Exists(pathDirectoryLog))
             {
                 Directory.CreateDirectory(pathDirectoryLog);
@@ -59,15 +61,15 @@ namespace NSModel
                 File.WriteAllText(Get_logFile(), initLogFile);
             }
 
-            string pathDirectoryState = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).ToString() + @"\EasySave";
+            string pathDirectoryState = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).ToString() +
+                                        @"\EasySave";
             string pathState = pathDirectoryState + @"\State.json";
             Set_workFile(pathState);
             if (!File.Exists(Get_workFile()))
             {
-
                 //Write json string to JSON file
-                File.WriteAllText(Get_workFile(), "{\n\"lang\": \"en\",\n\"extToCrypt\": [], \n\"extPrio\": [], \n\"State\": []\n}");
-
+                File.WriteAllText(Get_workFile(),
+                    "{\n\"lang\": \"en\",\n\"extToCrypt\": [], \n\"extPrio\": [], \n\"State\": []\n}");
             }
 
             JObject objJSON = JObject.Parse(File.ReadAllText(Get_workFile()));
@@ -75,7 +77,8 @@ namespace NSModel
             int identationIndex = 0;
             foreach (JObject i in objJSON["State"])
             {
-                _listSaveJob.Add(new M_SaveJob(i["Name"].ToString(), i["SourceFilePath"].ToString(), i["TargetFilePath"].ToString(), i["Type"].Value<int>(), i["State"].ToString(), 0, identationIndex));
+                _listSaveJob.Add(new M_SaveJob(i["Name"].ToString(), i["SourceFilePath"].ToString(),
+                    i["TargetFilePath"].ToString(), i["Type"].Value<int>(), i["State"].ToString(), 0, identationIndex));
                 identationIndex += 1;
             }
 
@@ -87,7 +90,7 @@ namespace NSModel
 
             //Set _extensionToCryptRegex
             Set_extensionToCryptRegex();
-            
+
             //Get extensions to prioritize in json file
             foreach (string y in objJSON["extPrio"])
             {
@@ -96,7 +99,6 @@ namespace NSModel
 
             //Set _extensionPrioRegex
             Set_extensionPriorityRegex();
-
         }
 
         public void WriteLanguage(string language)
@@ -199,7 +201,8 @@ namespace NSModel
         public void Edit_extensionToCrypt(int index, string value)
         {
             _extensionToCrypt[index] = value;
-        } 
+        }
+
         public List<string> Get_extensionPriority()
         {
             return _extensionPriority;
@@ -222,9 +225,11 @@ namespace NSModel
             _extensionPriority[index] = value;
         }
 
-        public void InstanceNewSaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int _progress, int index)
+        public void InstanceNewSaveJob(string _saveJobName, string _saveJobSourceDirectory,
+            string _saveJobDestinationDirectory, int _saveJobType, string _state, int _progress, int index)
         {
-            _listSaveJob.Add(new M_SaveJob(_saveJobName, _saveJobSourceDirectory, _saveJobDestinationDirectory, _saveJobType, _state, _progress, index));
+            _listSaveJob.Add(new M_SaveJob(_saveJobName, _saveJobSourceDirectory, _saveJobDestinationDirectory,
+                _saveJobType, "idle", _progress, index));
         }
 
         public void RemoveSaveJob(int index)
@@ -260,7 +265,6 @@ namespace NSModel
 
         public void RemoveExtensionToCryptState(int index)
         {
-
             JObject objJSON = JObject.Parse(File.ReadAllText(Get_workFile()));
             JArray arrayExtToCrypt = (JArray)objJSON["extToCrypt"];
             arrayExtToCrypt.RemoveAt(index);
@@ -294,9 +298,11 @@ namespace NSModel
             {
                 result = "jesuisvide";
             }
+
             string regex = @$"\b({result})\b";
             _extensionToCryptRegex = new Regex(regex);
         }
+
         public void AddExtensionPriorityState(string extension)
         {
             JObject objJSON = JObject.Parse(File.ReadAllText(Get_workFile()));
@@ -311,7 +317,6 @@ namespace NSModel
 
         public void RemoveExtensionPriorityState(int index)
         {
-
             JObject objJSON = JObject.Parse(File.ReadAllText(Get_workFile()));
             JArray arrayExtPrio = (JArray)objJSON["extPrio"];
             arrayExtPrio.RemoveAt(index);
@@ -333,7 +338,7 @@ namespace NSModel
             //Write json string to JSON file
             File.WriteAllText(Get_workFile(), modifiedExtPrio);
         }
-        
+
         public void Set_extensionPriorityRegex()
         {
             string result;
@@ -345,6 +350,7 @@ namespace NSModel
             {
                 result = "jesuisvide";
             }
+
             string regex = @$"\b({result})\b";
             _extensionPriorityRegex = new Regex(regex);
         }

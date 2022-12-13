@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Livrable2"
         xmlns:p = "clr-namespace:Livrable2.Properties"
-        Title="EasySave" Height="500" Width="800">
+        Title="EasySave" Height="530" Width="893">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="13*"/>

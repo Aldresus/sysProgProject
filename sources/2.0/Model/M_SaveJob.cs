@@ -30,13 +30,14 @@ namespace NSModel
         public Thread? RunningThread { get; set; }
         public ManualResetEvent ThreadPaused { get; set; } = new ManualResetEvent(true);
 
-    // default Constructor
-    public M_SaveJob()
+        // default Constructor
+        public M_SaveJob()
         {
         }
 
         //Constructor (Set all attributes when object instantiation except _totalNbFile, _totalSizeFile)
-        public M_SaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int _progress, int index)
+        public M_SaveJob(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory,
+            int _saveJobType, string _state, int _progress, int index)
         {
             this.Set_saveJobName(_saveJobName);
             this.Set_saveJobSourceDirectory(_saveJobSourceDirectory);
@@ -48,15 +49,15 @@ namespace NSModel
             this.Set_progress(_progress);
             this.Set_index(index);
         }
-       
 
         public void Execute(VM_ViewModel _oViewModel, M_SaveJob SaveJob, string logFilePath, string stateFilePath, M_Model M, Server server)
+
         {
             M.utilExecute.StartThread(SaveJob, M, _oViewModel, server);
         }
 
         //Getter and Setter
-        
+
         //Getter _savedJobName
         public string Get_saveJobName()
         {
@@ -164,7 +165,7 @@ namespace NSModel
         {
             _NbFilesLeftToDo = value;
         }
-        
+
         // Getter _progress
         public int Get_progress()
         {
@@ -177,9 +178,10 @@ namespace NSModel
             _progress = value;
         }
 
-        
+
         //Edit attributes of object M_SaveJob
-        public void Update(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType, string _state, int _totalNbFile, int _totalSizeFile)
+        public void Update(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory,
+            int _saveJobType, string _state, int _totalNbFile, int _totalSizeFile)
         {
             //Edit attributes
             this.Set_saveJobName(_saveJobName);
@@ -191,7 +193,8 @@ namespace NSModel
             this.Set_totalSizeFile(_totalSizeFile);
         }
 
-        public void Update(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory, int _saveJobType)
+        public void Update(string _saveJobName, string _saveJobSourceDirectory, string _saveJobDestinationDirectory,
+            int _saveJobType)
         {
             //Edit attributes
             this.Set_saveJobName(_saveJobName);
@@ -292,7 +295,7 @@ namespace NSModel
             //Write json string to JSON file
             File.WriteAllText(JsonStatePath, finalState);
         }
-        
+
 
         //method which is called when the save job is running
         public void WriteJSON(string JsonStatePath, string state, int FilesLeft, int progress)
@@ -303,7 +306,7 @@ namespace NSModel
             Set_state(state);
             Set_NbFilesLeftToDo(FilesLeft);
             Set_progress(progress);
-            
+
             //Edit State
             objJSON["State"][this.Get_index()]["State"] = this.Get_state();
             //Edit NbFilesLeftToDo
@@ -350,6 +353,7 @@ namespace NSModel
             catch (UnauthorizedAccessException e)
             {
             }
+
             return folderSize;
         }
 
@@ -369,15 +373,15 @@ namespace NSModel
         {
             //Destructor
         }
-        
+
         public void pauseThread()
         {
             if (this.RunningThread != null)
             {
-                this._state = "Paused";
                 ThreadPaused.Reset();
             }
         }
+
         public void resumeThread()
         {
             if (this.RunningThread != null)
@@ -385,11 +389,11 @@ namespace NSModel
                 ThreadPaused.Set();
             }
         }
+
         public void stopThread()
         {
             if (this.RunningThread != null)
             {
-                this._state = "Stopped";
                 RunningThread.Interrupt();
             }
         }
