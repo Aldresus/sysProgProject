@@ -186,33 +186,6 @@ namespace NSUtils
             _oSaveJobs.RunningThread = null;
         }
 
-        public void Execute(M_SaveJob SaveJob, string FileLogPath, string FileStatePath)
-        {
-
-            /*var t = new Thread(() =>
-            {
-                string sourcePath = SaveJob.Get_saveJobSourceDirectory();
-                string targetPath = SaveJob.Get_saveJobDestinationDirectory();
-                bool isFullSave = (SaveJob.Get_saveJobType() == 1) ? true : false;
-
-                // Check if the source directory exists.
-                if (System.IO.Directory.Exists(sourcePath))
-                {
-                    //Now Create all of the directories
-
-
-                    //Copy all the files & Replaces any files with the same name
-
-                    foreach (string newPath in AllFiles)
-                    {
-
-                    }
-                    
-                }
-            });
-            t.Start();
-            System.Windows.Forms.MessageBox.Show($"{Resources.executed}");*/
-        }
 
         public void WriteLog(M_Model M, string JobName, string JsonLogPath, string fileName, string fileSourcePath, string fileDestPath, string directoryTarget, TimeSpan copyTime)
         {
