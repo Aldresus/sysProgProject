@@ -1,4 +1,11 @@
-﻿using System;
+﻿using Livrable2;
+using Livrable2.Properties;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using NSModel;
+using NSServer;
+using NSViewModel;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -44,6 +51,7 @@ public class U_Execute
                 proceed = false;
         if (proceed)
         {
+        }
             List<string> tempPrio = new();
             List<string>? tempNotPrio = new();
 
@@ -57,8 +65,6 @@ public class U_Execute
                     tempPrio.Add(file);
                 else
                     tempNotPrio.Add(file);
-
-
             pasprioencour.Add(tempPrio.Count == 0);
             var threadIndex = pasprioencour.Count - 1;
 
@@ -88,7 +94,6 @@ public class U_Execute
         {
             //only multiply by 10 to reduce the number of refreshes
             var p = (int)Math.Round((total - (float)(prioEntrant + pasprioEntrant)) / total * 10f);
-
             if (_oSaveJobs._progress < p * 10)
             {
                 _oSaveJobs.Set_progress(p * 10);
