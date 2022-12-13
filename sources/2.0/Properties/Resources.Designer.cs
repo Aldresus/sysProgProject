@@ -133,6 +133,15 @@ namespace Livrable2.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Priority Extension :.
+        /// </summary>
+        public static string extensionPrio {
+            get {
+                return ResourceManager.GetString("extensionPrio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Extensions.
         /// </summary>
         public static string extensions {

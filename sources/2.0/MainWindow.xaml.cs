@@ -10,6 +10,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+
 using TextBox = System.Windows.Controls.TextBox;
 
 namespace Livrable2
@@ -161,11 +162,18 @@ namespace Livrable2
         private void Execute_Click(object sender, RoutedEventArgs e)
         {
             DataGrid dataGrid = DG1;
-            model.Get_listSaveJob()[dataGrid.SelectedIndex].Execute(model.Get_listSaveJob()[dataGrid.SelectedIndex], model.Get_logFile(), model.Get_workFile(), model);
+            M_SaveJob job = model.Get_listSaveJob()[dataGrid.SelectedIndex];
+            if (job.RunningThread != null)
+            {
+                job.ThreadPaused.Set();
+            }
+            else
+            {
+                job.Execute(viewModel, model.Get_listSaveJob()[dataGrid.SelectedIndex], model.Get_logFile(), model.Get_workFile(), model);
+            }
         }
         private void Ajouter_Click(object sender, RoutedEventArgs e)
         {
-            //TODO : Check entry values with readers class
             string name = txtBoxName.Text;
             string sourceDirectory = txtBoxSourceDir.Text;
             string destinationDirectory = txtBoxDestDir.Text;
@@ -185,7 +193,7 @@ namespace Livrable2
             if (checker.CheckStringInput(name, false) && checker.CheckStringInput(sourceDirectory, false) && checker.CheckStringInput(destinationDirectory, false) && checker.CheckStringInput(type, false))
             {
                 int indexJob = checker.GetEmptyJobIndex(model.Get_listSaveJob());
-                model.InstanceNewSaveJob(name, sourceDirectory, destinationDirectory, SaveJobeType, "idle", indexJob);
+                model.InstanceNewSaveJob(name, sourceDirectory, destinationDirectory, SaveJobeType, "idle", 0, indexJob);
                 model.GetSelectedSaveJob(indexJob).WriteJSON(model.Get_workFile());
                 viewModel.setupObsCollection();
                 DG1.DataContext = viewModel.data;
@@ -340,6 +348,19 @@ namespace Livrable2
                     threadEcouteReseau.Start();
                 }
             }
+        }
+
+        private void Pause_Click(object sender, RoutedEventArgs e)
+        {
+            DataGrid dataGrid = DG1;
+            model.Get_listSaveJob()[dataGrid.SelectedIndex].pauseThread();
+        }
+        private void Stop_Click(object sender, RoutedEventArgs e)
+        {
+
+            //TODO make it happen
+            DataGrid dataGrid = DG1;
+            model.Get_listSaveJob()[dataGrid.SelectedIndex].stopThread();
         }
     }
 }
