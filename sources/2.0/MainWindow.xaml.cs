@@ -20,7 +20,7 @@ namespace Livrable2
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Server server;
+        private Server server = new Server();
         private M_Model model;
         private VM_ViewModel viewModel;
         private U_Checker checker = new U_Checker();
@@ -33,10 +33,9 @@ namespace Livrable2
             InitializeComponent();
             model = new M_Model();
             viewModel = new VM_ViewModel(model);
-            server = new Server(model, viewModel);
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
-            Thread threadStartListening = new Thread(() => server.StartServer());
+            Thread threadStartListening = new Thread(() => StartServer());
             threadStartListening.Start();
         }
 
@@ -141,6 +140,7 @@ namespace Livrable2
             }
         }
 
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Window1 settings = new Window1(model, viewModel);
@@ -153,9 +153,9 @@ namespace Livrable2
             model.RemoveSaveJob(dataGrid.SelectedIndex);
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
-            if (server.Get_socket() != null)
+            if (socket != null)
             {
-                server.SendToClient();
+                SendToClient();
             }
         }
 
@@ -202,9 +202,9 @@ namespace Livrable2
                 model.GetSelectedSaveJob(indexJob).WriteJSON(model.Get_workFile());
                 viewModel.setupObsCollection();
                 DG1.DataContext = viewModel.data;
-                if (server.Get_socket() != null)
+                if (socket != null)
                 {
-                    server.SendToClient();
+                    SendToClient();
                 }
                 //System.Windows.Forms.MessageBox.Show($"{name} {Properties.Resources.created}");
 
@@ -304,9 +304,16 @@ namespace Livrable2
             model.GetSelectedSaveJob(dataGrid.SelectedIndex).WriteJSON(model.Get_workFile());
             viewModel.setupObsCollection();
             DG1.DataContext = viewModel.data;
-            if (server.Get_socket() != null)
+            if (socket != null)
             {
-                server.SendToClient();
+                SendToClient();
+            }
+        }
+
+        private void StartServer()
+        {
+            while (true)
+            {
                 Debug.WriteLine("StartServer");
                 Thread threadConnexion = new Thread(() => this.serverSocket = Server.SeConnecter());
                 Thread threadAccepterConnexion =

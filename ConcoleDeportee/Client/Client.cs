@@ -50,15 +50,6 @@ namespace NSClient
                     {
                         int nbOctetsRecus = client.Receive(buffer);
                         message += System.Text.Encoding.ASCII.GetString(buffer, 0, nbOctetsRecus);
-                        if (message.Substring(0, 8) == "Progress")
-                        {
-                            string progress = message.Substring(0, message.IndexOf("____"));
-                            message = message.Remove(0, message.IndexOf("____")+4);
-                            return progress;
-                        }
-                        else
-                        {
-                        }
                     }
 
                     return message;
